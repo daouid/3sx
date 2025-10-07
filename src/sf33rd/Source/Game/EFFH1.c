@@ -41,7 +41,11 @@ void effect_H1_move(WORK_Other* ewk) {
 }
 
 void eff_h1_move(WORK_Other* ewk) {
-s16 work;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    s16 work;
 
     switch (ewk->wu.routine_no[1]) {
     case 0:
@@ -81,7 +85,11 @@ s16 work;
 }
 
 s32 effect_H1_init() {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
     s16 i;
     const s16* data_ptr = &effh1_data_tbl[0][0];

@@ -231,7 +231,12 @@ void end_401_1000() {
 }
 
 void end_401_2000() {
-switch (bgw_ptr->r_no_1) {
+#if defined(TARGET_PS2)
+    void Frame_Up(u32 x, u32 y, u16 add);
+    void Frame_Down(u32 x, u32 y, u16 add, u32 /* unused */);
+#endif
+
+    switch (bgw_ptr->r_no_1) {
     case 0:
         bgw_ptr->r_no_1++;
         Bg_On_W(2);
@@ -264,8 +269,13 @@ switch (bgw_ptr->r_no_1) {
                 end_w.timer = 0;
                 break;
             }
+
+#if defined(TARGET_PS2)
+            Frame_Down(bg_w.center_x, bg_w.center_y, 1, 1);
+#else
             Frame_Down(bg_w.center_x, bg_w.center_y, 1);
-}
+#endif
+        }
 
         break;
 
@@ -275,7 +285,12 @@ switch (bgw_ptr->r_no_1) {
 }
 
 void end_401_3000() {
-switch (bgw_ptr->r_no_1) {
+#if defined(TARGET_PS2)
+    void Frame_Up(u32 x, u32 y, u16 add);
+    void Frame_Down(u32 x, u32 y, u16 add, u32 /* unused */);
+#endif
+
+    switch (bgw_ptr->r_no_1) {
     case 0:
         bgw_ptr->r_no_1++;
         bgw_ptr->xy[0].disp.pos = end_4_pos[end_w.r_no_2][0];
@@ -304,8 +319,12 @@ switch (bgw_ptr->r_no_1) {
                 end_w.timer = 0;
                 break;
             }
+#if defined(TARGET_PS2)
+            Frame_Down(bg_w.center_x, bg_w.center_y, 1, 1);
+#else
             Frame_Down(bg_w.center_x, bg_w.center_y, 1);
-}
+#endif
+        }
 
         break;
 
@@ -315,7 +334,12 @@ switch (bgw_ptr->r_no_1) {
 }
 
 void end_401_4000() {
-switch (bgw_ptr->r_no_1) {
+#if defined(TARGET_PS2)
+    void Frame_Up(u32 x, u32 y, u16 add);
+    void Frame_Down(u32 x, u32 y, u16 add, u32 /* unused */);
+#endif
+
+    switch (bgw_ptr->r_no_1) {
     case 0:
         bgw_ptr->r_no_1++;
         bgw_ptr->xy[0].disp.pos = end_4_pos[end_w.r_no_2][0];
@@ -345,8 +369,13 @@ switch (bgw_ptr->r_no_1) {
                 end_w.timer = 60;
                 break;
             }
+
+#if defined(TARGET_PS2)
+            Frame_Down(bg_w.center_x, bg_w.center_y, 1, 1);
+#else
             Frame_Down(bg_w.center_x, bg_w.center_y, 1);
-}
+#endif
+        }
 
         break;
 

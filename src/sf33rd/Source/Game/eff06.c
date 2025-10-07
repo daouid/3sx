@@ -69,7 +69,11 @@ const s16* scr_obj_data6[22] = { st0000_data_tbl,  st0100_data_tbl,  st0200_data
                                  stg_dum_data_tbl, stg_dum_data_tbl };
 
 void effect_06_move(WORK_Other* ewk) {
-if (obr_no_disp_check()) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    if (obr_no_disp_check()) {
         return;
     }
 
@@ -97,7 +101,11 @@ if (obr_no_disp_check()) {
 }
 
 s32 effect_06_init() {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
     s16 lp_cnt = scr_obj_num6[bg_w.bg_index];
     s16 i;

@@ -1032,7 +1032,11 @@ const u16 car_parts[7][8][18][2] = { { { { 0x7D10, 0x0000 },
                                          { 0x7A3F, 0x0000 } } } };
 
 void effect_C3_move(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[0]) {
+#if defined(TARGET_PS2)
+    s16 c3_hit_disp_check(u32 ix);
+#endif
+
+    switch (ewk->wu.routine_no[0]) {
     case 0:
         ewk->wu.routine_no[0]++;
         ewk->wu.disp_flag = 1;
@@ -1150,7 +1154,11 @@ void clear_parts_hit_data(WORK* wk) {
 }
 
 void effC3_main_process(WORK_Other* ewk) {
-if (ewk->wu.dir_old) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s32 koc, s32 index, s32 ip, s32 scf);
+#endif
+
+    if (ewk->wu.dir_old) {
         ewk->wu.routine_no[0] = 2;
         ewk->wu.routine_no[1] = 0;
         ewk->wu.routine_no[2] = 0;

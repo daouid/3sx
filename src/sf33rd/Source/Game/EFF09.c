@@ -75,7 +75,11 @@ void effect_09_move(WORK_Other* ewk) {
 }
 
 void eff09_0000(WORK_Other* ewk) {
-if (obr_no_disp_check()) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    if (obr_no_disp_check()) {
         return;
     }
 
@@ -186,7 +190,11 @@ void eff09_1000(WORK_Other* ewk) {
 }
 
 void eff09_2000(WORK_Other* ewk) {
-s16 work;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    s16 work;
     const s32* ptr;
     u16 sw_work;
     const s16* pl_hit_ptr;
@@ -363,7 +371,11 @@ void ball_bound_set(WORK_Other* ewk) {
 }
 
 void eff09_3000(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         if (Exec_Wipe) {
             ewk->wu.routine_no[1] = 99;
@@ -415,7 +427,11 @@ switch (ewk->wu.routine_no[1]) {
 }
 
 void eff09_4000(WORK_Other* ewk) {
-s16 work;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    s16 work;
     s16 work2;
     WORK* oya_ptr;
 
@@ -479,7 +495,11 @@ s16 work;
 }
 
 void eff09_5000(WORK_Other* ewk) {
-if (obr_no_disp_check()) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    if (obr_no_disp_check()) {
         return;
     }
 
@@ -506,7 +526,11 @@ if (obr_no_disp_check()) {
 }
 
 void eff09_6000(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         ewk->wu.routine_no[1]++;
         ewk->wu.disp_flag = 1;
@@ -550,7 +574,11 @@ switch (ewk->wu.routine_no[1]) {
 }
 
 void eff09_7000(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         ewk->wu.routine_no[1]++;
         ewk->wu.disp_flag = 1;
@@ -597,7 +625,11 @@ switch (ewk->wu.routine_no[1]) {
 }
 
 void eff09_8000(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         ewk->wu.routine_no[1]++;
         ewk->wu.disp_flag = 1;
@@ -629,7 +661,11 @@ switch (ewk->wu.routine_no[1]) {
 }
 
 void eff09_9000(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         ewk->wu.routine_no[1]++;
         ewk->wu.disp_flag = 1;
@@ -664,7 +700,11 @@ switch (ewk->wu.routine_no[1]) {
 }
 
 void eff09_10000(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         ewk->wu.routine_no[1]++;
         ewk->wu.disp_flag = 1;
@@ -705,7 +745,11 @@ switch (ewk->wu.routine_no[1]) {
 }
 
 void eff09_11000(WORK_Other* ewk) {
-s16 work;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    s16 work;
     s16 work2;
     WORK* oya_ptr = (WORK*)ewk->my_master;
 
@@ -777,7 +821,11 @@ s16 work;
 }
 
 void eff09_12000(WORK_Other* ewk) {
-WORK* oya_ptr = (WORK*)ewk->my_master;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK* oya_ptr = (WORK*)ewk->my_master;
 
     switch (ewk->wu.routine_no[1]) {
     case 0:
@@ -841,7 +889,11 @@ WORK* oya_ptr = (WORK*)ewk->my_master;
 }
 
 void eff09_13000(WORK_Other* ewk) {
-WORK* oya_ptr = (WORK*)ewk->my_master;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK* oya_ptr = (WORK*)ewk->my_master;
 
     switch (ewk->wu.routine_no[1]) {
     case 0:
@@ -897,7 +949,11 @@ WORK* oya_ptr = (WORK*)ewk->my_master;
 }
 
 void eff09_14000(WORK_Other* ewk) {
-WORK* oya_ptr = (WORK*)ewk->my_master;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK* oya_ptr = (WORK*)ewk->my_master;
 
     if (ewk->wu.rl_flag) {
         ewk->wu.xyz[0].disp.pos = oya_ptr->xyz[0].disp.pos - eff09_data2[ewk->wu.type][2];
@@ -940,7 +996,11 @@ WORK* oya_ptr = (WORK*)ewk->my_master;
 }
 
 void eff09_15000(WORK_Other* ewk) {
-WORK* oya_ptr;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK* oya_ptr;
 
     if (obr_no_disp_check()) {
         return;
@@ -982,7 +1042,11 @@ WORK* oya_ptr;
 }
 
 void eff09_16000(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         ewk->wu.routine_no[1]++;
         ewk->wu.disp_flag = 1;
@@ -1018,7 +1082,11 @@ switch (ewk->wu.routine_no[1]) {
 }
 
 void eff09_17000(WORK_Other* ewk) {
-WORK* oya_ptr;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK* oya_ptr;
 
     if (obr_no_disp_check()) {
         return;
@@ -1071,7 +1139,11 @@ WORK* oya_ptr;
 }
 
 void eff09_18000(WORK_Other* ewk) {
-WORK* oya_ptr;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK* oya_ptr;
 
     if (obr_no_disp_check()) {
         return;
@@ -1132,7 +1204,11 @@ WORK* oya_ptr;
 }
 
 void eff09_19000(WORK_Other* ewk) {
-WORK* oya_ptr;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK* oya_ptr;
 
     if (obr_no_disp_check()) {
         return;
@@ -1193,7 +1269,11 @@ WORK* oya_ptr;
 }
 
 void eff09_20000(WORK_Other* ewk) {
-WORK* oya_ptr;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK* oya_ptr;
     s16 pos_work;
 
     if (test_flag) {
@@ -1249,7 +1329,11 @@ WORK* oya_ptr;
 }
 
 void eff09_21000(WORK_Other* ewk) {
-s16 arrive_x;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    s16 arrive_x;
     s16 arrive_y;
 
     if (Suicide[0]) {
@@ -1332,7 +1416,12 @@ s16 arrive_x;
 }
 
 void eff09_22000(WORK_Other* ewk) {
-WORK* oya_ptr;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s32 ip, s32 scf);
+#endif
+
+    WORK* oya_ptr;
     s16 work;
 
     if (test_flag) {
@@ -1384,7 +1473,11 @@ WORK* oya_ptr;
 }
 
 void eff09_23000(WORK_Other* ewk) {
-WORK* oya_ptr;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK* oya_ptr;
 
     if (test_flag) {
         ewk->wu.routine_no[1] = 99;
@@ -1454,7 +1547,11 @@ WORK* oya_ptr;
 }
 
 void eff09_24000(WORK_Other* ewk) {
-WORK* oya_ptr;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK* oya_ptr;
 
     if (test_flag) {
         ewk->wu.routine_no[1] = 99;
@@ -1536,7 +1633,11 @@ WORK* oya_ptr;
 }
 
 void eff09_25000(WORK_Other* ewk) {
-WORK* oya_ptr = (WORK*)ewk->my_master;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK* oya_ptr = (WORK*)ewk->my_master;
 
     switch (ewk->wu.routine_no[1]) {
     case 0:
@@ -1677,7 +1778,11 @@ void jijii_win_tama_sub(WORK_Other* ewk) {
 }
 
 void eff09_27000(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         ewk->wu.routine_no[1]++;
         ewk->wu.disp_flag = 1;
@@ -1742,7 +1847,11 @@ switch (ewk->wu.routine_no[1]) {
 }
 
 s32 effect_09_init(WORK* wk, u8 data) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
     const s16* data_ptr;
 
@@ -1779,7 +1888,11 @@ WORK_Other* ewk;
 }
 
 s32 effect_09_init2(WORK* wk, u8 data) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
     const s16* data_ptr;
 

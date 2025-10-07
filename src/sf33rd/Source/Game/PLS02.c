@@ -280,7 +280,11 @@ void remake_mvxy_PoGR(WORK* wk) {
 }
 
 void check_body_touch() {
-PLW* p1w = &plw[0];
+#if defined(TARGET_PS2)
+    s16 meri_case_switch(s32 meri);
+#endif
+
+    PLW* p1w = &plw[0];
     PLW* p2w = &plw[1];
     s16 meri;
 
@@ -347,7 +351,13 @@ s16 meri_case_switch(s16 meri) {
 }
 
 void check_body_touch2() {
-PLW* hmw;
+#if defined(TARGET_PS2)
+    s16 hoseishitemo_eenka(WORK * wk, s32 tx);
+    s16 meri_case_switch(s32 meri);
+    s16 check_work_position_bonus(WORK * hm, s32 tx);
+#endif
+
+    PLW* hmw;
     PLW* cmw;
     WORK* efw;
     s16* dad0;
@@ -833,7 +843,11 @@ void set_hit_stop_hit_quake(WORK* wk) {
 }
 
 void add_sp_arts_gauge_init(PLW* wk) {
-PLW* mwk;
+#if defined(TARGET_PS2)
+    void add_super_arts_gauge(SA_WORK * wk, s32 ix, s32 asag, u16 mf);
+#endif
+
+    PLW* mwk;
     s16 asag;
 
     if (wk->wu.work_id != 1) {
@@ -850,7 +864,11 @@ PLW* mwk;
 }
 
 void add_sp_arts_gauge_guard(PLW* wk) {
-PLW* mwk;
+#if defined(TARGET_PS2)
+    void add_super_arts_gauge(SA_WORK * wk, s32 ix, s32 asag, u32 mf);
+#endif
+
+    PLW* mwk;
     s16 asag;
 
     if (wk->wu.work_id != 1) {
@@ -867,7 +885,12 @@ PLW* mwk;
 }
 
 void add_sp_arts_gauge_hit_dm(PLW* wk) {
-PLW* emwk;
+#if defined(TARGET_PS2)
+    void add_super_arts_gauge(SA_WORK * wk, s32 ix, s32 asag, u32 mf);
+    s16 cal_sa_gauge_waribiki(PLW * wk, s32 asag);
+#endif
+
+    PLW* emwk;
     s16 asag;
 
     if (wk->wu.work_id != 1) {
@@ -923,7 +946,11 @@ s16 cal_sa_gauge_waribiki(PLW* wk, s16 asag) {
 }
 
 void add_sp_arts_gauge_paring(PLW* wk) {
-PLW* emwk;
+#if defined(TARGET_PS2)
+    void add_super_arts_gauge(SA_WORK * wk, s32 ix, s32 asag, u16 mf);
+#endif
+
+    PLW* emwk;
     s16 asag;
 
     if (sa_stop_check() != 0) {
@@ -953,7 +980,11 @@ PLW* emwk;
 }
 
 void add_sp_arts_gauge_tokushu(PLW* wk) {
-s16 asag;
+#if defined(TARGET_PS2)
+    void add_super_arts_gauge(SA_WORK * wk, s32 ix, s32 asag, u16 mf);
+#endif
+
+    s16 asag;
 
     if (wk->wu.work_id != 1) {
         return;
@@ -977,7 +1008,11 @@ s16 asag;
 }
 
 void add_sp_arts_gauge_ukemi(PLW* wk) {
-s16 asag;
+#if defined(TARGET_PS2)
+    void add_super_arts_gauge(SA_WORK * wk, s32 ix, s32 asag, u32 mf);
+#endif
+
+    s16 asag;
 
     if (wk->wu.work_id != 1) {
         return;
@@ -1001,7 +1036,11 @@ s16 asag;
 }
 
 void add_sp_arts_gauge_nagenuke(PLW* wk) {
-s16 asag;
+#if defined(TARGET_PS2)
+    void add_super_arts_gauge(SA_WORK * wk, s32 ix, s32 asag, u16 mf);
+#endif
+
+    s16 asag;
 
     if (wk->wu.work_id != 1) {
         return;
@@ -1025,7 +1064,11 @@ s16 asag;
 }
 
 void add_sp_arts_gauge_maxbit(PLW* wk) {
-if (pcon_rno[0] != 1) {
+#if defined(TARGET_PS2)
+    void add_super_arts_gauge(SA_WORK * wk, s32 ix, s32 asag, u16 mf);
+#endif
+
+    if (pcon_rno[0] != 1) {
         return;
     }
 

@@ -83,7 +83,11 @@ void end_d00_move() {
 }
 
 void end_d00_1000() {
-switch (bgw_ptr->r_no_1) {
+#if defined(TARGET_PS2)
+    void Bg_On_W(u32 s_prm);
+#endif
+
+    switch (bgw_ptr->r_no_1) {
     case 0:
         bgw_ptr->r_no_1++;
         Bg_On_W(1 << bgw_ptr->fam_no);
@@ -172,7 +176,11 @@ void end_d00_3000() {
 }
 
 void end_d00_4000() {
-switch (bgw_ptr->r_no_1) {
+#if defined(TARGET_PS2)
+    void Bg_On_W(u32 s_prm);
+#endif
+
+    switch (bgw_ptr->r_no_1) {
     case 0:
         bgw_ptr->r_no_1++;
         Bg_On_W(1 << bgw_ptr->fam_no);
@@ -202,7 +210,11 @@ switch (bgw_ptr->r_no_1) {
 }
 
 void end_d00_6000() {
-switch (bgw_ptr->r_no_1) {
+#if defined(TARGET_PS2)
+    void Bg_On_W(u32 s_prm);
+#endif
+
+    switch (bgw_ptr->r_no_1) {
     case 0:
         bgw_ptr->r_no_1++;
         Bg_On_W(1 << bgw_ptr->fam_no);

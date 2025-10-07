@@ -125,7 +125,13 @@ const s16 hit_mark_hosei_table[108][2] = {
 };
 
 void effect_02_move(WORK_Other* ewk) {
-const HMDT* tad;
+#if defined(TARGET_PS2)
+    void urian_guard_se_check(WORK_Other * ewk, PLW * twk, u32 oto);
+    void pp_screen_quake(s32 ix);
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    const HMDT* tad;
     const EXPLEM* edt;
 
     switch (ewk->wu.routine_no[0]) {

@@ -13,7 +13,12 @@
 #include "sf33rd/Source/Game/workuser.h"
 
 void effect_A7_move(WORK_Other* ewk) {
-const HMDT* tad;
+#if defined(TARGET_PS2)
+    void pp_screen_quake(s32 ix);
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    const HMDT* tad;
     const EXPLEM* edt;
 
     switch (ewk->wu.routine_no[0]) {

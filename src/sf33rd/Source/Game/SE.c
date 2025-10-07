@@ -52,7 +52,11 @@ void BGM_Request(s16 Code) {
 }
 
 void BGM_Request_Code_Check(u16 Code) {
-SsRequest_CC(Code);
+#if defined(TARGET_PS2)
+    void SsRequest_CC(u32 num);
+#endif
+
+    SsRequest_CC(Code);
 }
 
 void BGM_Stop() {

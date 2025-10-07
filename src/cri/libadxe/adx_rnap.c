@@ -134,6 +134,11 @@ void ADXRNA_SetWavFname() {
 INCLUDE_ASM("asm/anniversary/nonmatchings/cri/libadxe/adx_rnap", ADXRNA_PauseAll);
 
 INCLUDE_ASM("asm/anniversary/nonmatchings/cri/libadxe/adx_rnap", ADXRNA_GetStatPauseAll);
+
+#if defined(TARGET_PS2)
+INCLUDE_ASM("asm/anniversary/nonmatchings/cri/libadxe/adx_rnap", ADXRNA_SetStmHdInfo);
+#else
 void ADXRNA_SetStmHdInfo(ADXRNA rna, Sint32) {
     not_implemented(__func__);
 }
+#endif

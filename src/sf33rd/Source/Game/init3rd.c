@@ -101,10 +101,16 @@ void Init_Task_1st(struct _TASK* task_ptr) {
     for (ix = 0; ix < 6; ix++) {
         system_dir[ix] = Dir_Default_Data;
         permission_player[ix] = Permission_PL_Data;
+
+#if defined(TARGET_PS2)
+        save_w[ix].extra_option.contents = save_w[0].extra_option.contents;
+#else
         memcpy(&save_w[ix].extra_option.contents,
                &save_w[0].extra_option.contents,
                sizeof(save_w[ix].extra_option.contents));
-Direction_Working[ix] = 0;
+#endif
+
+        Direction_Working[ix] = 0;
         Vital_Handicap[ix][0] = 7;
         Vital_Handicap[ix][1] = 7;
         permission_player[ix].cursor_infor[0].first_x = 1;

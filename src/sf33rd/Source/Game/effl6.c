@@ -39,7 +39,11 @@ void effect_L6_move(WORK_Other* ewk) {
 }
 
 void effl6_flont(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         ewk->wu.routine_no[1]++;
         ewk->wu.disp_flag = 1;
@@ -81,7 +85,11 @@ switch (ewk->wu.routine_no[1]) {
 }
 
 void effl6_back(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         ewk->wu.routine_no[1]++;
         ewk->wu.disp_flag = 1;
@@ -123,7 +131,11 @@ switch (ewk->wu.routine_no[1]) {
 }
 
 s32 effect_L6_init(WORK* wk, u8 typel6) {
-s16 ix;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    s16 ix;
     WORK_Other* ewk;
 
     if ((ix = pull_effect_work(4)) == -1) {

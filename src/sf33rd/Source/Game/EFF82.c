@@ -14,7 +14,11 @@
 #include "sf33rd/Source/Game/workuser.h"
 
 void effect_82_move(WORK_Other* ewk) {
-WORK* oya_ptr = (WORK*)ewk->my_master;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK* oya_ptr = (WORK*)ewk->my_master;
     s16 work;
 
     switch (ewk->wu.routine_no[0]) {
@@ -77,8 +81,15 @@ WORK* oya_ptr = (WORK*)ewk->my_master;
         break;
     }
 }
+
+#if defined(TARGET_PS2)
+s32 effect_82_init(WORK* wk, s32 /* unused */) {
+    s16 get_my_trans_mode(s32 curr);
+#else
 s32 effect_82_init(WORK* wk) {
-WORK_Other* ewk;
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
 
     if ((ix = pull_effect_work(4)) == -1) {

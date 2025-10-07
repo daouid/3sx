@@ -22,7 +22,11 @@ const GillEffData gill_eff_data[54] = {
 };
 
 void effect_G4_move(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[0]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[0]) {
     case 0:
         ewk->wu.routine_no[0]++;
         ewk->wu.disp_flag = 1;

@@ -35,7 +35,12 @@ const s16 enemy_pos_hos[1][20][2];
 const s16 X_F_L_A_T_pos_hos[1][20][2];
 
 void effect_13_move(WORK_Other* ewk) {
-TAMA* tama = (TAMA*)ewk->wu.my_effadrs;
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s32 ip, s16 scf);
+    s32 erase_my_shell_ix(WORK * wk, s32 ix);
+#endif
+
+    TAMA* tama = (TAMA*)ewk->wu.my_effadrs;
     PLW* mwk;
     PLW* emwk;
 
@@ -285,7 +290,11 @@ void set_tengu_init_pos(WORK* ewk, WORK* mwk) {
 }
 
 void kotp_00000(WORK_Other* ewk, TAMA* twk) {
-if (ewk->wu.hf.hit_flag) {
+#if defined(TARGET_PS2)
+    s32 effect_96_init(WORK * wk, u32 chix, s32 dspf, s32 /* unused */);
+#endif
+
+    if (ewk->wu.hf.hit_flag) {
         ewk->wu.routine_no[1] = 1;
     }
 
@@ -594,7 +603,11 @@ void set_tengu_my_home(WORK* ewk, WORK* mwk) {
 }
 
 s32 check_tengu_attack(WORK* ewk, WORK* mwk, TAMA* twk) {
-if (mwk->cg_ja.atix == 0) {
+#if defined(TARGET_PS2)
+    void make_speed_xy_att(WORK * ewk, WORK * mwk, s32 tm, u8 xsw, u8 ysw);
+#endif
+
+    if (mwk->cg_ja.atix == 0) {
         return 0;
     }
 
@@ -743,7 +756,11 @@ void kotp_04000(WORK_Other* ewk, TAMA* /* unused */) {
 }
 
 void kotp_05000(WORK_Other* ewk, TAMA* twk) {
-if (ewk->wu.hf.hit_flag) {
+#if defined(TARGET_PS2)
+    s32 effect_96_init(WORK * wk, u32 chix, s32 dspf, s32 /* unused */);
+#endif
+
+    if (ewk->wu.hf.hit_flag) {
         ewk->wu.routine_no[1] = 1;
     }
 
@@ -846,7 +863,11 @@ if (ewk->wu.hf.hit_flag) {
 }
 
 void kotp_06000(WORK_Other* ewk, TAMA* twk) {
-PLW* mwk;
+#if defined(TARGET_PS2)
+    s32 effect_96_init(WORK * wk, u32 chix, s32 dspf, s32 /* unused */);
+#endif
+
+    PLW* mwk;
     PLW* emwk;
     s16 dir;
     s16 emdir;
@@ -994,7 +1015,12 @@ PLW* mwk;
 }
 
 void kotp_07000(WORK_Other* ewk, TAMA* twk) {
-WORK* awk;
+#if defined(TARGET_PS2)
+    void setup_mvxy_data(WORK * wk, u32 ix);
+    s32 effect_96_init(WORK * wk, u32 chix, s32 dspf, s32 /* unused */);
+#endif
+
+    WORK* awk;
     s16 dsst;
     PLW* mwk;
     PLW* emwk;
@@ -1126,7 +1152,11 @@ WORK* awk;
 }
 
 void kotp_08000(WORK_Other* ewk, TAMA* twk) {
-if (ewk->wu.hf.hit_flag) {
+#if defined(TARGET_PS2)
+    s32 effect_96_init(WORK * wk, u32 chix, s32 dspf, s32 /* unused */);
+#endif
+
+    if (ewk->wu.hf.hit_flag) {
         ewk->wu.routine_no[1] = 1;
     }
 
@@ -1234,7 +1264,11 @@ if (ewk->wu.hf.hit_flag) {
 }
 
 void kotp_09000(WORK_Other* ewk, TAMA* twk) {
-if (ewk->wu.hf.hit_flag) {
+#if defined(TARGET_PS2)
+    s32 effect_96_init(WORK * wk, u32 chix, s32 dspf, s32 /* unused */);
+#endif
+
+    if (ewk->wu.hf.hit_flag) {
         ewk->wu.routine_no[1] = 1;
     }
 
@@ -1407,7 +1441,11 @@ void kotp_11000(WORK_Other* ewk, TAMA* twk) {
 }
 
 void kotp_12000(WORK_Other* ewk, TAMA* twk) {
-if (ewk->wu.hf.hit_flag) {
+#if defined(TARGET_PS2)
+    s32 effect_96_init(WORK * wk, u32 chix, s32 dspf, s32 /* unused */);
+#endif
+
+    if (ewk->wu.hf.hit_flag) {
         ewk->wu.routine_no[1] = 1;
     }
 
@@ -1704,7 +1742,11 @@ void kotp_15000(WORK_Other* ewk, TAMA* twk) {
 }
 
 void kotp_16000(WORK_Other* ewk, TAMA* twk) {
-if (ewk->wu.hf.hit_flag) {
+#if defined(TARGET_PS2)
+    s32 effect_96_init(WORK * wk, u32 chix, s32 dspf, s32 /* unused */);
+#endif
+
+    if (ewk->wu.hf.hit_flag) {
         ewk->wu.routine_no[1] = 1;
     }
 
@@ -1824,7 +1866,11 @@ if (ewk->wu.hf.hit_flag) {
 }
 
 s32 effect_13_init(WORK* wk, u8 data) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    void write_my_shell_ix(WORK * wk, s32 ix);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
 
     if ((ix = pull_effect_work(3)) == -1) {

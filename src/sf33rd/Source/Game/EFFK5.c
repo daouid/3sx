@@ -162,7 +162,11 @@ typedef union {
 } GOTCP;
 
 void get_okuri_time(WORK* ewk, WORK* mwk, MVJ* mvj) {
-GOTCP gotcp;
+#if defined(TARGET_PS2)
+    void K5_decode_new_hit_index(WORK * wk, MVJ * mvj, s32 mf);
+#endif
+
+    GOTCP gotcp;
     ST st;
     s16 exc;
     u16 now_mf;
@@ -238,7 +242,11 @@ GOTCP gotcp;
 }
 
 void K5_decode_new_hit_index(WORK* wk, MVJ* mvj, u16 mf) {
-s16 i;
+#if defined(TARGET_PS2)
+    u32 decode_mvsw(s32 flag);
+#endif
+
+    s16 i;
     s16 t0;
     s16 t1;
     MVSW mvsw;

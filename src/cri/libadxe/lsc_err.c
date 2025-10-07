@@ -4,7 +4,13 @@
 #include <cri/cri_xpts.h>
 
 #include <stdio.h>
+
+#if defined(TARGET_PS2)
+#include "mw_stdarg.h"
+#else
 #include <stdarg.h>
+#endif
+
 // data
 void (*lsc_err_func)(void*, Char8*) = NULL;
 void* lsc_err_obj = NULL;

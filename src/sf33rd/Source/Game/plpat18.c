@@ -14,7 +14,11 @@ void pl18_extra_attack(PLW* wk) {
 }
 
 void Att_PL18_NINGENBAKUDAN(PLW* wk) {
-wk->scr_pos_set_flag = 0;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    wk->scr_pos_set_flag = 0;
 
     switch (wk->wu.routine_no[3]) {
     case 0:
@@ -72,7 +76,12 @@ wk->scr_pos_set_flag = 0;
 }
 
 void Att_PL18_TOKUSHUKOUDOU(PLW* wk) {
-wk->scr_pos_set_flag = 0;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void grade_add_personal_action(s32 ix);
+#endif
+
+    wk->scr_pos_set_flag = 0;
 
     switch (wk->wu.routine_no[3]) {
     case 0:

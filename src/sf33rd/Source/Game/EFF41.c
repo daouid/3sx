@@ -39,7 +39,13 @@ const s16 sa_sign_data[69][5] = {
 void (*const eff41_main_process[2])() = { eff41_process_00, eff41_process_01 };
 
 void effect_41_move(WORK_Other* ewk) {
-PLW* mwk = (PLW*)ewk->my_master;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void push_color_trans_req(s32 from_col, s16 to_col);
+    s32 erase_my_shell_ix(WORK * wk, s32 ix);
+#endif
+
+    PLW* mwk = (PLW*)ewk->my_master;
 
     switch (ewk->wu.routine_no[0]) {
     case 0:
@@ -165,7 +171,11 @@ void eff41_process_01(WORK_Other* ewk, PLW* mwk) {
 }
 
 void gauge_minus(WORK_Other* ewk, PLW* mwk) {
-switch (sa_sign_data[ewk->wu.type][3]) {
+#if defined(TARGET_PS2)
+    void grade_add_super_arts(s32 ix, s16 num);
+#endif
+
+    switch (sa_sign_data[ewk->wu.type][3]) {
     case 1:
         mwk->sa->saeff_ok = -1;
         grade_add_super_arts(mwk->wu.id, 1);
@@ -179,7 +189,11 @@ switch (sa_sign_data[ewk->wu.type][3]) {
 }
 
 s32 effect_41_init(PLW* wk, u8 data) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    void write_my_shell_ix(WORK * wk, s32 ix);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
 
     if (test_flag) {

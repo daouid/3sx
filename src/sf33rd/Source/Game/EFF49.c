@@ -13,7 +13,11 @@
 u8 Setup_Char_49(WORK_Other* ewk);
 
 void effect_49_move(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[0]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s32 koc, s32 index, s32 ip, s32 scf);
+#endif
+
+    switch (ewk->wu.routine_no[0]) {
     case 0:
         ewk->wu.routine_no[0]++;
         ewk->wu.disp_flag = 1;
@@ -58,7 +62,11 @@ switch (ewk->wu.routine_no[0]) {
 }
 
 s32 effect_49_init(s16 vital_new) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
 
     if ((ix = pull_effect_work(4)) == -1) {

@@ -31,7 +31,12 @@ u8 Extra_Counter[2];
 const s32 Pos_Z_Data_79[3] = { 0, 5, 10 };
 
 void effect_79_move(WORK_Other* ewk) {
-s16 xx;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void set_char_move_init2(WORK * wk, s32 koc, s32 index, s32 ip, s32 scf);
+#endif
+
+    s16 xx;
     s16 arrived[2];
 
     switch (ewk->wu.routine_no[0]) {
@@ -628,7 +633,11 @@ s32 Select_End_Sub_79(WORK_Other* ewk) {
 }
 
 s32 effect_79_init(s16 pl_id, s16 plate_id, s16 pos_id, s16 time, s16 Target_BG) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
 
     if ((ix = pull_effect_work(4)) == -1) {

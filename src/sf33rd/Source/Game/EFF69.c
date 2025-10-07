@@ -32,7 +32,11 @@ void EFF69_WAIT(WORK_Other* ewk) {
 }
 
 void EFF69_SLIDE_IN(WORK_Other* ewk) {
-if (Order[ewk->wu.dir_old] != 1) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s32 ip, s16 scf);
+#endif
+
+    if (Order[ewk->wu.dir_old] != 1) {
         ewk->wu.routine_no[0] = Order[ewk->wu.dir_old];
         ewk->wu.routine_no[1] = 0;
         return;
@@ -125,7 +129,11 @@ void EFF69_SLIDE_OUT(WORK_Other* ewk) {
 }
 
 void EFF69_SUDDENLY(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s32 ip, s16 scf);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         if (--Order_Timer[ewk->wu.dir_old]) {
             break;
@@ -146,7 +154,11 @@ switch (ewk->wu.routine_no[1]) {
 }
 
 s32 effect_69_init(s16 dir_old) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
 
     if ((dir_old == 3 || dir_old == 4) && (Present_Mode == 4 || Present_Mode == 5)) {

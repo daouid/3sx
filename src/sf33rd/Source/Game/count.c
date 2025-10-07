@@ -51,7 +51,11 @@ void count_cont_init(u8 type) {
 }
 
 void count_cont_main() {
-if (Bonus_Game_Flag) {
+#if defined(TARGET_PS2)
+    void counter_write(s32 atr);
+#endif
+
+    if (Bonus_Game_Flag) {
         return;
     }
 
@@ -94,7 +98,11 @@ if (Bonus_Game_Flag) {
 }
 
 void counter_control() {
-if (Counter_hi == 0) {
+#if defined(TARGET_PS2)
+    void counter_write(s32 atr);
+#endif
+
+    if (Counter_hi == 0) {
         if (No_Trans == 0) {
             counter_write(counter_color);
         }

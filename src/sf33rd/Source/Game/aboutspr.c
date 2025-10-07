@@ -81,11 +81,17 @@ void setup_bonus_car_parts() {
 }
 
 void setup_dma_group(u16 num, u32 /* unused */) {
-load_any_texture_patnum(num, 2, 0);
+#if defined(TARGET_PS2)
+    s32 load_any_texture_patnum(u32 patnum, u8 kokey, u8 _unused);
+#endif
+    load_any_texture_patnum(num, 2, 0);
 }
 
 void reset_dma_group(u16 num) {
-purge_texture_group_of_this(num);
+#if defined(TARGET_PS2)
+    void purge_texture_group_of_this(u32 patnum);
+#endif
+    purge_texture_group_of_this(num);
 }
 
 void set_judge_area_sprite(WORK_Other_JUDGE* wk, s16 bsy) {
@@ -262,7 +268,10 @@ void Mtrans_use_trans_mode(WORK* wk, s16 bsy) {
 }
 
 s16 exchange_current_colcd(WORK* wk) {
-WORK* mwk;
+#if defined(TARGET_PS2)
+    void push_color_trans_req(s32 from_col, s32 to_col);
+#endif
+    WORK* mwk;
     s16 col;
 
     col = ((WORK_Other*)wk)->wu.current_colcd;
@@ -295,7 +304,12 @@ WORK* mwk;
 }
 
 s32 sort_push_request(WORK* wk) {
-if (wk->my_mts == 0) {
+#if defined(TARGET_PS2)
+    void shadow_setup(WORK * wk, s32 bsy);
+    void Mtrans_use_trans_mode(WORK * wk, s32 bsy);
+#endif
+
+    if (wk->my_mts == 0) {
         return 0;
     }
 
@@ -336,7 +350,10 @@ if (wk->my_mts == 0) {
 }
 
 s32 sort_push_request2(WORK_Other* wk) {
-if (wk->wu.disp_flag == 0) {
+#if defined(TARGET_PS2)
+    void set_judge_area_sprite(WORK_Other_JUDGE * wk, s32 bsy);
+#endif
+    if (wk->wu.disp_flag == 0) {
         return 1;
     }
     set_judge_area_sprite((WORK_Other_JUDGE*)wk, base_y_pos);
@@ -344,7 +361,10 @@ if (wk->wu.disp_flag == 0) {
 }
 
 s32 sort_push_request3(WORK* wk) {
-if (wk->my_mts == 0) {
+#if defined(TARGET_PS2)
+    s32 set_conn_sprite(WORK_Other_CONN * wk, s32 bsy);
+#endif
+    if (wk->my_mts == 0) {
         return 0;
     }
     wk->current_colcd = wk->my_col_code;
@@ -424,7 +444,10 @@ s32 sort_push_request8(WORK* wk) {
 }
 
 s32 sort_push_requestA(WORK* wk) {
-PAL_CURSOR_COL oricol;
+#if defined(TARGET_PS2)
+    void draw_box(f64 arg0, f64 arg1, f64 arg2, f64 arg3, u32 col, u32 attr, s32 prio);
+#endif
+    PAL_CURSOR_COL oricol;
     s16 i;
     s16 mf;
 
@@ -498,7 +521,10 @@ PAL_CURSOR_COL oricol;
 }
 
 s32 sort_push_requestB(WORK* wk) {
-PAL_CURSOR_COL oricol;
+#if defined(TARGET_PS2)
+    void draw_box(f64 arg0, f64 arg1, f64 arg2, f64 arg3, u32 col, u32 attr, s32 prio);
+#endif
+    PAL_CURSOR_COL oricol;
     s16 i;
     s16 mf;
 
@@ -578,7 +604,11 @@ void shadow_setup(WORK* wk, s16 bsy) {
 }
 
 void shadow_drawing(WORK* wk, s16 bsy) {
-s16 shadow;
+#if defined(TARGET_PS2)
+    s8 get_kage_width(s32 cpy);
+    void Mtrans_use_trans_mode(WORK * wk, s32 bsy);
+#endif
+    s16 shadow;
 
     if (!Debug_w[0x23]) {
         dmwk_kage.position_x = (wk->position_x + wk->kage_hx * (1 - (wk->rl_flag != 0) * 2));

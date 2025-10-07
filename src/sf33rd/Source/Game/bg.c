@@ -70,8 +70,12 @@ void Bg_TexInit() {
 
 void Bg_Kakikae_Set() {
     u8 i;
+#if defined(TARGET_PS2)
+    const u32* rwtbl_ptr;
+#else
     const bgrw_data_tbl_elem* rwtbl_ptr;
-s8 rw;
+#endif
+    s8 rw;
 
     switch (bg_w.stage) {
     case 3:
@@ -89,11 +93,20 @@ s8 rw;
 
         for (i = 0; i < 4; i++) {
             rw = bgrw_on[bg_w.stage][i];
+
+#if defined(TARGET_PS2)
+            rwtbl_ptr = bgrw_data_tbl[rw];
+            rw_dat[i + 1].bg_num = *rwtbl_ptr++;
+            rw_dat[i + 1].rwgbix = *rwtbl_ptr++;
+            rw_dat[i + 1].rwd_ptr = rw_dat[i + 1].brw_ptr = (s16*)rwtbl_ptr[0];
+#else
             rwtbl_ptr = &bgrw_data_tbl[rw];
             rw_dat[i + 1].bg_num = rwtbl_ptr->bg_num;
             rw_dat[i + 1].rwgbix = rwtbl_ptr->rwgbix;
             rw_dat[i + 1].rwd_ptr = rw_dat[i + 1].brw_ptr = rwtbl_ptr->rw_ptr;
-rw_dat[i + 1].rw_cnt = *rw_dat[i + 1].rwd_ptr++;
+#endif
+
+            rw_dat[i + 1].rw_cnt = *rw_dat[i + 1].rwd_ptr++;
             rw_dat[i + 1].gbix = *rw_dat[i + 1].rwd_ptr++;
         }
         break;
@@ -117,11 +130,20 @@ rw_dat[i + 1].rw_cnt = *rw_dat[i + 1].rwd_ptr++;
         }
 
         rw = bgrw_on[bg_w.stage][0];
+
+#if defined(TARGET_PS2)
+        rwtbl_ptr = bgrw_data_tbl[rw];
+        rw_dat[1].bg_num = *rwtbl_ptr++;
+        rw_dat[1].rwgbix = *rwtbl_ptr++;
+        rw_dat[1].rwd_ptr = rw_dat[1].brw_ptr = (s16*)rwtbl_ptr[0];
+#else
         rwtbl_ptr = &bgrw_data_tbl[rw];
         rw_dat[1].bg_num = rwtbl_ptr->bg_num;
         rw_dat[1].rwgbix = rwtbl_ptr->rwgbix;
         rw_dat[1].rwd_ptr = rw_dat[1].brw_ptr = rwtbl_ptr->rw_ptr;
-rw_dat[1].rw_cnt = *rw_dat[1].rwd_ptr++;
+#endif
+
+        rw_dat[1].rw_cnt = *rw_dat[1].rwd_ptr++;
         rw_dat[1].gbix = *rw_dat[1].rwd_ptr++;
         break;
 
@@ -146,12 +168,22 @@ rw_dat[1].rw_cnt = *rw_dat[1].rwd_ptr++;
             }
 
             rw_num += 1;
+
+#if defined(TARGET_PS2)
+            rwtbl_ptr = bgrw_data_tbl[rw];
+            rw_dat[i].bg_num = *rwtbl_ptr++;
+            rw_bg_flag[rw_dat[i].bg_num] = 1;
+            rw_dat[i].rwgbix = *rwtbl_ptr++;
+            rw_dat[i].rwd_ptr = rw_dat[i].brw_ptr = (s16*)rwtbl_ptr[0];
+#else
             rwtbl_ptr = &bgrw_data_tbl[rw];
             rw_dat[i].bg_num = rwtbl_ptr->bg_num;
             rw_bg_flag[rw_dat[i].bg_num] = 1;
             rw_dat[i].rwgbix = rwtbl_ptr->rwgbix;
             rw_dat[i].rwd_ptr = rw_dat[i].brw_ptr = rwtbl_ptr->rw_ptr;
-rw_dat[i].rw_cnt = *rw_dat[i].rwd_ptr++;
+#endif
+
+            rw_dat[i].rw_cnt = *rw_dat[i].rwd_ptr++;
             rw_dat[i].gbix = *rw_dat[i].rwd_ptr++;
         }
 
@@ -230,7 +262,11 @@ void Bg_Close() {
 }
 
 void Bg_Texture_Load_EX() {
-void* loadAdrs;
+#if defined(TARGET_PS2)
+    void Bg_On_R(u32 s_prm);
+#endif
+
+    void* loadAdrs;
     u32 loadSize;
     u32 tgbix;
     u32 prio;
@@ -356,7 +392,11 @@ void* loadAdrs;
 }
 
 void Bg_Texture_Load2(u8 type) {
-void* loadAdrs;
+#if defined(TARGET_PS2)
+    void Bg_On_R(u32 s_prm);
+#endif
+
+    void* loadAdrs;
     u32 loadSize;
     s16 key;
     u32 tgbix;
@@ -419,7 +459,11 @@ void* loadAdrs;
 }
 
 void Bg_Texture_Load_Ending(s16 type) {
-void* loadAdrs;
+#if defined(TARGET_PS2)
+    void Ed_Kakikae_Set(s32 type);
+#endif
+
+    void* loadAdrs;
     u32 loadSize;
     u16 accnum;
     u32 tgbix[2];
@@ -1135,11 +1179,20 @@ void ppgCalScrPosition(s32 x, s32 y, s32 xs, s32 ys) {
     scrDrawPos[1].x = scrDrawPos[3].x = point[1].x;
     scrDrawPos[2].y = scrDrawPos[3].y = point[1].y;
     scrDrawPos[0].z = scrDrawPos[1].z = scrDrawPos[2].z = scrDrawPos[3].z = point[0].z;
+
+#if defined(TARGET_PS2)
+    scrDrawPos[0].s = (0.5f + (f32)(x & 0x7F)) / 128.0f;
+    scrDrawPos[0].t = (0.5f + (f32)(y & 0x7F)) / 128.0f;
+    scrDrawPos[3].s = (0.5f + (f32)((x & 0x7F) + xs)) / 128.0f;
+    scrDrawPos[3].t = (0.5f + (f32)((y & 0x7F) + ys)) / 128.0f;
+#else
     scrDrawPos[0].s = (f32)(x & 0x7F) / 128.0f;
     scrDrawPos[0].t = (f32)(y & 0x7F) / 128.0f;
     scrDrawPos[3].s = (f32)((x & 0x7F) + xs) / 128.0f;
     scrDrawPos[3].t = (f32)((y & 0x7F) + ys) / 128.0f;
-scrDrawPos[1].s = scrDrawPos[3].s;
+#endif
+
+    scrDrawPos[1].s = scrDrawPos[3].s;
     scrDrawPos[2].s = scrDrawPos[0].s;
     scrDrawPos[1].t = scrDrawPos[0].t;
     scrDrawPos[2].t = scrDrawPos[3].t;
@@ -1243,7 +1296,11 @@ void Zoom_Value_Set(u16 zadd) {
 }
 
 void Frame_Up(u16 x, u16 y, u16 add) {
-if (zoom_add < 2) {
+#if defined(TARGET_PS2)
+    void Frame_Adgjust(u32 pos_x, u32 pos_y);
+#endif
+
+    if (zoom_add < 2) {
         scr_sc = 64.0f;
         return;
     }
@@ -1254,7 +1311,11 @@ if (zoom_add < 2) {
 }
 
 void Frame_Down(u16 x, u16 y, u16 add) {
-if (zoom_add >= 0xFFC0) {
+#if defined(TARGET_PS2)
+    void Frame_Adgjust(u32 pos_x, u32 pos_y);
+#endif
+
+    if (zoom_add >= 0xFFC0) {
         scr_sc = 0.0009775171f;
         return;
     }

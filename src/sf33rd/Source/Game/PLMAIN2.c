@@ -26,7 +26,11 @@ void player_mvbs_4000(PLW* wk);
 void (*const plmain_b_lv_00[5])(PLW* wk);
 
 void Player_move_bonus(PLW* wk, u16 lv_data) {
-s16 i;
+#if defined(TARGET_PS2)
+    u16 check_illegal_lever_data(u32 data);
+#endif
+
+    s16 i;
 
     if (wk->wu.operator) {
         if (wk->metamor_over) {
@@ -84,7 +88,12 @@ s16 i;
 }
 
 void player_mvbs_0000(PLW* wk) {
-s16 i;
+#if defined(TARGET_PS2)
+    void setup_vitality(WORK * wk, s32 pno);
+    void metamor_color_restore(s32 wkid);
+#endif
+
+    s16 i;
 
     for (i = 0; i < 8; i++) {
         wk->old_pos_data[i] = 0;

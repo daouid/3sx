@@ -28,6 +28,12 @@
 #include "sf33rd/Source/Game/vs_shell.h"
 #include "sf33rd/Source/Game/workuser.h"
 #include "structs.h"
+
+#if defined(TARGET_PS2)
+
+#else
+#endif
+
 // sbss
 s8 Lv;
 s8 Rnd;
@@ -1450,7 +1456,11 @@ s32 Check_Exit_Guard(PLW* wk, s16 Option) {
 }
 
 void Short_Range_Attack(PLW* wk, s16 Reaction, u16 Lever_Data, s16 Next_Action, s16 Next_Menu) {
-u16 xx;
+#if defined(TARGET_PS2)
+    u16 get_nearing_range(s32 pnum, s32 kos);
+#endif
+
+    u16 xx;
 
     switch (CP_Index[wk->wu.id][1]) {
     case 0:
@@ -3747,7 +3757,11 @@ s32 Check_Landed(PLW* wk, s16 Reaction) {
 }
 
 s32 Check_Dash_Hit(PLW* wk, u16 Tech_Number) {
-WORK_Other* tmw;
+#if defined(TARGET_PS2)
+    s32 get_vs_shell_adrs(WORK * wk, s32 id, s32 ix, WORK_Other * *tmw);
+#endif
+
+    WORK_Other* tmw;
     WORK* em;
     s16 i;
     s16 xx;
@@ -3843,7 +3857,12 @@ void Jump_Init(PLW* wk, s16 Jump_Dir) {
 }
 
 s32 Command_Type_00(PLW* wk, s16 Power_Level, u16 Tech_Number, s16 Ex_Shot) {
-if (Tech_Address[wk->wu.id][Tech_Index[wk->wu.id] + 4] != 0x1C) {
+#if defined(TARGET_PS2)
+    s16 datacmd_conpanecmd(s32 dat);
+    s16 renbanshot_conpaneshot(const s16* dadr, s32 pow);
+#endif
+
+    if (Tech_Address[wk->wu.id][Tech_Index[wk->wu.id] + 4] != 0x1C) {
         Lever_Buff[wk->wu.id] = Tech_Address[wk->wu.id][Tech_Index[wk->wu.id] + 3] & 0x7FFF;
         Lever_Buff[wk->wu.id] = datacmd_conpanecmd(Lever_Buff[wk->wu.id]);
 
@@ -3906,7 +3925,11 @@ const u16 Rolling_Lv_Data[2][9] = {
 };
 
 s32 Command_Type_06(PLW* wk, s16 Power_Level, u16 Tech_Number, s16 Ex_Shot) {
-s16 xx;
+#if defined(TARGET_PS2)
+    s16 renbanshot_conpaneshot(const s16* dadr, s32 pow);
+#endif
+
+    s16 xx;
 
     xx = 0;
 
@@ -4404,7 +4427,12 @@ s32 Check_Meoshi_Attack(PLW* wk, s16 Reaction, s16 Power_Level) {
 }
 
 s32 Get_Meoshi_Data(PLW* wk) {
-u16 lever;
+#if defined(TARGET_PS2)
+    s16 get_meoshi_lever(s32 data);
+    s16 get_meoshi_shot(s32 data);
+#endif
+
+    u16 lever;
     u16 shot;
 
     lever = get_meoshi_lever(wk->wu.cg_meoshi);
@@ -4972,7 +5000,11 @@ void Next_Be_Flip(PLW* wk, s16 xx) {
 }
 
 s32 Check_Diagonal_Shell(PLW* wk) {
-WORK_Other* tmw;
+#if defined(TARGET_PS2)
+    s32 get_vs_shell_adrs(WORK * wk, s32 id, s32 ix, WORK_Other * *tmw);
+#endif
+
+    WORK_Other* tmw;
     WORK* em;
     s16 i;
 
@@ -5043,7 +5075,11 @@ s32 Check_Ignore_Shell2(WORK_Other* tmw) {
 }
 
 s32 Check_Shell(PLW* wk) {
-WORK_Other* tmw;
+#if defined(TARGET_PS2)
+    s32 get_vs_shell_adrs(WORK * wk, s32 id, s32 ix, WORK_Other * *tmw);
+#endif
+
+    WORK_Other* tmw;
     WORK* em;
     s16 i;
     s16 xx;
@@ -5108,7 +5144,11 @@ WORK_Other* tmw;
     return 0;
 }
 s32 Check_Shell_Another_in_Flip(PLW* wk) {
-WORK_Other* tmw;
+#if defined(TARGET_PS2)
+    s32 get_vs_shell_adrs(WORK * wk, s32 id, s32 ix, WORK_Other * *tmw);
+#endif
+
+    WORK_Other* tmw;
     WORK* em;
     s32 i;
     s32 xx = 0;

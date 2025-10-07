@@ -82,7 +82,11 @@ void EFF66_SUSPEND(WORK_Other* ewk) {
 }
 
 void EFF66_SLIDE_IN(WORK_Other* ewk) {
-if (Order[ewk->wu.dir_old] != 1) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s32 koc, s32 index, s32 ip, s32 scf);
+#endif
+
+    if (Order[ewk->wu.dir_old] != 1) {
         ewk->wu.routine_no[0] = Order[ewk->wu.dir_old];
         ewk->wu.routine_no[1] = 0;
         return;
@@ -198,7 +202,11 @@ void EFF66_SUDDENLY(WORK_Other* ewk) {
 }
 
 void Setup_Pos_66(WORK_Other* ewk) {
-if (--Order_Timer[ewk->wu.dir_old]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s32 koc, s32 index, s32 ip, s32 scf);
+#endif
+
+    if (--Order_Timer[ewk->wu.dir_old]) {
         return;
     }
 
@@ -231,7 +239,11 @@ if (--Order_Timer[ewk->wu.dir_old]) {
 }
 
 s32 effect_66_init(s16 order_index, s16 id, s16 master_player, s16 target_bg, s16 char_ix, s16 char_ix2, s16 option) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
     s16 cg_type;
 

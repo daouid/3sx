@@ -525,7 +525,11 @@ void Game2_1() {
 }
 
 void Game2_2() {
-s16 i;
+#if defined(TARGET_PS2)
+    void Bg_On_R(s32 s_prm);
+#endif
+
+    s16 i;
 
     BG_Draw_System();
     Switch_Screen(0);

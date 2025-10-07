@@ -13,7 +13,12 @@ void renewal_table_address(WORK_Other_JUDGE* ewk, WORK* twk);
 void renewal_table_data(WORK_Other_JUDGE* ewk);
 
 void effect_00_move(WORK_Other_JUDGE* ewk) {
-u16 dip;
+#if defined(TARGET_PS2)
+    s32 get_dip_modoki(s16 from, s32 fl);
+    s32 get_dip_modoki2(s16 from, s32 fl);
+#endif
+
+    u16 dip;
     u16 dip2;
 
     ewk->fade_cja += 2;

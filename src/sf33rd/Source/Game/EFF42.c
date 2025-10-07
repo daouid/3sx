@@ -30,7 +30,11 @@ void effect_42_move(WORK_Other* ewk) {
 }
 
 void EFF42_SUDDENLY(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[6]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s32 koc, s32 index, s32 ip, s32 scf);
+#endif
+
+    switch (ewk->wu.routine_no[6]) {
     case 0:
         if (--Order_Timer[ewk->wu.dir_old] != 0) {
             break;
@@ -63,7 +67,11 @@ switch (ewk->wu.routine_no[6]) {
 }
 
 void EFF42_SLIDE_IN(WORK_Other* ewk) {
-if (Order[ewk->wu.dir_old] != 1) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s32 koc, s32 index, s32 ip, s32 scf);
+#endif
+
+    if (Order[ewk->wu.dir_old] != 1) {
         ewk->wu.routine_no[0] = Order[ewk->wu.dir_old];
         ewk->wu.routine_no[1] = 0;
         return;
@@ -167,7 +175,11 @@ void EFF42_KILL(WORK_Other* ewk) {
 }
 
 void EFF42_MOVE(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[0]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s32 koc, s32 index, s32 ip, s32 scf);
+#endif
+
+    switch (ewk->wu.routine_no[0]) {
     case 0:
         if (--ewk->wu.dir_timer == 0) {
             ewk->wu.routine_no[0]++;
@@ -204,7 +216,11 @@ void Setup_Char_Index(WORK_Other* ewk) {
 }
 
 s32 effect_42_init(s16 type) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
 
     if (Present_Mode == 4 || Present_Mode == 5) {

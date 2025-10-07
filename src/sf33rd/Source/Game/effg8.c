@@ -98,7 +98,11 @@ s16 effg8_range_check(WORK_Other* ewk) {
 }
 
 s32 effect_G8_init() {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
     s16 i;
 

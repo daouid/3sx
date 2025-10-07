@@ -12,7 +12,11 @@
 #include "sf33rd/Source/Game/workuser.h"
 
 void effect_K8_move(WORK_Other* ewk) {
-WORK* mwk = (WORK*)ewk->my_master;
+#if defined(TARGET_PS2)
+    void push_color_trans_req(s32 from_col, s32 to_col);
+#endif
+
+    WORK* mwk = (WORK*)ewk->my_master;
 
     switch (ewk->wu.routine_no[0]) {
     case 0:

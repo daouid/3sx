@@ -43,7 +43,11 @@ void EFF57_WAIT(WORK_Other* ewk) {
 }
 
 void EFF57_SLIDE_IN(WORK_Other* ewk) {
-if (Order[ewk->wu.dir_old] != 1) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s32 ip, s16 scf);
+#endif
+
+    if (Order[ewk->wu.dir_old] != 1) {
         ewk->wu.routine_no[0] = Order[ewk->wu.dir_old];
         ewk->wu.routine_no[1] = 0;
         return;
@@ -95,7 +99,11 @@ if (Order[ewk->wu.dir_old] != 1) {
 }
 
 void EFF57_CHAR_CHANGE(WORK_Other* ewk) {
-if (--Order_Timer[ewk->wu.dir_old] == 0) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s32 ip, s16 scf);
+#endif
+
+    if (--Order_Timer[ewk->wu.dir_old] == 0) {
         ewk->wu.routine_no[0] = 0;
         Order[ewk->wu.dir_old] = 0;
         ewk->wu.dir_step = Order_Dir[ewk->wu.dir_old];
@@ -104,7 +112,11 @@ if (--Order_Timer[ewk->wu.dir_old] == 0) {
 }
 
 void EFF57_WALL(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s32 ip, s16 scf);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         if (--Order_Timer[ewk->wu.dir_old]) {
             break;
@@ -127,7 +139,11 @@ switch (ewk->wu.routine_no[1]) {
 }
 
 void EFF57_SUDDENLY(WORK_Other* ewk) {
-if (--Order_Timer[ewk->wu.dir_old] != 0) {
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s32 ip, s16 scf);
+#endif
+
+    if (--Order_Timer[ewk->wu.dir_old] != 0) {
         return;
     }
 
@@ -153,7 +169,11 @@ void EFF57_KILL(WORK_Other* ewk) {
 }
 
 s32 effect_57_init(s16 dir_old, s16 ID, s16 Target_BG, s16 char_ix, s16 option) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
 
     if ((ix = pull_effect_work(4)) == -1) {

@@ -2,7 +2,13 @@
 #include "common.h"
 #include "structs.h"
 #include <stdio.h>
+
+#if defined(TARGET_PS2)
+#include "mw_stdarg.h"
+#else
 #include <stdarg.h>
+#endif
+
 s8 plReportMessage[2048];
 void* (*plmalloc)(s32);
 void (*plfree)(void*);

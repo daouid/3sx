@@ -148,8 +148,13 @@ void Init_sound_system() {
     flAdxInitialize(NULL, "\\THIRD\\");
 
     ADXT_Init();
+#if defined(TARGET_PS2)
+    adxt = ADXT_Create(2, adx_stm_work, ADX_STM_WORK_SIZE);
+#else
     SDLADXSound_Init();
-system_init_level |= 2;
+#endif
+
+    system_init_level |= 2;
     cseInitSndDrv();
     system_init_level |= 1;
 }
@@ -215,8 +220,14 @@ void checkAdxFileLoaded() {
 
 void Exit_sound_system() {
     if (system_init_level & 2) {
+#if defined(TARGET_PS2)
+        ADXT_Destroy(adxt);
+        ADXT_Finish();
+#else
         SDLADXSound_Exit();
-system_init_level &= ~2;
+#endif
+
+        system_init_level &= ~2;
     }
 
     if (system_init_level & 1) {
@@ -345,7 +356,11 @@ void sound_request_for_dc(SoundPatchConfig* rmc, s16 pan) {
 }
 
 void BGM_Server() {
-if (!(system_init_level & 2)) {
+#if defined(TARGET_PS2)
+    void bgm_volume_setup(s32 data);
+#endif
+
+    if (!(system_init_level & 2)) {
         return;
     }
 
@@ -371,35 +386,78 @@ if (!(system_init_level & 2)) {
 
     switch (bgm_exe.kind) {
     case 1:
+#if defined(TARGET_PS2)
+        ADXT_Stop(adxt);
+#else
         SDLADXSound_Stop();
-bgm_seamless_clear();
+#endif
+
+        bgm_seamless_clear();
         current_bgm = 0;
         bgm_exe.kind = 0;
         break;
 
     case 2:
+#if defined(TARGET_PS2)
+        ADXT_Stop(adxt);
+#else
         SDLADXSound_Stop();
-if ((bgm_table[sys_w.bgm_type][bgm_exe.code].data & 0x4000) && (bgm_separate_check() != 0)) {
+#endif
+
+        if ((bgm_table[sys_w.bgm_type][bgm_exe.code].data & 0x4000) && (bgm_separate_check() != 0)) {
             bgm_exe.exIndex = bgm_table[sys_w.bgm_type][bgm_exe.code].data & 0xFF;
             bgm_exe.exEntry = bgm_exdata[sys_w.bgm_type][bgm_exe.exIndex].numStart;
-bgm_volume_setup(0);
+
+#if defined(TARGET_PS2)
+            ADXT_Destroy(adxt);
+            adxt = ADXT_Create(2, adx_stm_work, ADX_STM_WORK_SIZE);
+#endif
+
+            bgm_volume_setup(0);
+
+#if defined(TARGET_PS2)
+            ADXT_Pause(adxt, 1);
+#else
             SDLADXSound_Pause(1);
-bgm_play_request(bgm_exe.exEntry, 0);
+#endif
+
+            bgm_play_request(bgm_exe.exEntry, 0);
             bgm_exe.nowSeamless = 1;
+
+#if defined(TARGET_PS2)
+            ADXT_StartSeamless(adxt);
+#else
             SDLADXSound_StartSeamless();
-} else {
+#endif
+        } else {
             bgm_seamless_clear();
             bgm_volume_setup(0);
+
+#if defined(TARGET_PS2)
+            ADXT_Pause(adxt, 1);
+#else
             SDLADXSound_Pause(1);
-if (adx_NowOnMemoryType == sys_w.bgm_type) {
+#endif
+
+            if (adx_NowOnMemoryType == sys_w.bgm_type) {
                 switch (bgm_exe.code) {
                 case 0x33:
+#if defined(TARGET_PS2)
+                    ADXT_StartMem(adxt, adx_VS);
+#else
                     SDLADXSound_StartMem(adx_VS, sizeof(adx_VS));
-break;
+#endif
+
+                    break;
 
                 case 0x39:
+#if defined(TARGET_PS2)
+                    ADXT_StartMem(adxt, adx_EmSel);
+#else
                     SDLADXSound_StartMem(adx_EmSel, sizeof(adx_EmSel));
-break;
+#endif
+
+                    break;
 
                 default:
                     bgm_play_request(bgm_exe.code, 1);
@@ -415,8 +473,13 @@ break;
         break;
 
     case 3:
+#if defined(TARGET_PS2)
+        ADXT_Pause(adxt, 0);
+#else
         SDLADXSound_Pause(0);
-bgm_exe.kind = 0;
+#endif
+
+        bgm_exe.kind = 0;
         break;
 
     case 4:
@@ -426,16 +489,27 @@ bgm_exe.kind = 0;
                 bgm_exe.exEntry = bgm_exdata[sys_w.bgm_type][bgm_exe.exIndex].numStart;
 
                 if (bgm_exe.nowSeamless == 0) {
+#if defined(TARGET_PS2)
+                    ADXT_Destroy(adxt);
+                    adxt = ADXT_Create(2, adx_stm_work, ADX_STM_WORK_SIZE);
+#else
                     SDLADXSound_Stop();
-bgm_volume_setup(0);
+#endif
+
+                    bgm_volume_setup(0);
                 }
 
                 bgm_play_request(bgm_exe.exEntry, 0);
 
                 if (bgm_exe.nowSeamless == 0) {
                     bgm_exe.nowSeamless = 1;
+
+#if defined(TARGET_PS2)
+                    ADXT_StartSeamless(adxt);
+#else
                     SDLADXSound_StartSeamless();
-}
+#endif
+                }
             }
         } else {
             bgm_seamless_clear();
@@ -444,12 +518,20 @@ bgm_volume_setup(0);
             if (adx_NowOnMemoryType == sys_w.bgm_type) {
                 switch (bgm_exe.code) {
                 case 0x33:
+#if defined(TARGET_PS2)
+                    ADXT_StartMem(adxt, adx_VS);
+#else
                     SDLADXSound_StartMem(adx_VS, sizeof(adx_VS));
-break;
+#endif
+                    break;
 
                 case 0x39:
+#if defined(TARGET_PS2)
+                    ADXT_StartMem(adxt, adx_EmSel);
+#else
                     SDLADXSound_StartMem(adx_EmSel, sizeof(adx_EmSel));
-break;
+#endif
+                    break;
 
                 default:
                     bgm_play_request(bgm_exe.code, 1);
@@ -459,10 +541,18 @@ break;
                 bgm_play_request(bgm_exe.code, 1);
             }
         }
+
+#if defined(TARGET_PS2)
+        if (ADXT_GetStatPause(adxt) != 0) {
+            ADXT_Pause(adxt, 0);
+        }
+#else
         if (SDLADXSound_IsPaused()) {
             SDLADXSound_Pause(0);
         }
-current_bgm = bgm_exe.code;
+#endif
+
+        current_bgm = bgm_exe.code;
         bgm_exe.kind = 0;
         break;
 
@@ -517,15 +607,25 @@ current_bgm = bgm_exe.code;
                     bgm_exe.exEntry = bgm_exdata[sys_w.bgm_type][bgm_exe.exIndex].numStart;
 
                     if (bgm_exe.nowSeamless == 0) {
+#if defined(TARGET_PS2)
+                        ADXT_Destroy(adxt);
+                        adxt = ADXT_Create(2, adx_stm_work, ADX_STM_WORK_SIZE);
+#else
                         SDLADXSound_Stop();
-}
+#endif
+                    }
 
                     bgm_play_request(bgm_exe.exEntry, 0);
 
                     if (bgm_exe.nowSeamless == 0) {
                         bgm_exe.nowSeamless = 1;
+
+#if defined(TARGET_PS2)
+                        ADXT_StartSeamless(adxt);
+#else
                         SDLADXSound_StartSeamless();
-}
+#endif
+                    }
                 }
             } else {
                 bgm_seamless_clear();
@@ -533,12 +633,20 @@ current_bgm = bgm_exe.code;
                 if (adx_NowOnMemoryType == sys_w.bgm_type) {
                     switch (bgm_exe.code) {
                     case 0x33:
+#if defined(TARGET_PS2)
+                        ADXT_StartMem(adxt, adx_VS);
+#else
                         SDLADXSound_StartMem(adx_VS, sizeof(adx_VS));
-break;
+#endif
+                        break;
 
                     case 0x39:
+#if defined(TARGET_PS2)
+                        ADXT_StartMem(adxt, adx_EmSel);
+#else
                         SDLADXSound_StartMem(adx_EmSel, sizeof(adx_EmSel));
-break;
+#endif
+                        break;
 
                     default:
                         bgm_play_request(bgm_exe.code, 1);
@@ -548,10 +656,18 @@ break;
                     bgm_play_request(bgm_exe.code, 1);
                 }
             }
+
+#if defined(TARGET_PS2)
+            if (ADXT_GetStatPause(adxt) != 0) {
+                ADXT_Pause(adxt, 0);
+            }
+#else
             if (SDLADXSound_IsPaused()) {
                 SDLADXSound_Pause(0);
             }
-bgm_volume_setup(-0x7F);
+#endif
+
+            bgm_volume_setup(-0x7F);
             current_bgm = bgm_exe.code;
             bgm_exe.rno = 1;
             bgm_fade.in.dex.hi = -bgm_vol_mix;
@@ -595,8 +711,14 @@ bgm_volume_setup(-0x7F);
         bgm_exe.kind = 0;
         break;
     }
+
+#if defined(TARGET_PS2)
+    if (bgm_exe.nowSeamless && (ADXT_GetNumFiles(adxt) <= 0)) {
+#else
     if (bgm_exe.nowSeamless && (SDLADXSound_GetNumFiles() <= 0)) {
-bgm_exe.exEntry += 1;
+#endif
+
+        bgm_exe.exEntry += 1;
 
         if (bgm_exe.exEntry > bgm_exdata[sys_w.bgm_type][bgm_exe.exIndex].numEnd) {
             bgm_exe.exEntry = bgm_exdata[sys_w.bgm_type][bgm_exe.exIndex].numLoop;
@@ -620,10 +742,18 @@ void setupAlwaysSeamlessFlag(s16 flag) {
 
 void bgm_play_request(s32 filenum, s32 flag) {
     if (flag == 0) {
+#if defined(TARGET_PS2)
+        ADXT_EntryAfs(adxt, 0, filenum);
+#else
         SDLADXSound_EntryAfs(filenum);
-} else {
+#endif
+    } else {
+#if defined(TARGET_PS2)
+        ADXT_StartAfs(adxt, 0, bgm_table[sys_w.bgm_type][filenum].fnum);
+#else
         SDLADXSound_StartAfs(bgm_table[sys_w.bgm_type][filenum].fnum);
-}
+#endif
+    }
 }
 
 void bgm_seamless_clear() {
@@ -632,8 +762,16 @@ void bgm_seamless_clear() {
     }
 
     bgm_exe.nowSeamless = 0;
+
+#if defined(TARGET_PS2)
+    ADXT_Stop(adxt);
+    ADXT_ResetEntry(adxt);
+    ADXT_Destroy(adxt);
+    adxt = ADXT_Create(2, adx_stm_work, ADX_STM_WORK_SIZE);
+#else
     SDLADXSound_Stop();
     SDLADXSound_ResetEntry();
+#endif
 }
 
 void bgm_volume_setup(s16 data) {
@@ -662,12 +800,22 @@ void bgm_volume_setup(s16 data) {
     if (Debug_w[44]) {
         bgm_vol_now = 0;
     }
+
+#if defined(TARGET_PS2)
+    ADXT_SetOutVol(adxt, adx_volume[bgm_vol_now]);
+#else
     SDLADXSound_SetOutVol(adx_volume[bgm_vol_now]);
+#endif
 }
 
 s32 adx_now_playing() {
+#if defined(TARGET_PS2)
+    bgm_exe.state = ADXT_GetStat(adxt);
+#else
     bgm_exe.state = SDLADXSound_GetStat();
-if ((bgm_exe.state == ADXT_STAT_PLAYING) || (bgm_exe.state == ADXT_STAT_DECEND)) {
+#endif
+
+    if ((bgm_exe.state == ADXT_STAT_PLAYING) || (bgm_exe.state == ADXT_STAT_DECEND)) {
         return 1;
     }
 
@@ -675,8 +823,13 @@ if ((bgm_exe.state == ADXT_STAT_PLAYING) || (bgm_exe.state == ADXT_STAT_DECEND))
 }
 
 s32 adx_now_playend() {
+#if defined(TARGET_PS2)
+    bgm_exe.state = ADXT_GetStat(adxt);
+#else
     bgm_exe.state = SDLADXSound_GetStat();
-if (bgm_exe.state == ADXT_STAT_PLAYEND) {
+#endif
+
+    if (bgm_exe.state == ADXT_STAT_PLAYEND) {
         return 1;
     }
 
@@ -704,7 +857,12 @@ void SsAllNoteOff() {
 }
 
 void SsRequestPan(u16 reqNum, s16 start, s16 /* unused */, s32 /* unused */, s32 /* unused */) {
-SoundPatchConfig rmcode;
+#if defined(TARGET_PS2)
+    u16 remake_sound_code_for_DC(s32 code, SoundPatchConfig * rmcode);
+    void sound_request_for_dc(SoundPatchConfig * rmc, s32 pan);
+#endif
+
+    SoundPatchConfig rmcode;
 
     start -= 0x40;
 
@@ -825,7 +983,10 @@ u16 remake_sound_code_for_DC(u16 code, SoundPatchConfig* rmcode) {
 }
 
 void SsRequest(u16 ReqNumber) {
-SoundPatchConfig rmcode;
+#if defined(TARGET_PS2)
+    u16 remake_sound_code_for_DC(s32 code, SoundPatchConfig * rmcode);
+#endif
+    SoundPatchConfig rmcode;
 
     if (remake_sound_code_for_DC(ReqNumber, &rmcode)) {
         return;
@@ -836,7 +997,11 @@ SoundPatchConfig rmcode;
 }
 
 void SsRequest_CC(u16 num) {
-SoundPatchConfig rmcode;
+#if defined(TARGET_PS2)
+    u16 remake_sound_code_for_DC(s32 code, SoundPatchConfig * rmcode);
+#endif
+
+    SoundPatchConfig rmcode;
 
     if (remake_sound_code_for_DC(num, &rmcode)) {
         return;
@@ -848,7 +1013,11 @@ SoundPatchConfig rmcode;
 }
 
 void Standby_BGM(u16 num) {
-SoundPatchConfig rmcode;
+#if defined(TARGET_PS2)
+    u16 remake_sound_code_for_DC(s32 code, SoundPatchConfig * rmcode);
+#endif
+
+    SoundPatchConfig rmcode;
 
     if (remake_sound_code_for_DC(num, &rmcode)) {
         return;
@@ -880,7 +1049,11 @@ void SsBgmOff() {
 }
 
 void SsBgmFadeIn(u16 ReqNumber, u16 FadeSpeed) {
-SoundPatchConfig rmcode;
+#if defined(TARGET_PS2)
+    u16 remake_sound_code_for_DC(s32 code, SoundPatchConfig * rmcode);
+#endif
+
+    SoundPatchConfig rmcode;
     s32 fade_time = 0x8000 / FadeSpeed;
 
     if (!(remake_sound_code_for_DC(ReqNumber, &rmcode)) && (rmcode.ptix == 0x7F)) {

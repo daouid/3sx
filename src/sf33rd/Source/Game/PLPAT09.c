@@ -41,7 +41,12 @@ void pl09_extra_attack(PLW* wk) {
 }
 
 void Att_SP_YAGYOUDAMA(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -97,7 +102,12 @@ switch (wk->wu.routine_no[3]) {
 }
 
 s32 set_tenguiwa(PLW* wk, u8 data) {
-s16 i;
+#if defined(TARGET_PS2)
+    s32 effect_13_init(WORK * wk, const u32 data);
+    s32 get_my_shell_ix(WORK * wk, s32 ix, WORK * *tmw);
+#endif
+
+    s16 i;
     s16 j;
     u16 num;
     const u8* tengu;
@@ -167,7 +177,12 @@ s16 i;
 }
 
 void Att_PL09_TOKUSHUKOUDOU(PLW* wk) {
-wk->scr_pos_set_flag = 0;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void grade_add_personal_action(s32 ix);
+#endif
+
+    wk->scr_pos_set_flag = 0;
 
     switch (wk->wu.routine_no[3]) {
     case 0:
@@ -220,7 +235,11 @@ wk->scr_pos_set_flag = 0;
 }
 
 void Att_JINNCHUUWATARI_EX(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -263,7 +282,12 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void mvxy_table_reader(PLW* wk) {
-PLW* twk = (PLW*)wk->wu.target_adrs;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    PLW* twk = (PLW*)wk->wu.target_adrs;
     const s16* curr_kop = &homing_kop[wk->pl09_dat_index][0];
     s16 ex;
     s16 ey;
@@ -330,7 +354,11 @@ PLW* twk = (PLW*)wk->wu.target_adrs;
 }
 
 void Att_PL09_EX_TENGUIWA(PLW* wk) {
-wk->scr_pos_set_flag = 0;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    wk->scr_pos_set_flag = 0;
 
     switch (wk->wu.routine_no[3]) {
     case 0:
@@ -348,7 +376,12 @@ wk->scr_pos_set_flag = 0;
 }
 
 void Att_PL09_EX_KISHINRIKI(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;

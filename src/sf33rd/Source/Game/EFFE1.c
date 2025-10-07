@@ -6,7 +6,11 @@
 #include "sf33rd/Source/Game/aboutspr.h"
 
 void effect_E1_move(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[0]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[0]) {
     case 0:
         ewk->wu.routine_no[0] += 1;
         ewk->wu.disp_flag = 1;

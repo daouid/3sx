@@ -270,12 +270,22 @@ void q_ldreq_texture_group(REQ* curr) {
                 //
                 // Because 25 is the number of members in CharInitData struct, `i` goes
                 // to 25 too.
+
+#if defined(TARGET_PS2)
+                for (i = 0; i < 25; i++) {
+                    ((u32*)ldchd)[i] += ldchd;
+                }
+
+                cit = (CharInitData*)ldchd;
+#else
                 cit = (CharInitData*)malloc(sizeof(CharInitData));
 
                 for (i = 0; i < 25; i++) {
                     ((uintptr_t*)cit)[i] = ldchd + ((u32*)ldchd)[i];
                 }
-cit2 = &char_init_data[plid_data[plt_req[curr->id]]];
+#endif
+
+                cit2 = &char_init_data[plid_data[plt_req[curr->id]]];
                 *cit2 = *cit;
 
 #if !defined(TARGET_PS2)
@@ -286,8 +296,13 @@ cit2 = &char_init_data[plid_data[plt_req[curr->id]]];
 
                 // Q specific code
                 if (curr->ix == 18) {
+#if defined(TARGET_PS2)
+                    patchAdrs = ((u32**)ldchd)[8];
+                    patchAdrs[37] = patchAdrs[3];
+#else
                     cit2->cbca[37] = cit2->cbca[3];
-}
+#endif
+                }
 
                 // Akuma specific code
                 if (curr->ix == 15) {
@@ -388,7 +403,11 @@ void checkSelObjFileLoaded() {
 }
 
 void purge_texture_group_of_this(u16 patnum) {
-purge_texture_group(obj_group_table[patnum]);
+#if defined(TARGET_PS2)
+    void purge_texture_group(u16 grp);
+#endif
+
+    purge_texture_group(obj_group_table[patnum]);
 }
 
 void purge_texture_group(u8 grp) {
@@ -426,7 +445,11 @@ void purge_player_texture(s16 id) {
 }
 
 s32 load_any_texture_patnum(u16 patnum, u8 kokey, u8 _unused) {
-return load_any_texture_grpnum(obj_group_table[patnum], kokey);
+#if defined(TARGET_PS2)
+    s32 load_any_texture_grpnum(u16 grp, u16 kokey);
+#endif
+
+    return load_any_texture_grpnum(obj_group_table[patnum], kokey);
 }
 
 s32 load_any_texture_grpnum(u8 grp, u8 kokey) {

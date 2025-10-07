@@ -13,7 +13,11 @@ s16 get_c2_quake(WORK* c2wk);
 const s16 c2quake_table[19] = { 0, 3, 3, 2, 2, 1, 1, 1, 0, 0, 0, -1, -1, -1, -2, -2, -3, -3, 0 };
 
 void effect_J9_move(WORK_Other* ewk) {
-WORK* c2wk = (WORK*)ewk->my_master;
+#if defined(TARGET_PS2)
+    void player_hosei_data(WORK_Other * ewk, s32 flag);
+#endif
+
+    WORK* c2wk = (WORK*)ewk->my_master;
 
     switch (ewk->wu.routine_no[0]) {
     case 0:
@@ -57,8 +61,13 @@ WORK* c2wk = (WORK*)ewk->my_master;
             ewk->wu.xyz[0].disp.pos = c2wk->xyz[0].disp.pos;
             break;
         }
+
+#if defined(TARGET_PS2)
+        player_hosei_data(ewk, c2wk->dir_timer);
+#else
         player_hosei_data(ewk, c2wk->dir_timer, 0);
-effJ9_trans(&ewk->wu);
+#endif
+        effJ9_trans(&ewk->wu);
         break;
 
     case 2:

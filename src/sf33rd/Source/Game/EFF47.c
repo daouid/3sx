@@ -17,7 +17,11 @@ const s32 eff47_sp_tbl[4][4] = { { 0x40000, -0x1000, 0x30000, -0x4000 },
 const s16 eff47_data_tbl[12] = { 16, 144, 50, -68, 122, 50, 24, 48, 30, -37, 70, 30 };
 
 void effect_47_move(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[0]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[0]) {
     case 0:
         ewk->wu.routine_no[0]++;
         ewk->wu.disp_flag = 1;
@@ -56,7 +60,11 @@ switch (ewk->wu.routine_no[0]) {
 }
 
 s32 effect_47_init(WORK* wk, s32 /* unused */) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
     s16 i;
     const s16* data_ptr = eff47_data_tbl;

@@ -84,7 +84,11 @@ void effect_D7_move(WORK_Other* ewk) {
 }
 
 void effD7_main_process(WORK_Other* ewk) {
-PLW* mwk = (PLW*)ewk->my_master;
+#if defined(TARGET_PS2)
+    s32 check_ball_mizushibuki(s32 xx, s32 yy);
+#endif
+
+    PLW* mwk = (PLW*)ewk->my_master;
 
     if (ewk->wu.hf.hit_flag) {
         ewk->wu.routine_no[1] = 1;
@@ -254,14 +258,22 @@ PLW* mwk = (PLW*)ewk->my_master;
 }
 
 void cal_speeds_to_me(WORK_Other* ewk, PLW* mwk) {
-s16 tx = mwk->wu.xyz[0].disp.pos;
+#if defined(TARGET_PS2)
+    void cal_speeds_effD7(WORK_Other * ewk, s16 tm, s32 tx, s32 ty, s16 ysp);
+#endif
+
+    s16 tx = mwk->wu.xyz[0].disp.pos;
     s16 ty = mwk->wu.xyz[1].disp.pos + 157;
 
     cal_speeds_effD7(ewk, 20, tx, ty, 6);
 }
 
 void cal_speeds_to_em(WORK_Other* ewk, PLW* twk) {
-s16 tx = twk->wu.position_x;
+#if defined(TARGET_PS2)
+    void cal_speeds_effD7(WORK_Other * ewk, s16 tm, s32 tx, s32 ty, s16 ysp);
+#endif
+
+    s16 tx = twk->wu.position_x;
     s16 ty;
 
     if (ewk->wu.rl_flag) {

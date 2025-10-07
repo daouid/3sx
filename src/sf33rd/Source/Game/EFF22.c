@@ -66,7 +66,11 @@ const s32 snow_sp[4][12][4] = { { { 0x200, 0, -0x2000, 0 },
                                   { 0, 0, -0x2000, 0 } } };
 
 void effect_22_move(WORK_Other* ewk) {
-const s32* ptr;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    const s32* ptr;
 
     if (obr_no_disp_check()) {
         return;
@@ -119,8 +123,15 @@ const s32* ptr;
         break;
     }
 }
+
+#if defined(TARGET_PS2)
+s32 effect_22_init(s32 /* unused */) {
+    s16 get_my_trans_mode(s32 curr);
+#else
 s32 effect_22_init() {
-s16 ix;
+#endif
+
+    s16 ix;
     s16 i;
     WORK_Other* ewk;
 

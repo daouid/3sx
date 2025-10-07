@@ -12,7 +12,11 @@
 #include "sf33rd/Source/Game/workuser.h"
 
 void effect_I4_move(WORK_Other* ewk) {
-if (obr_no_disp_check()) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    if (obr_no_disp_check()) {
         return;
     }
 
@@ -48,7 +52,11 @@ if (obr_no_disp_check()) {
 }
 
 void effect_i4_hit_sub(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[1]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[1]) {
     case 0:
         if (eff_hit_check2(ewk, 0, 2)) {
             set_char_move_init(&ewk->wu, 0, 25);
@@ -135,7 +143,11 @@ void effi4_up_to_down(WORK_Other* ewk) {
 }
 
 s32 effect_I4_init() {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
 
     if ((ix = pull_effect_work(4)) == -1) {

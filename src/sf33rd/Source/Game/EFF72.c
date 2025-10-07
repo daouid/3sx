@@ -11,7 +11,11 @@
 #include "sf33rd/Source/Game/workuser.h"
 
 void effect_72_move(WORK_Other* ewk) {
-WORK_Other* oya;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    WORK_Other* oya;
 
     if (obr_no_disp_check()) {
         return;
@@ -48,7 +52,11 @@ WORK_Other* oya;
 }
 
 s32 effect_72_init(WORK_Other* oya, u8 type_id) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
 
     if (EXE_obroll) {

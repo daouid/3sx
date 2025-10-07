@@ -13,7 +13,11 @@ const s8 effl2_dir_tbl[2][16] = { { 0, 0, 0, 1, 2, 2, 3, 3, 4, 4, 4, 4, 4, 4, 4,
                                   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3 } };
 
 void effect_L2_move(WORK_Other* ewk) {
-switch (ewk->wu.routine_no[0]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (ewk->wu.routine_no[0]) {
     case 0:
         ewk->wu.routine_no[0]++;
         ewk->wu.disp_flag = 1;
@@ -64,7 +68,11 @@ switch (ewk->wu.routine_no[0]) {
 }
 
 void effl2_dir_check(WORK_Other* ewk) {
-s16 work = (plw[ewk->master_id].wu.xyz[0].disp.pos);
+#if defined(TARGET_PS2)
+    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s32 ip, s16 scf);
+#endif
+
+    s16 work = (plw[ewk->master_id].wu.xyz[0].disp.pos);
 
     work >>= 6;
     work &= 15;
@@ -76,7 +84,11 @@ s16 work = (plw[ewk->master_id].wu.xyz[0].disp.pos);
 }
 
 s32 effect_L2_init() {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
     s16 oya_id;
 

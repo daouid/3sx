@@ -223,7 +223,13 @@ void grade_check_work_round_init(s16 ix) {
 }
 
 void grade_makeup_final_parameter(s16 ix, s16 pt) {
-renew_judge_final_work(ix, pt);
+#if defined(TARGET_PS2)
+    void renew_judge_final_work(s32 ix, s32 pt);
+    void makeup_spp_frdat(s32 ix, s32 pt);
+    void makeup_final_grade(s32 ix, s32 pt);
+#endif
+
+    renew_judge_final_work(ix, pt);
     judge_final[ix][pt].all_clear = (VS_Index[WINNER] < 10) ^ 1;
     judge_final[ix][pt].keizoku = Continue_Coin[ix];
     makeup_spp_frdat(ix, pt);
@@ -246,7 +252,10 @@ void renew_judge_final_work(s16 ix, s16 pt) {
 }
 
 void makeup_final_grade(s16 ix, s16 pt) {
-s16 i;
+#if defined(TARGET_PS2)
+    s16 get_grade_ix(s32 pts);
+#endif
+    s16 i;
     s16 tt = 0;
     s16 dt;
 
@@ -376,7 +385,14 @@ void makeup_spp_frdat(s16 ix, s16 pt) {
 }
 
 void grade_makeup_round_parameter(s16 ix) {
-s16 ix2 = (ix + 1) & 1;
+#if defined(TARGET_PS2)
+    s16 get_offence_total(s32 ix);
+    s16 get_defence_total(s32 ix, s16 wf);
+    s16 get_tech_pts_total(s32 ix);
+    s16 get_ex_point_total(s32 ix, s16 wf);
+#endif
+
+    s16 ix2 = (ix + 1) & 1;
 
     judge_item[ix][Play_Type].offence_total += get_offence_total(ix);
     judge_item[ix2][Play_Type].offence_total += get_offence_total(ix2);
@@ -400,7 +416,14 @@ void backup_RO_PT() {
 }
 
 void grade_makeup_round_para_dko() {
-s16 i;
+#if defined(TARGET_PS2)
+    s16 get_offence_total(s32 ix);
+    s16 get_defence_total(s32 ix, s16 wf);
+    s16 get_tech_pts_total(s32 ix);
+    s16 get_ex_point_total(s32 ix, s16 wf);
+#endif
+
+    s16 i;
 
     for (i = 0; i < 2; i++) {
         judge_item[i][Play_Type].offence_total += get_offence_total(i);
@@ -414,7 +437,15 @@ s16 i;
 }
 
 void grade_makeup_judgement_gals() {
-s16 i;
+#if defined(TARGET_PS2)
+    s16 get_offence_total(s32 ix);
+    s16 get_defence_total(s32 ix, s16 wf);
+    s16 get_tech_pts_total(s32 ix);
+    s16 get_ex_point_total(s32 ix, s16 wf);
+    s16 get_grade_ix(s32 pts);
+#endif
+
+    s16 i;
 
     for (i = 0; i < 2; i++) {
         judge_gals[i].offence_total = get_offence_total(i);
@@ -427,7 +458,15 @@ s16 i;
 }
 
 void grade_makeup_stage_parameter(s16 ix) {
-s16 i;
+#if defined(TARGET_PS2)
+    u8 old_my_char_check(u32 num, u8 flag);
+    void grade_makeup_stage_para_com(s32 ix);
+    void grade_makeup_final_parameter(s32 ix, s16 pt);
+    s16 get_grade_ix(s32 pts);
+    s32 rannyuu_Q_check(s32 ix);
+#endif
+
+    s16 i;
     s16 grade;
     s16 plnum;
     s16 point = 0;
@@ -543,7 +582,11 @@ s32 rannyuu_Q_check(s16 ix) {
 }
 
 void grade_makeup_stage_para_com(s16 ix) {
-judge_com[ix].round = judge_item[ix][Play_Type].round;
+#if defined(TARGET_PS2)
+    s16 get_grade_ix(s32 pts);
+#endif
+
+    judge_com[ix].round = judge_item[ix][Play_Type].round;
 
     if (judge_com[ix].round == 0) {
         judge_com[ix].round = 1;
@@ -980,7 +1023,11 @@ void grade_add_quick_stand(s16 ix) {
 }
 
 void grade_add_nml_nage(WORK* wk) {
-s16 ix;
+#if defined(TARGET_PS2)
+    s32 check_normal_attack(u16 waza);
+#endif
+
+    s16 ix;
 
     if (check_normal_attack(wk->kind_of_waza)) {
         ix = wk->id;

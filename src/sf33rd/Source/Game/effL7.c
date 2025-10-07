@@ -46,7 +46,12 @@ void effect_L7_move(WORK_Other* ewk) {
 }
 
 void effl7_move(WORK_Other* ewk) {
-WORK* oya_ptr = (WORK*)ewk->my_master;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void set_char_move_init2(WORK * wk, s16 koc, s16 index, s16 ip);
+#endif
+
+    WORK* oya_ptr = (WORK*)ewk->my_master;
 
     switch (ewk->wu.routine_no[1]) {
     case 0:
@@ -112,8 +117,14 @@ WORK* oya_ptr = (WORK*)ewk->my_master;
             // To match the original behavior run the game in PCSX2, set a breakpoing at
             // 0x234efc and note the value of t0. If it's 0, call set_char_move_init2
             // with 0 in the last arg. If it's non-zero, call with 1.
+
+#if defined(TARGET_PS2)
+            set_char_move_init2(&ewk->wu, 0, 0, 3);
+#else
             fatal_error("This part needs debugging. Check the comment above for details.");
-if (ewk->wu.rl_flag) {
+#endif
+
+            if (ewk->wu.rl_flag) {
                 ewk->wu.mvxy.a[0].sp = 0x20000;
             } else {
                 ewk->wu.mvxy.a[0].sp = -0x20000;
@@ -144,7 +155,11 @@ if (ewk->wu.rl_flag) {
 }
 
 s32 effect_L7_init(WORK* wk, s32 /* unused */) {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
     s16 kind_w;
 

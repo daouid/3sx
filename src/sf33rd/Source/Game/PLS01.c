@@ -202,7 +202,11 @@ s8 saishin_bs2_on_car(PLW* wk) {
 }
 
 s32 check_air_jump(PLW* wk) {
-if (wk->spmv_ng_flag & 0x80000) {
+#if defined(TARGET_PS2)
+    void grade_add_command_waza(s32 ix);
+#endif
+
+    if (wk->spmv_ng_flag & 0x80000) {
         return 0;
     }
 
@@ -234,7 +238,11 @@ if (wk->spmv_ng_flag & 0x80000) {
 }
 
 s32 check_sankaku_tobi(PLW* wk) {
-if (wk->spmv_ng_flag & 0x40000) {
+#if defined(TARGET_PS2)
+    void grade_add_command_waza(s32 ix);
+#endif
+
+    if (wk->spmv_ng_flag & 0x40000) {
         return 0;
     }
 
@@ -325,7 +333,11 @@ void remake_sankaku_tobi_mvxy(WORK* wk, u8 kabe) {
 }
 
 s16 check_F_R_dash(PLW* wk) {
-s16 num;
+#if defined(TARGET_PS2)
+    void grade_add_command_waza(s32 ix);
+#endif
+
+    s16 num;
     s16 rnum;
 
     if (Bonus_Game_Flag != 20 || !wk->bs2_on_car) {
@@ -382,7 +394,11 @@ s16 num;
 }
 
 s32 check_jump_ready(PLW* wk) {
-if (!(wk->cp->sw_new & 1)) {
+#if defined(TARGET_PS2)
+    void grade_add_command_waza(s32 ix);
+#endif
+
+    if (!(wk->cp->sw_new & 1)) {
         return 0;
     }
 
@@ -404,7 +420,11 @@ if (!(wk->cp->sw_new & 1)) {
 }
 
 s32 check_hijump_only(PLW* wk) {
-if (wk->spmv_ng_flag & 0x20000) {
+#if defined(TARGET_PS2)
+    void grade_add_command_waza(s32 ix);
+#endif
+
+    if (wk->spmv_ng_flag & 0x20000) {
         return 0;
     }
 
@@ -629,7 +649,11 @@ s16 check_attbox_dir(PLW* wk) {
 }
 
 u16 check_defense_kind(PLW* wk) {
-u16 rnum = 0;
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    u16 rnum = 0;
 
     switch (wk->wu.routine_no[2]) {
     case 27:

@@ -116,7 +116,11 @@ void Att_HADOUKEN(PLW* wk) {
 }
 
 void Att_HADOUKEN2(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -131,7 +135,11 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_NM_OKIAGARI(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         set_char_move_init(&wk->wu, 5, wk->as->char_ix);
@@ -144,7 +152,13 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_SHOURYUUKEN(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+    void add_to_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -191,7 +205,13 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_SENPUUKYAKU(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+    void add_to_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -232,7 +252,12 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_SENPUUKYAKU2(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -264,7 +289,12 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_ABISEGERI(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -318,7 +348,12 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_SHOURYUUREPPA(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -375,7 +410,12 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_SHINSHOURYUUKEN(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -409,7 +449,12 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_KUUCHUUNICHIRINSHOU(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void add_to_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         set_char_move_init(&wk->wu, 5, wk->as->char_ix);
@@ -440,7 +485,13 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_KUUCHUUJINNCHUUWATARI(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+    void add_to_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         set_char_move_init(&wk->wu, 5, wk->as->char_ix);
@@ -489,7 +540,12 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_TENSHINSENKYUUTAI(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -584,7 +640,12 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_CHOUCHUURENGEKI(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         hoken_muriyari_chakuchi(wk);
@@ -615,7 +676,12 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_SLIDE_and_JUMP(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         hoken_muriyari_chakuchi(wk);
@@ -690,7 +756,12 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_JINNCHUUWATARI(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+    void setup_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -733,7 +804,11 @@ switch (wk->wu.routine_no[3]) {
 }
 
 void Att_HOMING_JUMP(PLW* wk) {
-switch (wk->wu.routine_no[3]) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -776,7 +851,11 @@ const s16 ahj_empos_hos[3][20][2] = {
 const s16 ahj_kop[3][4] = { { 0, 24, 0, 2 }, { 0, 22, 0, 2 }, { 0, 23, 0, 2 } };
 
 void att_ahj_table_reader(PLW* wk) {
-PLW* twk = (PLW*)wk->wu.target_adrs;
+#if defined(TARGET_PS2)
+    void setup_mvxy_data(WORK * wk, u32 ix);
+#endif
+
+    PLW* twk = (PLW*)wk->wu.target_adrs;
     const s16* curr_kop = ahj_kop[wk->as->r_no];
     s16 ex;
     s16 ey;

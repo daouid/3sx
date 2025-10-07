@@ -13,7 +13,11 @@
 #include "sf33rd/Source/Game/workuser.h"
 
 void effect_J8_move(WORK_Other* ewk) {
-if (obr_no_disp_check()) {
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    if (obr_no_disp_check()) {
         return;
     }
 
@@ -86,7 +90,11 @@ s16 dragonfly_l_move_2(WORK_Other* ewk) {
 }
 
 s16 dragonfly_l_move_3(WORK_Other* ewk) {
-add_x_sub(ewk);
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    add_x_sub(ewk);
     add_y_sub(ewk);
 
     if (ewk->wu.xyz[0].disp.pos <= bg_w.bgw[1].l_limit2 - bg_w.pos_offset - 24) {
@@ -105,7 +113,11 @@ add_x_sub(ewk);
 }
 
 s16 dragonfly_l_move_4(WORK_Other* ewk) {
-char_move(&ewk->wu);
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    char_move(&ewk->wu);
     ewk->wu.dir_timer--;
 
     if (ewk->wu.dir_timer <= 0) {
@@ -192,7 +204,11 @@ s16 dragonfly_r_move_2(WORK_Other* ewk) {
 }
 
 s16 dragonfly_r_move_3(WORK_Other* ewk) {
-add_x_sub(ewk);
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    add_x_sub(ewk);
     add_y_sub(ewk);
 
     if (ewk->wu.xyz[0].disp.pos >= bg_w.bgw[1].r_limit2 + bg_w.pos_offset + 24) {
@@ -211,7 +227,11 @@ add_x_sub(ewk);
 }
 
 s16 dragonfly_r_move_4(WORK_Other* ewk) {
-char_move(&ewk->wu);
+#if defined(TARGET_PS2)
+    void set_char_move_init(WORK * wk, s16 koc, s32 index);
+#endif
+
+    char_move(&ewk->wu);
     ewk->wu.dir_timer--;
 
     if (ewk->wu.dir_timer <= 0) {
@@ -503,7 +523,11 @@ void dragonfly_move_next(WORK_Other* ewk) {
 }
 
 s32 effect_J8_init() {
-WORK_Other* ewk;
+#if defined(TARGET_PS2)
+    s16 get_my_trans_mode(s32 curr);
+#endif
+
+    WORK_Other* ewk;
     s16 ix;
     s16 i;
 
