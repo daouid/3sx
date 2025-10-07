@@ -46,11 +46,7 @@ const u8* cjdr_blocking_table[20];
 const u8* cjdr_defense_table[20];
 
 void Player_attack(PLW* wk) {
-#if defined(TARGET_PS2)
-    void clear_chainex_check(s32 ix);
-#endif
-
-    wk->wu.next_z = wk->wu.my_priority;
+wk->wu.next_z = wk->wu.my_priority;
     wk->running_f = 0;
     wk->py->flag = 0;
     wk->guard_flag = 3;
@@ -108,11 +104,7 @@ void Player_attack(PLW* wk) {
 }
 
 void Attack_00000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    wk->scr_pos_set_flag = 0;
+wk->scr_pos_set_flag = 0;
 
     switch (wk->wu.routine_no[3]) {
     case 0:
@@ -138,12 +130,7 @@ void Attack_00000(PLW* wk) {
 }
 
 void Attack_01000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void setup_mvxy_data(WORK * wk, u32 ix);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         hoken_muriyari_chakuchi(wk);
@@ -177,12 +164,7 @@ void Attack_01000(PLW* wk) {
 }
 
 void Attack_02000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void setup_mvxy_data(WORK * wk, u32 ix);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         hoken_muriyari_chakuchi(wk);
@@ -223,12 +205,7 @@ void Attack_02000(PLW* wk) {
 }
 
 void Attack_03000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void Normal_18000_init_unit(PLW * wk, s32 ps);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         get_cancel_timer(wk);
@@ -414,11 +391,7 @@ case3:
 }
 
 void Attack_04000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         hoken_muriyari_chakuchi(wk);
@@ -442,12 +415,7 @@ void Attack_04000(PLW* wk) {
 }
 
 void Attack_05000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    s32 effect_G6_init(WORK * wk, s32 dat);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.rl_flag = wk->wu.rl_waza;
         set_char_move_init(&wk->wu, 5, wk->as->char_ix);
@@ -492,11 +460,7 @@ void Attack_06000(PLW* wk) {
 }
 
 void Attack_07000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         hoken_muriyari_chakuchi(wk);
@@ -524,13 +488,7 @@ void Attack_07000(PLW* wk) {
 }
 
 void Attack_08000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void setup_mvxy_data(WORK * wk, u32 ix);
-    void add_to_mvxy_data(WORK * wk, u32 ix);
-#endif
-
-    s16 ixx;
+s16 ixx;
 
     switch (wk->wu.routine_no[3]) {
     case 0:
@@ -589,12 +547,7 @@ void Attack_08000(PLW* wk) {
 }
 
 void Attack_09000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void setup_mvxy_data(WORK * wk, u32 ix);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         hoken_muriyari_chakuchi(wk);
@@ -638,13 +591,7 @@ void Attack_09000(PLW* wk) {
 }
 
 void Attack_10000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void setup_mvxy_data(WORK * wk, s32 ix);
-    void grade_add_leap_attack(s32 ix);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         hoken_muriyari_chakuchi(wk);
@@ -714,11 +661,7 @@ void Attack_10000(PLW* wk) {
 }
 
 void Attack_14000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    wk->scr_pos_set_flag = 0;
+wk->scr_pos_set_flag = 0;
     switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
@@ -740,12 +683,7 @@ void Attack_14000(PLW* wk) {
 }
 
 void Attack_15000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void Normal_18000_init_unit(PLW * wk, s32 ps);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
 

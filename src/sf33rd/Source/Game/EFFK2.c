@@ -224,11 +224,7 @@ const s16 k2_kidou[83][4] = {
 void (*const effK2_main_process[9])();
 
 void effect_K2_move(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    DADD* hahen = (DADD*)ewk->wu.target_adrs;
+DADD* hahen = (DADD*)ewk->wu.target_adrs;
     WORK* mwk = (WORK*)ewk->my_master;
 
     if (ewk->wu.dir_old == 0 && (mwk->id != ewk->master_work_id || mwk->dir_old != 0)) {
@@ -348,11 +344,7 @@ void effK2_parts_move_type_0(WORK_Other* ewk, DADD*) {
 }
 
 void effK2_parts_move_type_1(WORK_Other* ewk, DADD* hahen) {
-#if defined(TARGET_PS2)
-    void set_next_next_y(WORK * wk, u32 flag);
-#endif
-
-    switch (ewk->wu.routine_no[2]) {
+switch (ewk->wu.routine_no[2]) {
     case 0:
         switch (ewk->wu.dm_attlv) {
         case 2:
@@ -567,11 +559,7 @@ void effK2_parts_move_type_7(WORK_Other* ewk, DADD* arg1) {
 }
 
 void effK2_parts_move_type_8(WORK_Other* ewk, DADD* hahen) {
-#if defined(TARGET_PS2)
-    void set_next_next_y(WORK * wk, u32 flag);
-#endif
-
-    switch (ewk->wu.routine_no[2]) {
+switch (ewk->wu.routine_no[2]) {
     case 0:
         switch (ewk->wu.dm_attlv) {
         case 2:

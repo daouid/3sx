@@ -11,11 +11,7 @@
 const s16 eff07_data_tbl[2][3] = { { 4, 742, 28 }, { 5, 806, 28 } };
 
 void effect_07_move(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    if (obr_no_disp_check()) {
+if (obr_no_disp_check()) {
         return;
     }
 
@@ -42,11 +38,7 @@ void effect_07_move(WORK_Other* ewk) {
 }
 
 s32 effect_07_init() {
-#if defined(TARGET_PS2)
-    s16 get_my_trans_mode(s32 curr);
-#endif
-
-    WORK_Other* ewk;
+WORK_Other* ewk;
     s16 ix;
     s16 i;
     const s16* data_ptr = &eff07_data_tbl[0][0];

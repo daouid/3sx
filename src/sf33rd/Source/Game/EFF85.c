@@ -38,11 +38,7 @@ void eff85_0100(WORK_Other* ewk) {
 }
 
 void eff85_1000(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (ewk->wu.routine_no[2]) {
+switch (ewk->wu.routine_no[2]) {
     case 0:
         ewk->wu.routine_no[2]++;
         ewk->wu.disp_flag = 1;
@@ -76,11 +72,7 @@ void eff85_1000(WORK_Other* ewk) {
 }
 
 void eff85_common(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (ewk->wu.routine_no[2]) {
+switch (ewk->wu.routine_no[2]) {
     case 0:
         ewk->wu.routine_no[2]++;
         set_char_move_init(&ewk->wu, 0, eff85_char_index_tbl[ewk->wu.routine_no[1]]);
@@ -99,11 +91,7 @@ void eff85_common(WORK_Other* ewk) {
 }
 
 void eff85_3000(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (ewk->wu.routine_no[2]) {
+switch (ewk->wu.routine_no[2]) {
     case 0:
         ewk->wu.routine_no[2]++;
         set_char_move_init(&ewk->wu, 0, 31);
@@ -132,11 +120,7 @@ void eff85_3000(WORK_Other* ewk) {
 }
 
 void eff85_5000(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (ewk->wu.routine_no[2]) {
+switch (ewk->wu.routine_no[2]) {
     case 0:
         ewk->wu.routine_no[2]++;
         set_char_move_init(&ewk->wu, 0, eff85_char_index_tbl[ewk->wu.routine_no[1]]);
@@ -159,11 +143,7 @@ void eff85_5000(WORK_Other* ewk) {
 }
 
 void eff85_7000(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (ewk->wu.routine_no[2]) {
+switch (ewk->wu.routine_no[2]) {
     case 0:
         ewk->wu.routine_no[2]++;
         set_char_move_init(&ewk->wu, 0, 34);
@@ -190,11 +170,7 @@ void eff85_7000(WORK_Other* ewk) {
 }
 
 void eff85_8000(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (ewk->wu.routine_no[2]) {
+switch (ewk->wu.routine_no[2]) {
     case 0:
         ewk->wu.routine_no[2]++;
         set_char_move_init(&ewk->wu, 0, 35);
@@ -213,11 +189,7 @@ void eff85_8000(WORK_Other* ewk) {
 }
 
 void eff85_9000(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (ewk->wu.routine_no[2]) {
+switch (ewk->wu.routine_no[2]) {
     case 0:
         ewk->wu.routine_no[2]++;
 
@@ -277,11 +249,7 @@ void eff85_0200(WORK_Other* ewk) {
 }
 
 s32 effect_85_init() {
-#if defined(TARGET_PS2)
-    s16 get_my_trans_mode(s32 curr);
-#endif
-
-    WORK_Other* ewk;
+WORK_Other* ewk;
     s16 ix;
 
     if (EXE_obroll) {

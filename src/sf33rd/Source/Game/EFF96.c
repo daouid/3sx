@@ -8,11 +8,7 @@
 #include "sf33rd/Source/Game/workuser.h"
 
 void effect_96_move(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (ewk->wu.routine_no[0]) {
+switch (ewk->wu.routine_no[0]) {
     case 0:
         ewk->wu.routine_no[0]++;
         ewk->wu.char_table[0] = _ef13_char_table;

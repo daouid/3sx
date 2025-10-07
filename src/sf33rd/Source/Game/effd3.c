@@ -27,13 +27,7 @@ void effect_D3_move(WORK_Other* ewk) {
 }
 
 void akebono_finish(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void Bg_Off_R(u32 s_prm);
-    void Bg_On_R(u32 s_prm);
-    void Scrn_Move_Set(s8 bgnm, s32 x, s16 y);
-#endif
-
-    s16 i;
+s16 i;
     u16 bg;
     u16 mask;
     u16 assign1;
@@ -134,12 +128,7 @@ void akebono_finish(WORK_Other* ewk) {
 }
 
 void syungoku_finish(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void Bg_On_R(u32 s_prm);
-    void Bg_Off_R(u32 s_prm);
-#endif
-
-    s16 i;
+s16 i;
     u16 bg;
     u16 mask;
     u16 assign1;

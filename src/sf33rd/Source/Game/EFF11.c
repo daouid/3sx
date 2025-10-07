@@ -34,11 +34,7 @@ const s32 eff11_quake_speed_x_tbl[2][8] = { { 0xC000, 0xC000, 0xA000, 0xA000, 0x
                                             { 0xA000, 0xA000, 0xC000, 0xC000, 0x10000, 0xA000, 0xA000, 0x8000 } };
 
 void effect_11_move(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    if (obr_no_disp_check()) {
+if (obr_no_disp_check()) {
         return;
     }
 
@@ -92,12 +88,7 @@ void eff11_quake_sub(WORK_Other* ewk) {
 }
 
 void quake_level_middle(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s16 ip, s16 scf);
-#endif
-
-    switch (ewk->wu.routine_no[2]) {
+switch (ewk->wu.routine_no[2]) {
     case 0:
         ewk->wu.routine_no[2]++;
         set_char_move_init(&ewk->wu, 0, ewk->wu.old_rno[6] + 1);
@@ -150,11 +141,7 @@ void quake_level_middle(WORK_Other* ewk) {
 }
 
 void quake_level_large(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s16 ip, s16 scf);
-#endif
-    s16 work;
+s16 work;
     switch (ewk->wu.routine_no[2]) {
     case 0:
         ewk->wu.routine_no[2]++;
@@ -285,11 +272,7 @@ void quake_level_large(WORK_Other* ewk) {
 }
 
 s32 effect_11_init() {
-#if defined(TARGET_PS2)
-    s16 get_my_trans_mode(s32 curr);
-#endif
-
-    WORK_Other* ewk;
+WORK_Other* ewk;
     s16 ix;
     s16 i;
     const s16* data_ptr = eff11_data_tbl;

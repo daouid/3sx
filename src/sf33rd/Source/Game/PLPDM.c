@@ -169,11 +169,7 @@ const u16 exdm_ix_data[2][20][5] = {
 };
 
 void Player_damage(PLW* wk) {
-#if defined(TARGET_PS2)
-    void clear_chainex_check(s32 ix);
-#endif
-
-    setup_damage_process_flags(wk);
+setup_damage_process_flags(wk);
 
     if (wk->wu.routine_no[3] == 0) {
         get_damage_reaction_data(wk);
@@ -225,11 +221,7 @@ void setup_damage_process_flags(PLW* wk) {
 }
 
 void Damage_00000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    wk->wu.next_z = 30;
+wk->wu.next_z = 30;
 
     switch (wk->wu.routine_no[3]) {
     case 0:
@@ -254,11 +246,7 @@ void Damage_00000(PLW* wk) {
 }
 
 void Damage_01000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3] = 1;
         wk->zuru_timer = 0;
@@ -302,11 +290,7 @@ void Damage_01000(PLW* wk) {
 }
 
 void Damage_04000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    wk->guard_flag = 0;
+wk->guard_flag = 0;
     wk->guard_chuu = guard_kind[wk->wu.routine_no[2] - 4];
     set_dm_hos_flag_grd(wk);
 
@@ -351,11 +335,7 @@ void Damage_04000(PLW* wk) {
     }
 }
 void Damage_07000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    wk->guard_flag = 0;
+wk->guard_flag = 0;
     wk->guard_chuu = guard_kind[wk->wu.routine_no[2] - 4];
 
     switch (wk->wu.routine_no[3]) {
@@ -491,13 +471,7 @@ s32 remake_initial_speeds(WORK* wk) {
 }
 
 void Damage_12000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    s32 setup_accessories(PLW*, u32 data);
-    s32 effect_D9_init(PLW * wk, u32 data);
-#endif
-
-    set_dm_hos_flag_grd(wk);
+set_dm_hos_flag_grd(wk);
 
     switch (wk->wu.routine_no[3]) {
     case 0:
@@ -558,11 +532,7 @@ void Damage_12000(PLW* wk) {
 }
 
 void Damage_14000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.dm_rl = ((WORK*)wk->wu.dmg_adrs)->rl_flag;
@@ -593,11 +563,7 @@ void Damage_14000(PLW* wk) {
 }
 
 void Damage_16000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = (wk->wu.dm_rl + 1) & 1;
@@ -630,12 +596,7 @@ void Damage_16000(PLW* wk) {
 }
 
 void Damage_17000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void exset_char_move_init(WORK * wk, s32 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = (wk->wu.dm_rl + 1) & 1;
@@ -690,13 +651,7 @@ void Damage_17000(PLW* wk) {
 }
 
 void Damage_18000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    s32 setup_accessories(PLW*, u32 data);
-    s32 effect_D9_init(PLW * wk, u32 data);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = (wk->wu.dm_rl + 1) & 1;
@@ -739,11 +694,7 @@ void Damage_18000(PLW* wk) {
 }
 
 void Damage_19000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.dm_rl = ((WORK*)wk->wu.dmg_adrs)->rl_flag;
@@ -778,11 +729,7 @@ void Damage_19000(PLW* wk) {
 }
 
 void Damage_20000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.dm_rl = ((WORK*)wk->wu.dmg_adrs)->rl_flag;
@@ -812,11 +759,7 @@ void Damage_20000(PLW* wk) {
 }
 
 void Damage_21000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.dm_rl = ((WORK*)wk->wu.dmg_adrs)->rl_flag;
@@ -847,11 +790,7 @@ void Damage_21000(PLW* wk) {
 }
 
 void Damage_23000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.dm_rl = ((WORK*)wk->wu.dmg_adrs)->rl_flag;
@@ -881,11 +820,7 @@ void Damage_23000(PLW* wk) {
 }
 
 void Damage_24000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = (wk->wu.dm_rl + 1) & 1;
@@ -932,13 +867,7 @@ void Damage_24000(PLW* wk) {
 }
 
 void Damage_25000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void grade_add_em_stun(s32 ix);
-    void pulpul_request(s32 id, s16 ix);
-#endif
-
-    s16 i;
+s16 i;
     s16 hok;
 
     switch (wk->wu.routine_no[3]) {
@@ -982,11 +911,7 @@ void Damage_25000(PLW* wk) {
 }
 
 void Damage_26000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         set_char_move_init(&wk->wu, 6, wk->as->char_ix);
@@ -1035,11 +960,7 @@ void Damage_26000(PLW* wk) {
 }
 
 void Damage_27000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->dm_ix = wk->as->char_ix + wk->wu.dm_attlv;
@@ -1063,11 +984,7 @@ void Damage_27000(PLW* wk) {
 }
 
 void Damage_28000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         set_char_move_init(&wk->wu, 6, wk->as->char_ix);
@@ -1090,11 +1007,7 @@ void Damage_28000(PLW* wk) {
 }
 
 void Damage_29000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    PLW* twk = (PLW*)wk->wu.target_adrs;
+PLW* twk = (PLW*)wk->wu.target_adrs;
     const u16* datadrs;
 
     switch (wk->wu.routine_no[3]) {
@@ -1153,14 +1066,7 @@ void Damage_29000(PLW* wk) {
 }
 
 void Damage_30000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    s32 setup_accessories(PLW*, u32 data);
-    s32 effect_D9_init(PLW * wk, u32 data);
-    void pp_screen_quake(s32 ix);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.dm_rl = ((WORK*)wk->wu.dmg_adrs)->rl_flag;
@@ -1281,11 +1187,7 @@ void Damage_31000(PLW* wk) {
 }
 
 void first_flight_union(PLW* wk, s16 num, s16 dv) {
-#if defined(TARGET_PS2)
-    void jumping_union_process(WORK * wk, s32 num);
-#endif
-
-    jumping_union_process(&wk->wu, num);
+jumping_union_process(&wk->wu, num);
 
     if (wk->wu.routine_no[3] != num) {
         return;
@@ -1338,11 +1240,7 @@ void first_TtktV_union(PLW* wk, s16 num, s16 dv) {
 }
 
 void buttobi_chakuchi_cg_type_check(PLW* wk) {
-#if defined(TARGET_PS2)
-    void grade_add_quick_stand(s32 ix);
-#endif
-
-    switch (wk->wu.cg_type) {
+switch (wk->wu.cg_type) {
     case 9:
         break;
 
@@ -1393,11 +1291,7 @@ void buttobi_add_y_check(PLW* wk) {
 }
 
 void setup_smoke_type(PLW* wk) {
-#if defined(TARGET_PS2)
-    s32 effect_G6_init(WORK * wk, u32 dat);
-#endif
-
-    s8* step_tbl;
+s8* step_tbl;
     u8 ix;
     s16 i;
     s16 total;

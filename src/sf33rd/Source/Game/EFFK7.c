@@ -12,11 +12,7 @@ void K7_move_type_0(WORK_Other* ewk, PLW* mwk);
 s16 K7_mt0_rebirth_check(PLW* mwk);
 
 void effect_K7_move(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void metamor_color_restore(s32 wkid);
-#endif
-
-    PLW* mwk = (PLW*)ewk->my_master;
+PLW* mwk = (PLW*)ewk->my_master;
 
     switch (ewk->wu.routine_no[0]) {
     case 0:
@@ -57,14 +53,7 @@ void effect_K7_move(WORK_Other* ewk) {
 }
 
 void K7_move_type_0(WORK_Other* ewk, PLW* mwk) {
-#if defined(TARGET_PS2)
-    void set_base_data_metamorphose(PLW * wk, s32 dmid);
-    void metamor_color_trans(s32 wkid);
-    void metamor_color_copy(s32 wkid);
-    void metamor_color_restore(s32 wkid);
-#endif
-
-    switch (ewk->wu.routine_no[1]) {
+switch (ewk->wu.routine_no[1]) {
     case 0:
         if (mwk->wu.cg_type != 20) {
             break;
@@ -173,12 +162,7 @@ s16 K7_mt0_rebirth_check(PLW* mwk) {
 }
 
 void K7_muriyari_metamor_rebirth(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_base_data_metamorphose(PLW * wk, s32 dmid);
-    void metamor_color_restore(s32 wkid);
-#endif
-
-    if (wk->metamorphose == 0) {
+if (wk->metamorphose == 0) {
         return;
     }
 

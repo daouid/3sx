@@ -78,11 +78,7 @@ void Push_ramcnt_key_original(s16 key) {
 }
 
 void Push_ramcnt_key_original_2(s16 key) {
-#if defined(TARGET_PS2)
-    void purge_texture_group(u16 grp);
-#endif
-
-    RCKeyWork* rwk = &rckey_work[key];
+RCKeyWork* rwk = &rckey_work[key];
 
     if (rwk->use != 0) {
         mmFree(&rckey_mmobj, (u8*)rwk->adr);

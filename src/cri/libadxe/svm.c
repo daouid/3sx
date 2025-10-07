@@ -5,13 +5,7 @@
 
 #include <stdio.h>
 #include <string.h>
-
-#if defined(TARGET_PS2)
-#include "mw_stdarg.h"
-#else
 #include <stdarg.h>
-#endif
-
 typedef struct {
     void (*func)(void*);
     void* object;
@@ -42,15 +36,6 @@ Sint32 svm_svr_exec_flag[8] = { 0 };
 Char8 svmerr_msg[128] = { 0 };
 
 // bss
-#if defined(TARGET_PS2)
-extern Sint32 (*svm_test_and_set_callback)();
-extern SVMErrorCallback svm_error_callback;
-extern SVMLockCallback svm_unlock_callback;
-extern SVMLockCallback svm_lock_callback;
-extern SVM_UNK D_006C04E0[8];
-extern SVMSVRCallback D_006C0360[8][6]; // svm_svr_callbacks
-// extern Uint8 D_006C0340[0x20];
-#else
 Sint32 (*svm_test_and_set_callback)();
 SVMErrorCallback svm_error_callback;
 SVMLockCallback svm_unlock_callback;
@@ -58,8 +43,6 @@ SVMLockCallback svm_lock_callback;
 SVM_UNK D_006C04E0[8];
 SVMSVRCallback D_006C0360[8][6]; // svm_svr_callbacks
 // Uint8 D_006C0340[0x20];
-#endif
-
 void svm_lock(Sint32 type) {
     if (svm_lock_callback.func == NULL) {
         return;

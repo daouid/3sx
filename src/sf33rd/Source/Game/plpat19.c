@@ -24,11 +24,7 @@ void pl19_extra_attack(PLW* wk) {
 }
 
 void Att_METAMORPHOSE(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -67,12 +63,7 @@ const s16 dra_em_tall[20][2] = { { 24, 16 }, { 28, 16 }, { 16, 16 }, { 16, 16 },
                                  { 16, 16 }, { 16, 16 }, { 16, 16 }, { 24, 16 }, { 20, 16 }, { 20, 16 } };
 
 void Att_SA__D_R_A(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void setup_mvxy_data(WORK * wk, u32 ix);
-#endif
-
-    PLW* emwk;
+PLW* emwk;
 
     switch (wk->wu.routine_no[3]) {
     case 0:
@@ -181,12 +172,7 @@ void Att_SA__D_R_A(PLW* wk) {
 }
 
 void Att_EX__D_R_A(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void setup_mvxy_data(WORK * wk, u32 ix);
-#endif
-
-    PLW* twk;
+PLW* twk;
     s16 ex;
     s16 ey;
 
@@ -272,12 +258,7 @@ void Att_EX__D_R_A(PLW* wk) {
 }
 
 void Att_KUUCHUUHISSATU(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void setup_mvxy_data(WORK * wk, u32 ix);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         set_char_move_init(&wk->wu, 5, wk->as->char_ix);
@@ -335,13 +316,7 @@ void Att_KUUCHUUHISSATU(PLW* wk) {
 }
 
 void Att_AIRDASH(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void setup_mvxy_data(WORK * wk, u32 ix);
-    void add_to_mvxy_data(WORK * wk, u32 ix);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -438,11 +413,7 @@ s32 kabe_check3(PLW* wk) {
 }
 
 void Att_pl19_TOKUSHUKOUDOU(PLW* wk) {
-#if defined(TARGET_PS2)
-    void grade_add_personal_action(s32 ix);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         wk->wu.rl_flag = wk->wu.rl_waza;
@@ -487,13 +458,7 @@ void Att_pl19_TOKUSHUKOUDOU(PLW* wk) {
 }
 
 void Att_AIR_A_X_E(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    void setup_mvxy_data(WORK * wk, u32 ix);
-    void add_to_mvxy_data(WORK * wk, u32 ix);
-#endif
-
-    switch (wk->wu.routine_no[3]) {
+switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
         set_char_move_init(&wk->wu, 5, wk->as->char_ix);

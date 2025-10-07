@@ -1215,11 +1215,7 @@ void Dir_Move_Sub_LR(u16 sw, s16 /* unused */) {
 }
 
 void Setup_Next_Page(struct _TASK* task_ptr, u8 /* unused */) {
-#if defined(TARGET_PS2)
-    s32 effect_18_init(s32 disp_index, s32 cursor_id, s16 sync_bg, s16 master_player);
-#endif
-
-    s16 ix;
+s16 ix;
     s16 disp_index;
     s16 mode_type;
 
@@ -1881,11 +1877,7 @@ void Button_Config_Sub(s16 PL_id) {
 }
 
 void Button_Move_Sub_LR(u16 sw, s16 cursor_id) {
-#if defined(TARGET_PS2)
-    void pulpul_stop2(s32 ix);
-    void pp_vib_on(s32 id);
-#endif
-    s16 max;
+s16 max;
 
     switch (Menu_Cursor_Y[cursor_id]) {
     case 8:
@@ -2312,11 +2304,7 @@ void Screen_Move_Sub_LR(u16 sw) {
 }
 
 void Sound_Test(struct _TASK* task_ptr) {
-#if defined(TARGET_PS2)
-    void setSeVolume(u8);
-#endif
-
-    s16 char_index;
+s16 char_index;
     s16 ix;
     u8 last_mode;
 
@@ -3205,11 +3193,7 @@ void Button_Config_in_Game(struct _TASK* task_ptr) {
 }
 
 void Setup_Button_Sub(s16 x, s16 y, s16 master_player) {
-#if defined(TARGET_PS2)
-    s32 effect_10_init(s16 id, u8 Type, u32 Type_in_Type, u32 dir_step, u32 Death_Type, s32 pos_x, s32 pos_y);
-#endif
-
-    s16 ix;
+s16 ix;
     s16 s1;
 
     effect_10_init(0, 7, 99, 0, master_player, x + 7, y + 20);
@@ -3942,11 +3926,7 @@ void Exit_Replay_Save(struct _TASK* task_ptr) {
 }
 
 void Decide_PL(s16 PL_id) {
-#if defined(TARGET_PS2)
-    void grade_check_work_1st_init(s32 ix, s32 ix2);
-#endif
-
-    plw[PL_id].wu.operator = 1;
+plw[PL_id].wu.operator = 1;
     Operator_Status[PL_id] = 1;
     Champion = PL_id;
     plw[PL_id ^ 1].wu.operator = 0;

@@ -46,11 +46,7 @@ void bg0602() {
 }
 
 void bg0602_init00() {
-#if defined(TARGET_PS2)
-    s32 effect_24_init();
-#endif
-
-    bgw_ptr->r_no_1 = 0;
+bgw_ptr->r_no_1 = 0;
     bgw_ptr->r_no_0++;
     bgw_ptr->zuubun = 0;
     bgw_ptr->old_pos_x = bgw_ptr->xy[0].disp.pos = bgw_ptr->pos_x_work = 0x200;

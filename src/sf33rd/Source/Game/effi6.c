@@ -58,11 +58,7 @@ void effi6_line_move(WORK_Other* ewk) {
 }
 
 s32 effect_I6_init(WORK_Other* oya) {
-#if defined(TARGET_PS2)
-    s16 get_my_trans_mode(s32 curr);
-#endif
-
-    WORK_Other* ewk;
+WORK_Other* ewk;
     s16 ix;
 
     if ((ix = pull_effect_work(4)) == -1) {

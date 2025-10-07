@@ -8,11 +8,7 @@
 #include "sf33rd/Source/Game/texcash.h"
 
 void effect_43_move(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    switch (ewk->wu.routine_no[0]) {
+switch (ewk->wu.routine_no[0]) {
     case 0:
         if (--ewk->wu.dir_timer) {
             return;
@@ -38,11 +34,7 @@ void effect_43_move(WORK_Other* ewk) {
 }
 
 s32 effect_43_init(s16 Time, s16 Target_BG) {
-#if defined(TARGET_PS2)
-    s16 get_my_trans_mode(s32 curr);
-#endif
-
-    WORK_Other* ewk;
+WORK_Other* ewk;
     s16 ix;
 
     if ((ix = pull_effect_work(4)) == -1) {

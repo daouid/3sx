@@ -89,11 +89,7 @@ void EFF76_WAIT_BREAK_INTO(WORK_Other* ewk) {
 }
 
 void EFF76_SLIDE_IN(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init2(WORK * wk, s32 koc, s32 index, s32 ip, s32 scf);
-#endif
-
-    if (Order[ewk->wu.dir_old] != 1) {
+if (Order[ewk->wu.dir_old] != 1) {
         ewk->wu.routine_no[0] = Order[ewk->wu.dir_old];
         ewk->wu.routine_no[1] = 0;
         return;
@@ -140,11 +136,7 @@ void EFF76_SLIDE_OUT(WORK_Other* /* unused */) {
 }
 
 void EFF76_SUDDENLY(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init2(WORK * wk, s32 koc, s32 index, s32 ip, s32 scf);
-#endif
-
-    switch (ewk->wu.routine_no[1]) {
+switch (ewk->wu.routine_no[1]) {
     case 0:
         if (--Order_Timer[ewk->wu.dir_old] == 0) {
             ewk->wu.routine_no[1]++;
@@ -203,11 +195,7 @@ void EFF76_SUDDENLY(WORK_Other* ewk) {
 }
 
 void EFF76_BEFORE(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init2(WORK * wk, s32 koc, s32 index, s32 ip, s32 scf);
-#endif
-
-    if (--Order_Timer[ewk->wu.dir_old] != 0) {
+if (--Order_Timer[ewk->wu.dir_old] != 0) {
         return;
     }
 
@@ -250,11 +238,7 @@ void EFF76_SHIFT(WORK_Other* ewk) {
 }
 
 s32 effect_76_init(s16 dir_old) {
-#if defined(TARGET_PS2)
-    s16 get_my_trans_mode(s32 curr);
-#endif
-
-    WORK_Other* ewk;
+WORK_Other* ewk;
     s16 ix;
 
     if ((ix = pull_effect_work(4)) == -1) {
@@ -279,11 +263,7 @@ s32 effect_76_init(s16 dir_old) {
 }
 
 void Setup_Pos_76(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    s16 get_my_trans_mode(s32 curr);
-#endif
-
-    s16 ix;
+s16 ix;
     u8 my_char;
 
     switch (ewk->wu.dir_old) {

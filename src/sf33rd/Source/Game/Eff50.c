@@ -10,11 +10,7 @@
 #include "sf33rd/Source/Game/workuser.h"
 
 void effect_50_move(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    WORK_Other* pwk;
+WORK_Other* pwk;
     u16 sw;
 
     if (ewk->master_id) {
@@ -99,12 +95,7 @@ void effect_50_move(WORK_Other* ewk) {
 }
 
 s32 effect_50_init(s16 PL_id, s16 Direction, s16 dm_vital) {
-#if defined(TARGET_PS2)
-    s16 get_my_trans_mode(s32 curr);
-    void set_char_move_init2(WORK * wk, s32 koc, s32 index, s32 ip, s32 scf);
-#endif
-
-    WORK_Other* ewk;
+WORK_Other* ewk;
     s16 ix;
 
     if ((ix = pull_effect_work(4)) == -1) {

@@ -43,13 +43,7 @@ PS2CDReadMode ps2CdReadMode;
 s16 plt_req[2]; // size: 0x4, address: 0x579084
 u8 ldreq_break;
 struct _adx_fs* adxf = NULL;
-
-#if defined(TARGET_PS2)
-u8 sf3ptinfo[3352];
-#else
 u8 sf3ptinfo[3352 + 12];
-#endif
-
 REQ q_ldreq[16];      // size: 0x280, address: 0x5E1DD0
 u8 ldreq_result[294]; // size: 0x126, address: 0x5E1CA0
 
@@ -81,10 +75,6 @@ s32 Setup_Directory_Record_Data() {
         if (ADXF_GetPtStat(0) == ADXF_STAT_READEND) {
             break;
         }
-
-#if defined(TARGET_PS2)
-        sceGsSyncV(0);
-#else
         // CRI relies on VSync interrupts to execute its file system server.
         // On modern platforms we don't call the VSync interrupt handler until
         // we get to the main loop. That's why we have to emulate the interrupt
@@ -92,9 +82,7 @@ s32 Setup_Directory_Record_Data() {
         begin_interrupt();
         ADXPS2_ExecVint(0);
         end_interrupt();
-#endif
-
-        ADXM_ExecMain();
+ADXM_ExecMain();
     }
 
     ps2CdReadMode.trycount = 64;
@@ -260,14 +248,9 @@ s32 fsFileReadSync(REQ* req, u32 sec, void* buff) {
 void waitVsyncDummy() {
     ADXM_ExecMain();
     cseExecServer();
-
-#if defined(TARGET_PS2)
-    sceGsSyncV(0);
-#else
     begin_interrupt();
     ADXPS2_ExecVint(0);
     end_interrupt();
-#endif
 }
 
 s32 load_it_use_any_key2(u16 fnum, void** adrs, s16* key, u8 kokey, u8 group) {
@@ -387,11 +370,7 @@ void Push_LDREQ_Queue_Player(s16 id, s16 ix) {
 }
 
 void Push_LDREQ_Queue_BG(s16 ix) {
-#if defined(TARGET_PS2)
-    void Push_LDREQ_Queue_Union(s32 ix);
-#endif
-
-    Push_LDREQ_Queue_Union(ix + 20);
+Push_LDREQ_Queue_Union(ix + 20);
     Push_LDREQ_Queue_Metamor();
 }
 
@@ -418,11 +397,7 @@ void Push_LDREQ_Queue_Union(s16 ix) {
 }
 
 void Push_LDREQ_Queue_Metamor() {
-#if defined(TARGET_PS2)
-    void Push_LDREQ_Queue_Direct(s32 ix, s16 id);
-#endif
-
-    switch ((My_char[0] == 0x12) + (My_char[1] == 0x12) * 2) {
+switch ((My_char[0] == 0x12) + (My_char[1] == 0x12) * 2) {
     case 1:
         Push_LDREQ_Queue_Direct(My_char[1] + 0xD4, 0);
         break;
@@ -558,11 +533,7 @@ s32 Check_LDREQ_Queue_Player(s16 id) {
 }
 
 s32 Check_LDREQ_Queue_BG(s16 ix) {
-#if defined(TARGET_PS2)
-    s32 Check_LDREQ_Queue_Union(s32 ix);
-#endif
-
-    return Check_LDREQ_Queue_Union(ix + 20);
+return Check_LDREQ_Queue_Union(ix + 20);
 }
 
 s32 Check_LDREQ_Queue_Union(s16 ix) {

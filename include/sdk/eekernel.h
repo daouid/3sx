@@ -1,19 +1,8 @@
 #ifndef _eekernel_h_
 #define _eekernel_h_
-
-#if defined(TARGET_PS2)
-#include "mw_stdarg.h"
-#else
 #include <stdarg.h>
 #include <stddef.h>
-#endif
-
-#if defined(TARGET_PS2)
-#define ExitHandler() asm("sync.l; ei")
-#else
 void ExitHandler();
-#endif
-
 #define WRITEBACK_DCACHE 0
 #define INVALIDATE_DCACHE 1
 #define INVALIDATE_ICACHE 2

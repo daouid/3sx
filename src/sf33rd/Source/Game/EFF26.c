@@ -19,11 +19,7 @@ const s16 eff26_num[1] = { 1 };
 const s16 eff26_data_0000[1] = { 0 };
 
 void effect_26_move(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    WORK_Other* oya;
+WORK_Other* oya;
 
     if (obr_no_disp_check()) {
         return;
@@ -84,11 +80,7 @@ void eff26_00(WORK_Other* ewk) {
 }
 
 void eff26_01(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    WORK_Other* oya = (WORK_Other*)ewk->my_master;
+WORK_Other* oya = (WORK_Other*)ewk->my_master;
 
     switch (ewk->wu.routine_no[1]) {
     case 0:
@@ -128,11 +120,7 @@ void eff26_01(WORK_Other* ewk) {
 }
 
 void eff26_02(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
-    WORK_Other* oya = (WORK_Other*)ewk->my_master;
+WORK_Other* oya = (WORK_Other*)ewk->my_master;
 
     switch (ewk->wu.routine_no[1]) {
     case 0:
@@ -181,12 +169,7 @@ void eff26_02(WORK_Other* ewk) {
 }
 
 void eff26_03(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    s32 effect_27_init(WORK_Other * oya, s32 type);
-#endif
-
-    WORK_Other* oya = (WORK_Other*)ewk->my_master;
+WORK_Other* oya = (WORK_Other*)ewk->my_master;
 
     switch (ewk->wu.routine_no[1]) {
     case 0:
@@ -247,12 +230,7 @@ void eff26_03(WORK_Other* ewk) {
 }
 
 void eff26_04(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    s32 effect_27_init(WORK_Other * oya, s32 type);
-#endif
-
-    WORK_Other* oya = (WORK_Other*)ewk->my_master;
+WORK_Other* oya = (WORK_Other*)ewk->my_master;
 
     switch (ewk->wu.routine_no[1]) {
     case 0:
@@ -322,12 +300,7 @@ void eff26_04(WORK_Other* ewk) {
 }
 
 void eff26_05(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    s32 effect_27_init(WORK_Other * oya, s32 type);
-#endif
-
-    WORK_Other* oya = (WORK_Other*)ewk->my_master;
+WORK_Other* oya = (WORK_Other*)ewk->my_master;
 
     switch (ewk->wu.routine_no[1]) {
     case 0:

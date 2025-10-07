@@ -25,11 +25,7 @@ void effect_48_move(WORK_Other* ewk) {
 }
 
 void eff48_0000(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s32 ip, s16 scf);
-#endif
-
-    if (ewk->wu.old_rno[1] <= op_obj_disp) {
+if (ewk->wu.old_rno[1] <= op_obj_disp) {
         ewk->wu.routine_no[1] = 0x63;
     }
 
@@ -56,11 +52,7 @@ void eff48_0000(WORK_Other* ewk) {
 }
 
 void eff48_1000(WORK_Other* ewk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s32 ip, s16 scf);
-#endif
-
-    if (ewk->wu.old_rno[1] <= op_obj_disp) {
+if (ewk->wu.old_rno[1] <= op_obj_disp) {
         ewk->wu.routine_no[1] = 0x63;
     }
 
@@ -118,11 +110,7 @@ void eff48_1000(WORK_Other* ewk) {
 }
 
 s32 effect_48_init(s16 type) {
-#if defined(TARGET_PS2)
-    s16 get_my_trans_mode(s32 curr);
-#endif
-
-    WORK_Other* ewk;
+WORK_Other* ewk;
     s16 ix;
     s16 i;
     const s16* data_ptr;

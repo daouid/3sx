@@ -125,11 +125,7 @@ const s16 effm7_data_tbl[42] = {
 };
 
 s32 effect_M7_init(PLW* oya) {
-#if defined(TARGET_PS2)
-    s16 get_my_trans_mode(s32 curr);
-#endif
-
-    WORK_Other* ewk;
+WORK_Other* ewk;
     s16 ix;
     s16 i;
     const s16* data_ptr = effm7_data_tbl;

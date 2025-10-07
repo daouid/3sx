@@ -86,12 +86,7 @@ void ADXT_Init() {
         ADXSTM_Init();
         ADXSJD_Init();
         ADXF_Init();
-
-#if defined(TARGET_PS2)
-        ADXRNA_Init();
-#endif
-
-        LSC_Init();
+LSC_Init();
         SVM_Init();
         ADXRNA_EntryErrFunc(adxini_rnaerr_cbfn, NULL);
         LSC_EntryErrFunc(adxini_lscerr_cbfn, NULL);
