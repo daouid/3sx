@@ -35,11 +35,13 @@ CLANG_WARNINGS += -Wno-pointer-sign
 CLANG_WARNINGS += -Wno-shift-count-overflow
 
 CLANG_DEFINES := -DTARGET_SDL3 -DSOUND_DISABLED -DXPT_TGT_EE -D_POSIX_C_SOURCE -DDEBUG
-CLANG_INCLUDES := $(COMMON_INCLUDES) -Ilibco
+CLANG_INCLUDES := $(COMMON_INCLUDES) -Ilibco -Ideps/ggpo-x/src/include -Isrc/ggpo
+CXXFLAGS := $(CLANG_INCLUDES) -Ideps/ggpo-x/src/lib/ggpo $(CLANG_WARNINGS) $(CLANG_DEFINES) -std=c++11 -O0
 CLANG_FLAGS := $(CLANG_INCLUDES) $(CLANG_WARNINGS) $(CLANG_DEFINES) -std=gnu11 -O0
-CLANG_LINKER_FLAGS := -lm -g -Llibco/build -llibco
+CLANG_LINKER_FLAGS := -lm -g -Llibco/build -llibco -Ldeps/ggpo-x/build/src/lib -lggpo -lstdc++
 PORT_PACKAGES := sdl3 libavcodec libavutil libavformat libswresample
 CLANG_FLAGS += $(shell pkg-config --cflags $(PORT_PACKAGES))
+CXXFLAGS += $(shell pkg-config --cflags $(PORT_PACKAGES))
 CLANG_LINKER_FLAGS += $(shell pkg-config --libs $(PORT_PACKAGES))
 
 ifeq ($(PLATFORM),windows)
@@ -54,6 +56,7 @@ GAME_C_FILES := $(shell find $(SRC_DIR)/sf33rd -name '*.c' 2>/dev/null)
 CRI_C_FILES := $(shell find $(SRC_DIR)/cri -name '*.c' 2>/dev/null)
 BIN2OBJ_C_FILES := $(shell find $(SRC_DIR)/bin2obj -name '*.c' 2>/dev/null)
 PORT_C_FILES := $(shell find $(SRC_DIR)/port -name '*.c' 2>/dev/null)
+GGPO_WRAPPER_CXX_FILES := $(shell find $(SRC_DIR)/ggpo -name '*.cpp' 2>/dev/null)
 ZLIB_C_FILES := $(shell find zlib -name '*.c' 2>/dev/null)
 
 GAME_O_FILES := $(patsubst %.c,%.c.o,$(GAME_C_FILES))
@@ -64,10 +67,12 @@ BIN2OBJ_O_FILES := $(patsubst %.c,%.c.o,$(BIN2OBJ_C_FILES))
 BIN2OBJ_O_FILES := $(addprefix $(BUILD_DIR)/,$(BIN2OBJ_O_FILES))
 PORT_O_FILES := $(patsubst %.c,%.c.o,$(PORT_C_FILES))
 PORT_O_FILES := $(addprefix $(BUILD_DIR)/,$(PORT_O_FILES))
+GGPO_WRAPPER_O_FILES := $(patsubst %.cpp,%.cpp.o,$(GGPO_WRAPPER_CXX_FILES))
+GGPO_WRAPPER_O_FILES := $(addprefix $(BUILD_DIR)/,$(GGPO_WRAPPER_O_FILES))
 ZLIB_O_FILES := $(patsubst %.c,%.c.o,$(ZLIB_C_FILES))
 ZLIB_O_FILES := $(addprefix $(BUILD_DIR)/,$(ZLIB_O_FILES))
 
-ALL_O_FILES := $(GAME_O_FILES) $(CRI_O_FILES) $(BIN2OBJ_O_FILES) $(PORT_O_FILES) $(ZLIB_O_FILES)
+ALL_O_FILES := $(GAME_O_FILES) $(CRI_O_FILES) $(BIN2OBJ_O_FILES) $(PORT_O_FILES) $(ZLIB_O_FILES) $(GGPO_WRAPPER_O_FILES)
 
 build: $(MAIN_TARGET)
 
@@ -78,19 +83,23 @@ clean:
 
 # Build
 
-$(MAIN_TARGET): $(ALL_O_FILES) libco/build/liblibco.o
+$(MAIN_TARGET): $(ALL_O_FILES) libco/build/liblibco.o deps/ggpo-x/build/src/lib/libggpo.a
 ifeq ($(PLATFORM),windows)
 	@find build -name '*.o' > $(BUILD_DIR)/objects.txt
 	@echo libco/build/liblibco.a >> $(BUILD_DIR)/objects.txt
 	clang @$(BUILD_DIR)/objects.txt $(CLANG_LINKER_FLAGS) -o $@
 	$(shell cp /mingw64/bin/SDL3.dll $(BUILD_DIR)/SDL3.dll)
 else
-	clang $(ALL_O_FILES) $(CLANG_LINKER_FLAGS) -o $@
+	clang++ $(ALL_O_FILES) $(CLANG_LINKER_FLAGS) -o $@
 endif
 
 $(BUILD_DIR)/%.c.o: %.c
 	@mkdir -p $(dir $@)
 	clang -g -c $< -o $@ $(CLANG_FLAGS)
+
+$(BUILD_DIR)/%.cpp.o: %.cpp
+	@mkdir -p $(dir $@)
+	clang++ -g -c $< -o $@ $(CXXFLAGS)
 
 libco/build/liblibco.o:
 	@mkdir -p $(dir $@)
@@ -99,3 +108,10 @@ libco/build/liblibco.o:
 		cd build && \
 		cmake .. && \
 		cmake --build .
+
+deps/ggpo-x/build/src/lib/libggpo.a:
+	rm -rf deps/ggpo-x/build
+	mkdir -p deps/ggpo-x/build
+	cd deps/ggpo-x/build && \
+		cmake -DBUILD_SHARED_LIBS=OFF .. && \
+		make

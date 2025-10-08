@@ -8,6 +8,7 @@
 #include "port/sdl/sdl_pad.h"
 #include "sf33rd/AcrSDK/ps2/foundaps2.h"
 #include "sf33rd/Source/Game/main.h"
+#include "ggpo_wrapper.h"
 
 #include <SDL3/SDL.h>
 
@@ -38,6 +39,8 @@ static Uint64 frame_counter = 0;
 static bool should_save_screenshot = false;
 static Uint64 last_mouse_motion_time = 0;
 static const int mouse_hide_delay_ms = 2000; // 2 seconds
+
+static GGPOSession* ggpo_session = NULL;
 
 static void create_screen_texture() {
     if (screen_texture != NULL) {
@@ -85,10 +88,14 @@ int SDLApp_Init() {
     // Initialize pads
     SDLPad_Init();
 
+    // Initialize GGPO
+    ggpo_session = ggpo_start_synctest_wrapper(2, sizeof(int), 1);
+
     return 0;
 }
 
 void SDLApp_Quit() {
+    ggpo_close_session_wrapper(ggpo_session);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -283,6 +290,7 @@ void SDLApp_EndFrame() {
     hide_cursor_if_needed();
 
     // Do frame pacing
+    ggpo_idle_wrapper(ggpo_session);
     Uint64 now = SDL_GetTicksNS();
 
     if (frame_deadline == 0) {
@@ -312,4 +320,12 @@ void SDLApp_Exit() {
     SDL_Event quit_event;
     quit_event.type = SDL_EVENT_QUIT;
     SDL_PushEvent(&quit_event);
+}
+
+GGPOSession* SDLApp_GetGgpoSession() {
+    return ggpo_session;
+}
+
+Uint64 SDLApp_GetFrameCounter() {
+    return frame_counter;
 }
