@@ -13,8 +13,6 @@
 
 #define FRAME_END_TIMES_MAX 30
 
-// We can't include cri_mw.h because it leads to conflicts
-// with SDL types
 int ADXPS2_ExecVint(int mode);
 
 static const char* app_name = "Street Fighter III: 3rd Strike";
@@ -37,7 +35,109 @@ static Uint64 frame_counter = 0;
 
 static bool should_save_screenshot = false;
 static Uint64 last_mouse_motion_time = 0;
-static const int mouse_hide_delay_ms = 2000; // 2 seconds
+static const int mouse_hide_delay_ms = 2000;
+
+// Cached letterbox rectangle
+static SDL_FRect cached_letterbox_rect;
+static bool letterbox_rect_valid = false;
+
+// Asynchronous Screenshot System
+typedef struct {
+    SDL_Surface* surface;
+    char filename[64];
+} ScreenshotJob;
+
+static SDL_Thread* screenshot_thread = NULL;
+static SDL_Mutex* screenshot_mutex = NULL;
+static SDL_Condition* screenshot_cond = NULL;
+static ScreenshotJob* pending_screenshot_job = NULL;
+static volatile bool screenshot_thread_running = true;
+
+static int ScreenshotSaverThread(void* data) {
+    (void)data;
+    while (screenshot_thread_running) {
+        SDL_LockMutex(screenshot_mutex);
+
+        while (!pending_screenshot_job && screenshot_thread_running) {
+            SDL_WaitCondition(screenshot_cond, screenshot_mutex);
+        }
+
+        if (!screenshot_thread_running) {
+            SDL_UnlockMutex(screenshot_mutex);
+            break;
+        }
+
+        ScreenshotJob* job = pending_screenshot_job;
+        pending_screenshot_job = NULL;
+
+        SDL_UnlockMutex(screenshot_mutex);
+
+        if (job && job->surface) {
+            if (!SDL_SaveBMP(job->surface, job->filename)) {
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to save screenshot: %s", SDL_GetError());
+            } else {
+                SDL_Log("Saved screenshot: %s", job->filename);
+            }
+            SDL_DestroySurface(job->surface);
+            SDL_free(job);
+        }
+    }
+    return 0;
+}
+
+static void QueueScreenshotJob(SDL_Surface* surface) {
+    if (!surface || !surface->pixels) {
+        return;
+    }
+
+    ScreenshotJob* job = SDL_malloc(sizeof(ScreenshotJob));
+    if (!job) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to allocate screenshot job");
+        return;
+    }
+
+    job->surface = surface;
+    SDL_snprintf(job->filename, sizeof(job->filename), "screenshot_%llu.bmp", (unsigned long long)SDL_GetTicks());
+
+    SDL_LockMutex(screenshot_mutex);
+    if (pending_screenshot_job) {
+        SDL_DestroySurface(pending_screenshot_job->surface);
+        SDL_free(pending_screenshot_job);
+    }
+    pending_screenshot_job = job;
+    SDL_SignalCondition(screenshot_cond);
+    SDL_UnlockMutex(screenshot_mutex);
+}
+
+static SDL_FRect calculate_letterbox_rect(int win_w, int win_h) {
+    float out_w = (float)win_w;
+    float out_h = (float)win_w / display_target_ratio;
+
+    if (out_h > (float)win_h) {
+        out_h = (float)win_h;
+        out_w = (float)win_h * display_target_ratio;
+    }
+
+    SDL_FRect rect;
+    rect.w = out_w;
+    rect.h = out_h;
+    rect.x = ((float)win_w - out_w) / 2.0f;
+    rect.y = ((float)win_h - out_h) / 2.0f;
+
+    return rect;
+}
+
+static void invalidate_letterbox_cache() {
+    letterbox_rect_valid = false;
+}
+
+static const SDL_FRect* get_letterbox_rect() {
+    if (!letterbox_rect_valid) {
+        cached_letterbox_rect = calculate_letterbox_rect(screen_texture->w, screen_texture->h);
+        letterbox_rect_valid = true;
+    }
+    return &cached_letterbox_rect;
+}
 
 static void create_screen_texture() {
     if (screen_texture != NULL) {
@@ -46,9 +146,13 @@ static void create_screen_texture() {
 
     int target_width, target_height;
     SDL_GetRenderOutputSize(renderer, &target_width, &target_height);
+    
     screen_texture = SDL_CreateTexture(
-        renderer, SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, target_width * 2, target_height * 2);
+        renderer, SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, 
+        target_width, target_height);
     SDL_SetTextureScaleMode(screen_texture, SDL_SCALEMODE_LINEAR);
+    
+    invalidate_letterbox_cache();
 }
 
 int SDLApp_Init() {
@@ -73,22 +177,45 @@ int SDLApp_Init() {
 
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-    // Initialize message renderer
     SDLMessageRenderer_Initialize(renderer);
-
-    // Initialize game renderer
     SDLGameRenderer_Init(renderer);
-
-    // Initialize screen texture
     create_screen_texture();
-
-    // Initialize pads
     SDLPad_Init();
+
+    // Initialize screenshot thread
+    screenshot_mutex = SDL_CreateMutex();
+    screenshot_cond = SDL_CreateCondition();
+    if (!screenshot_mutex || !screenshot_cond) {
+        SDL_Log("Couldn't create screenshot synchronization primitives: %s", SDL_GetError());
+        return 1;
+    }
+    screenshot_thread = SDL_CreateThread(ScreenshotSaverThread, "ScreenshotSaver", NULL);
+    if (!screenshot_thread) {
+        SDL_Log("Couldn't create screenshot thread: %s", SDL_GetError());
+        return 1;
+    }
 
     return 0;
 }
 
 void SDLApp_Quit() {
+    // Shutdown screenshot thread
+    if (screenshot_thread) {
+        SDL_LockMutex(screenshot_mutex);
+        screenshot_thread_running = false;
+        SDL_SignalCondition(screenshot_cond);
+        SDL_UnlockMutex(screenshot_mutex);
+        SDL_WaitThread(screenshot_thread, NULL);
+    }
+
+    if (pending_screenshot_job) {
+        SDL_DestroySurface(pending_screenshot_job->surface);
+        SDL_free(pending_screenshot_job);
+    }
+
+    if (screenshot_cond) SDL_DestroyCondition(screenshot_cond);
+    if (screenshot_mutex) SDL_DestroyMutex(screenshot_mutex);
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -103,12 +230,7 @@ static void set_screenshot_flag_if_needed(SDL_KeyboardEvent* event) {
 static void handle_fullscreen_toggle(SDL_KeyboardEvent* event) {
     if ((event->key == SDLK_F11) && event->down && !event->repeat) {
         const SDL_WindowFlags flags = SDL_GetWindowFlags(window);
-
-        if (flags & SDL_WINDOW_FULLSCREEN) {
-            SDL_SetWindowFullscreen(window, false);
-        } else {
-            SDL_SetWindowFullscreen(window, true);
-        }
+        SDL_SetWindowFullscreen(window, (flags & SDL_WINDOW_FULLSCREEN) ? 0 : SDL_WINDOW_FULLSCREEN);
     }
 }
 
@@ -119,7 +241,6 @@ static void handle_mouse_motion() {
 
 static void hide_cursor_if_needed() {
     const Uint64 now = SDL_GetTicks();
-
     if ((last_mouse_motion_time > 0) && ((now - last_mouse_motion_time) > mouse_hide_delay_ms)) {
         SDL_HideCursor();
     }
@@ -170,7 +291,6 @@ int SDLApp_PollEvents() {
 }
 
 void SDLApp_BeginFrame() {
-    // Clear window
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderClear(renderer);
@@ -179,29 +299,9 @@ void SDLApp_BeginFrame() {
     SDLGameRenderer_BeginFrame();
 }
 
-static SDL_FRect get_letterbox_rect(int win_w, int win_h) {
-    float out_w = win_w;
-    float out_h = win_w / display_target_ratio;
-
-    if (out_h > win_h) {
-        out_h = win_h;
-        out_w = win_h * display_target_ratio;
-    }
-
-    SDL_FRect rect;
-    rect.w = out_w;
-    rect.h = out_h;
-    rect.x = (win_w - out_w) / 2;
-    rect.y = (win_h - out_h) / 2;
-
-    return rect;
-}
-
 static void note_frame_end_time() {
     frame_end_times[frame_end_times_index] = SDL_GetTicksNS();
-    frame_end_times_index += 1;
-    frame_end_times_index %= FRAME_END_TIMES_MAX;
-
+    frame_end_times_index = (frame_end_times_index + 1) % FRAME_END_TIMES_MAX;
     if (frame_end_times_index == 0) {
         frame_end_times_filled = true;
     }
@@ -212,62 +312,45 @@ static void update_fps() {
         return;
     }
 
-    double total_frame_time_ms = 0;
-
-    for (int i = 0; i < FRAME_END_TIMES_MAX - 1; i++) {
-        const int cur = (frame_end_times_index + i) % FRAME_END_TIMES_MAX;
-        const int next = (cur + 1) % FRAME_END_TIMES_MAX;
-        total_frame_time_ms += (double)(frame_end_times[next] - frame_end_times[cur]) / 1e6;
+    const int oldest_idx = frame_end_times_index;
+    const int newest_idx = (frame_end_times_index - 1 + FRAME_END_TIMES_MAX) % FRAME_END_TIMES_MAX;
+    const Uint64 time_span_ns = frame_end_times[newest_idx] - frame_end_times[oldest_idx];
+    
+    if (time_span_ns > 0) {
+        fps = (FRAME_END_TIMES_MAX - 1) * 1e9 / (double)time_span_ns;
     }
-
-    double average_frame_time_ms = total_frame_time_ms / (FRAME_END_TIMES_MAX - 1);
-    fps = 1000 / average_frame_time_ms;
-}
-
-static void save_texture(SDL_Texture* texture, const char* filename) {
-    SDL_SetRenderTarget(renderer, texture);
-    const SDL_Surface* rendered_surface = SDL_RenderReadPixels(renderer, NULL);
-    SDL_SaveBMP(rendered_surface, filename);
-    SDL_DestroySurface(rendered_surface);
 }
 
 void SDLApp_EndFrame() {
-    // Run sound processing
     SDLADXSound_ProcessTracks();
 
-    // Run PS2 interrupts. Necessary for CRI to run its logic
     begin_interrupt();
     ADXPS2_ExecVint(0);
     end_interrupt();
 
-    // Render
-
     SDLGameRenderer_RenderFrame();
 
-    if (should_save_screenshot) {
-        save_texture(cps3_canvas, "screenshot_cps3.bmp");
-    }
-
+    // Render to screen texture
     SDL_SetRenderTarget(renderer, screen_texture);
-
-    // Render window background
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // black bars
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    // Render content
-    const SDL_FRect dst_rect = get_letterbox_rect(screen_texture->w, screen_texture->h);
-    SDL_RenderTexture(renderer, cps3_canvas, NULL, &dst_rect);
-    SDL_RenderTexture(renderer, message_canvas, NULL, &dst_rect);
+    const SDL_FRect* dst_rect = get_letterbox_rect();
+    SDL_RenderTexture(renderer, cps3_canvas, NULL, dst_rect);
+    SDL_RenderTexture(renderer, message_canvas, NULL, dst_rect);
 
-    // Render screen texture to screen
+    // Async screenshot - pixel readback happens here, file I/O in background thread
+    if (should_save_screenshot) {
+        SDL_Surface* screenshot = SDL_RenderReadPixels(renderer, NULL);
+        if (screenshot) {
+            QueueScreenshotJob(screenshot);
+        }
+    }
+
+    // Render to window
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderTexture(renderer, screen_texture, NULL, NULL);
 
-    if (should_save_screenshot) {
-        save_texture(screen_texture, "screenshot_screen.bmp");
-    }
-
-    // Render metrics
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_SetRenderScale(renderer, 2, 2);
     SDL_RenderDebugTextFormat(renderer, 8, 8, "FPS: %.3f", fps);
@@ -275,34 +358,29 @@ void SDLApp_EndFrame() {
 
     SDL_RenderPresent(renderer);
 
-    // Cleanup
     SDLGameRenderer_EndFrame();
     should_save_screenshot = false;
 
-    // Handle cursor hiding
     hide_cursor_if_needed();
 
-    // Do frame pacing
-    Uint64 now = SDL_GetTicksNS();
+    // Frame pacing
+    const Uint64 now = SDL_GetTicksNS();
 
     if (frame_deadline == 0) {
         frame_deadline = now + target_frame_time_ns;
     }
 
     if (now < frame_deadline) {
-        Uint64 sleep_time = frame_deadline - now;
-        SDL_DelayNS(sleep_time);
-        now = SDL_GetTicksNS();
+        SDL_DelayNS(frame_deadline - now);
     }
 
     frame_deadline += target_frame_time_ns;
 
-    // If we fell behind by more than one frame, resync to avoid spiraling
-    if (now > frame_deadline + target_frame_time_ns) {
-        frame_deadline = now + target_frame_time_ns;
+    const Uint64 now_after_sleep = SDL_GetTicksNS();
+    if (now_after_sleep > frame_deadline + target_frame_time_ns) {
+        frame_deadline = now_after_sleep + target_frame_time_ns;
     }
 
-    // Measure
     frame_counter += 1;
     note_frame_end_time();
     update_fps();
