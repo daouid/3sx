@@ -16,15 +16,24 @@ jobs:
           - name: Checkout repository
             uses: actions/checkout@v4
 
+          - name: Cache dependencies
+            uses: actions/cache@v4
+            with:
+                path: third_party
+                key: ${{ runner.os }}-deps-${{ hashFiles('build-deps.sh') }}
+
           - name: Install dependencies
             run: |
                 apt update
-                apt install -y build-essential make cmake clang libsdl3-0 libsdl3-dev ffmpeg libavcodec-dev libswresample-dev libavutil-dev libavformat-dev
+                apt install -y $(cat tools/requirements-ubuntu-sdl3.txt)
+                apt install -y clang curl nasm
+                sh build-deps.sh
 
           - name: Build for Linux
             run: |
                 set -o pipefail
-                make PLATFORM=linux 2>&1 | tee build.log
+                CC=clang CXX=clang++ cmake -B build -DCMAKE_BUILD_TYPE=Release
+                cmake --build build --parallel 2>&1 | tee build.log
             shell: bash
 
           - name: Upload build log

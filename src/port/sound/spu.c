@@ -28,6 +28,7 @@ struct AdsrParamCache {
     u8 shift;
     s8 step;
     s32 target;
+    bool infinite;
 };
 
 struct SPU_Voice {
@@ -56,8 +57,10 @@ struct SPU_Voice {
     u32 decRPos, decWPos, decLeft;
 };
 
+SDL_Mutex* soundLock;
+
+static void (*timer_cb)();
 static SDL_AudioStream* stream;
-static SDL_Mutex* spuLock;
 static struct SPU_Voice voices[VOICE_COUNT];
 static u16 ram[(2 * 1024 * 1024) >> 1];
 static s16 adpcm_coefs[5][2] = {
@@ -69,38 +72,44 @@ static s16 SPU_ApplyVolume(s16 sample, s32 volume) {
 }
 
 static void SPU_VoiceCacheADSR(struct SPU_Voice* v) {
+    struct AdsrParamCache* pc = &v->adsr_param;
+
     switch (v->adsr_phase) {
     case ADSR_PHASE_ATTACK:
-        v->adsr_param.decr = false;
-        v->adsr_param.exp = ((v->adsr1 & 0x8000) != 0);
-        v->adsr_param.shift = (v->adsr1 >> 10) & 0x1f;
-        v->adsr_param.step = 7 - ((v->adsr1 >> 8) & 0x3);
-        v->adsr_param.target = 0x7fff;
+        pc->decr = false;
+        pc->exp = ((v->adsr1 & 0x8000) != 0);
+        pc->shift = (v->adsr1 >> 10) & 0x1f;
+        pc->step = 7 - ((v->adsr1 >> 8) & 0x3);
+        pc->target = 0x7fff;
+        pc->infinite = ((v->adsr1 >> 8) & 0x7f) == 0x7f;
         break;
     case ADSR_PHASE_DECAY:
-        v->adsr_param.decr = true;
-        v->adsr_param.exp = true;
-        v->adsr_param.shift = (v->adsr1 >> 4) & 0xf;
-        v->adsr_param.step = -8;
-        v->adsr_param.target = ((v->adsr1 & 0xf) + 1) << 11;
+        pc->decr = true;
+        pc->exp = true;
+        pc->shift = (v->adsr1 >> 4) & 0xf;
+        pc->step = -8;
+        pc->target = ((v->adsr1 & 0xf) + 1) << 11;
+        pc->infinite = ((v->adsr1 >> 4) & 0xf) == 0xf;
         break;
     case ADSR_PHASE_SUSTAIN:
-        v->adsr_param.decr = ((v->adsr2 & 0x4000) != 0);
-        v->adsr_param.exp = ((v->adsr2 & 0x8000) != 0);
-        v->adsr_param.shift = (v->adsr2 >> 8) & 0x1f;
-        v->adsr_param.step = 7 - ((v->adsr2 >> 6) & 0x3);
-        v->adsr_param.target = 0;
+        pc->decr = ((v->adsr2 & 0x4000) != 0);
+        pc->exp = ((v->adsr2 & 0x8000) != 0);
+        pc->shift = (v->adsr2 >> 8) & 0x1f;
+        pc->step = 7 - ((v->adsr2 >> 6) & 0x3);
+        pc->target = 0;
+        pc->infinite = ((v->adsr2 >> 6) & 0x7f) == 0x7f;
 
-        if (v->adsr_param.decr) {
-            v->adsr_param.step = ~v->adsr_param.step;
+        if (pc->decr) {
+            pc->step = ~v->adsr_param.step;
         }
         break;
     case ADSR_PHASE_RELEASE:
-        v->adsr_param.decr = true;
-        v->adsr_param.exp = ((v->adsr2 & 0x20) != 0);
-        v->adsr_param.shift = v->adsr2 & 0x1f;
-        v->adsr_param.step = -8;
-        v->adsr_param.target = 0;
+        pc->decr = true;
+        pc->exp = ((v->adsr2 & 0x20) != 0);
+        pc->shift = v->adsr2 & 0x1f;
+        pc->step = -8;
+        pc->target = 0;
+        pc->infinite = (v->adsr2 & 0x1f) == 0x1f;
         break;
     }
 }
@@ -123,9 +132,9 @@ static void SPU_VoiceRunADSR(struct SPU_Voice* v) {
         level_inc = (level_inc * v->envx) >> 15;
     }
 
-    // technically incorrect for infinite duration
-    // only going to bother fixing if we need it
-    counter_inc = max(counter_inc, 1);
+    if (!pc->infinite) {
+        counter_inc = max(counter_inc, 1);
+    }
     v->adsr_counter += counter_inc;
 
     if (v->adsr_counter & 0x8000) {
@@ -244,8 +253,10 @@ int SPU_VoiceGetVolume(int vnum) {
 }
 
 void SPU_KeyOffVoice(int vnum) {
-    voices[vnum].adsr_phase = ADSR_PHASE_RELEASE;
-    SPU_VoiceCacheADSR(&voices[vnum]);
+    if (voices[vnum].adsr_phase < ADSR_PHASE_RELEASE) {
+        voices[vnum].adsr_phase = ADSR_PHASE_RELEASE;
+        SPU_VoiceCacheADSR(&voices[vnum]);
+    }
 }
 
 void SPU_StopVoice(int vnum) {
@@ -257,8 +268,6 @@ void SPU_StopVoice(int vnum) {
 void SPU_StartVoice(int vnum, struct SPUVConf* conf) {
     struct SPU_Voice* v = &voices[vnum];
     u16 header;
-
-    SDL_LockMutex(spuLock);
 
     v->ssa = conf->ssa;
     v->lsa = conf->ssa;
@@ -281,28 +290,45 @@ void SPU_StartVoice(int vnum, struct SPUVConf* conf) {
     }
 
     v->nax = (v->nax + 1) & 0xfffff;
-    SDL_UnlockMutex(spuLock);
 }
 
 void SPU_SDL_CB(void* user, SDL_AudioStream* stream, int additional_amount, int total_amount) {
     u32 samples_amount = additional_amount / sizeof(s16);
     s16 out[2] = {};
 
-    SDL_LockMutex(spuLock);
+    // We need to run the eml callbaack at 250hz
+    // 48000 / 250 = 192
+    static int cb_timer = 192;
+
+    // TODO consider redesigning this whole system, emlshim and spu should probably run
+    // on the same thread, no locks would be needed in the SDL audio callback path
+    SDL_LockMutex(soundLock);
 
     for (u32 i = 0; i < samples_amount; i++) {
         SPU_Tick(out);
         SDL_PutAudioStreamData(stream, out, sizeof(out));
+        cb_timer--;
+        if (!cb_timer) {
+            timer_cb();
+            cb_timer = 192;
+        }
     }
 
-    SDL_UnlockMutex(spuLock);
+    SDL_UnlockMutex(soundLock);
 }
 
-void SPU_Init() {
+static void nullcb() {}
+
+void SPU_Init(void (*cb)()) {
     SDL_AudioSpec spec;
 
+    timer_cb = cb;
+    if (!cb) {
+        timer_cb = nullcb;
+    }
+
     memset(voices, 0, sizeof(voices));
-    spuLock = SDL_CreateMutex();
+    soundLock = SDL_CreateMutex();
 
     spec.channels = 2;
     spec.format = SDL_AUDIO_S16;
@@ -317,11 +343,11 @@ void SPU_Init() {
 }
 
 void SPU_Upload(u32 dst, void* src, u32 size) {
-    SDL_LockMutex(spuLock);
+    SDL_LockMutex(soundLock);
 
     memcpy(&ram[dst >> 1], src, size);
 
-    SDL_UnlockMutex(spuLock);
+    SDL_UnlockMutex(soundLock);
 }
 
 void SPU_Tick(s16* output) {
