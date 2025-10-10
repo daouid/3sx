@@ -1,0 +1,39 @@
+name: Build 3sx for Batocera rpi4
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Clone Batocera build system
+        run: |
+          git clone --depth 1 https://github.com/batocera-linux/batocera.linux.git
+          cd batocera.linux
+          git submodule update --init
+
+      - name: Build Batocera Docker Image
+        run: |
+          cd batocera.linux
+          make batocera-docker-image
+
+      - name: Build 3sx package for rpi4 (bcm2711)
+        run: |
+          cd batocera.linux
+          # Copy your 3sx source into the Batocera 'package' directory as needed
+          cp -r ../3sx package/3sx
+          # Build for rpi4 (bcm2711)
+          make bcm2711-pkg PKG=3sx
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3sx-batocera-rpi4
+          path: batocera.linux/output/packages/bcm2711/*3sx*
