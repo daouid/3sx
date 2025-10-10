@@ -30,7 +30,8 @@ jobs:
       - name: Build 3sx Batocera/rpi4 package
         run: |
           cd batocera.linux
-          make bcm2711-pkg PKG=3sx
+          script -q -c "make bcm2711-pkg PKG=3sx"
+
     
       - name: Upload built Batocera 3sx package
         uses: actions/upload-artifact@v4
