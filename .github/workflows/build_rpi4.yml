@@ -21,40 +21,31 @@ jobs:
           git checkout master
           git submodule update --init --recursive
 
-      - name: Install build dependencies
+      - name: Install minimal host dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y util-linux clang curl nasm \
-            libx11-dev libxext-dev libxrandr-dev libxrender-dev libxfixes-dev \
-            libxi-dev libxcursor-dev libxinerama-dev libxss-dev \
-            libwayland-dev libwayland-bin libxkbcommon-dev libdrm-dev libgbm-dev \
-            make g++ gcc patch rsync cpio unzip bc wget file
+          sudo apt-get install -y util-linux rsync
 
-      - name: Move 3sx source and recipe to Batocera
+      - name: Add 3sx package to Batocera overlay
         run: |
-          mkdir -p batocera.linux/package/3sx
-          rsync -ar --exclude .git --exclude batocera.linux --exclude .github ./ batocera.linux/package/3sx/
-          cp tools/batocera/rpi4/3sx.mk batocera.linux/package/3sx/3sx.mk
-          cp tools/batocera/rpi4/Config.in batocera.linux/package/3sx/Config.in
+          set -e
+          mkdir -p batocera.linux/package/batocera/utils/3sx
+          rsync -ar --exclude .git --exclude batocera.linux --exclude .github ./ batocera.linux/package/batocera/utils/3sx/
+          cp tools/batocera/rpi4/3sx.mk batocera.linux/package/batocera/utils/3sx/3sx.mk
+          cp tools/batocera/rpi4/Config.in batocera.linux/package/batocera/utils/3sx/Config.in
 
       - name: Register 3sx in root Config.in
         run: |
+          set -e
           cd batocera.linux
-          if ! grep -qxF 'source "package/3sx/Config.in"' Config.in; then
-            echo 'source "package/3sx/Config.in"' >> Config.in
+          LINE='source "package/batocera/utils/3sx/Config.in"'
+          if ! grep -qxF "$LINE" Config.in; then
+            echo "$LINE" >> Config.in
           fi
 
-      - name: Register 3sx in batocera-system Config.in
-        run: |
-          cd batocera.linux
-          SYSTEM_CONFIG="package/batocera/core/batocera-system/Config.in"
-          if [ -f "$SYSTEM_CONFIG" ]; then
-            if ! grep -qxF 'source "package/3sx/Config.in"' "$SYSTEM_CONFIG"; then
-              echo 'source "package/3sx/Config.in"' >> "$SYSTEM_CONFIG"
-            fi
-          fi
+      # Do NOT source from batocera-system/Config.in; selection is not required for pkg build
 
-      - name: Build 3sx Batocera/rpi4 package (use script)
+      - name: Build 3sx for Raspberry Pi 4 (bcm2711)
         run: |
           cd batocera.linux
           script -q -c "make bcm2711-pkg PKG=3sx"
