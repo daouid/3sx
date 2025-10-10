@@ -1,0 +1,9 @@
+config BR2_PACKAGE_3SX
+    bool "3sx"
+    depends on BR2_PACKAGE_SDL3
+    select BR2_PACKAGE_ZLIB
+    select BR2_PACKAGE_FFMPEG
+    help
+      Port of Street Fighter III: 3rd Strike for modern platforms.
+      
+      https://github.com/crowded-street/3sx
