@@ -10,48 +10,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 0. Ensure repository is checked out
+      # 1. Checkout repo
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 1. Clone Batocera build system
+      # 2. Clone Batocera build system
       - name: Clone Batocera build system
         run: |
           git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
           cd batocera.linux
           git submodule update --init --recursive
-
-      # 2. Install util-linux for script utility
+      
+      # 3. Install util-linux for script utility
       - name: Install util-linux
         run: sudo apt-get update && sudo apt-get install -y util-linux
-
-      # 3. Debug: list package files (remove this after successful run)
-      - name: Debug - list package files for troubleshooting
+      
+      # 4. Build dependencies for 3sx
+      - name: Build 3sx dependencies (ffmpeg and SDL3)
         run: |
-          ls -l tools/batocera/rpi4/
-          ls -l tools/batocera/
+          cd tools/batocera
+          sh build-deps.sh
 
-      # 4. Copy 3sx package files into Batocera tree
-      - name: Copy package files
+      # 5. Configure CMake for 3sx
+      - name: Configure CMake
         run: |
-          mkdir -p batocera.linux/package/3sx
-          cp tools/batocera/rpi4/Config.in batocera.linux/package/3sx/Config.in
-          cp tools/batocera/rpi4/3sx.mk batocera.linux/package/3sx/Makefile
-          cp tools/batocera/3sx.sh batocera.linux/package/3sx/3sx.sh
+          cmake -B build
 
-      # 5. Register your package so Batocera build system sees it
-      - name: Register 3sx in Batocera package Config.in
-        run: echo 'source "package/3sx/Config.in"' >> batocera.linux/package/Config.in
-
-      # 6. Build the package for rpi4 (simulate TTY for Batocera buildroot)
-      - name: Build 3sx package for Batocera rpi4
+      # 6. Build the project with CMake
+      - name: Build 3sx
         run: |
-          cd batocera.linux
-          script -q -c "make bcm2711-pkg PKG=3sx"
+          cmake --build build
 
-      # 7. Upload the built output for download (adjust output path if needed)
+      # 7. Install the built binary to destination (example: /tmp/install)
+      - name: Install 3sx
+        run: |
+          cmake --install build --prefix /tmp/install
+
+      # 8. Upload built package
       - name: Upload built Batocera 3sx package
         uses: actions/upload-artifact@v4
         with:
           name: 3sx-batocera-rpi4
-          path: batocera.linux/output/packages/bcm2711/*
+          path: /tmp/install/*
