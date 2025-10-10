@@ -28,9 +28,9 @@ jobs:
       # 4. Build dependencies for 3sx
       - name: Build 3sx dependencies (ffmpeg and SDL3)
         run: |
-          cd tools/batocera
           sh build-deps.sh
-
+          cd tools/batocera
+          
       # 5. Configure CMake for 3sx
       - name: Configure CMake
         run: |
