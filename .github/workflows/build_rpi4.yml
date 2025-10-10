@@ -14,12 +14,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 2. Install build dependencies
-      - name: Install build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y util-linux clang curl nasm
-
       # 3. Clone Batocera build system
       - name: Clone Batocera build system
         run: |
@@ -27,13 +21,23 @@ jobs:
           cd batocera.linux
           git submodule update --init --recursive
 
+      # 2. Install build dependencies
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y util-linux clang curl nasm \
+            libx11-dev libxext-dev libxrandr-dev libxrender-dev libxfixes-dev \
+            libxi-dev libxcursor-dev libxinerama-dev libxss-dev \
+            libwayland-dev libwayland-bin libxkbcommon-dev libdrm-dev libgbm-dev
+
+
       # 4. Build dependencies (ffmpeg and SDL3) for 3sx
       - name: Build 3sx dependencies (ffmpeg and SDL3)
         run: bash build-deps.sh
 
       # 5. Configure CMake for 3sx
       - name: Configure CMake
-        run: cmake -B build
+        run: CC=clang CXX=clang++ cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       # 6. Build the project with CMake
       - name: Build 3sx
