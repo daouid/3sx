@@ -30,7 +30,8 @@ jobs:
       - name: Build Batocera package with fake TTY
         run: |
           cd batocera.linux
-          sudo apt-get update && sudo apt-get install -y script
+          sudo apt-get update && sudo apt-get install -y util-linux
           script -q -c "make bcm2711-pkg PKG=3sx"
+
 
 
