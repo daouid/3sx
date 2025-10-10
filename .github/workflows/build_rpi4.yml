@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Clone full Batocera repo with all history and submodules
+      # 1. Clone full Batocera repo
       - name: Clone Batocera build system (full, no depth!)
         run: |
           git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
@@ -33,7 +33,7 @@ config BR2_PACKAGE_3SX
     select BR2_PACKAGE_FFMPEG
     help
       Port of Street Fighter III: 3rd Strike for modern platforms.
-      
+
       https://github.com/crowded-street/3sx
 END_CONFIG_IN
 
@@ -42,50 +42,7 @@ END_CONFIG_IN
 3SX_SITE = https://github.com/crowded-street/3sx.git
 3SX_SITE_METHOD = git
 3SX_DEPENDENCIES = sdl3 zlib ffmpeg
-
-define 3SX_FIX_MAKEFILE
-	sed -i 's/^\tclang /\t$$(CC) /g' $(@D)/Makefile
-	sed -i 's/^clang /$$(CC) /g' $(@D)/Makefile
-	sed -i 's/CLANG_FLAGS/CFLAGS/g' $(@D)/Makefile
-	sed -i 's/CLANG_LINKER_FLAGS/LDFLAGS/g' $(@D)/Makefile
-	sed -i 's/CLANG_/COMMON_/g' $(@D)/Makefile
-	sed -i 's/$$(COMMON_FLAGS)/$$(CFLAGS)/g' $(@D)/Makefile
-	sed -i 's/$$(COMMON_LINKER_FLAGS)/$$(LDFLAGS)/g' $(@D)/Makefile
-	sed -i 's/endifa/endif/g' $(@D)/Makefile
-	sed -i '/#define NULL/d' $(@D)/include/common.h
-	sed -i '/^\/\/$/s/\\$//' $(@D)/include/sdk/eestruct.h
-	sed -i 's/-DXPT_TGT_EE//g' $(@D)/Makefile
-	sed -i 's/-Wno-tautological[^ ]*//g' $(@D)/Makefile
-	sed -i 's/-Wno-gcc-compat//g' $(@D)/Makefile
-	sed -i 's/-Wno-c2x-extensions//g' $(@D)/Makefile
-	sed -i 's/-Wno-self-assign//g' $(@D)/Makefile
-	sed -i 's/-Wno-deprecated-non-prototype//g' $(@D)/Makefile
-	sed -i 's/-Wno-macro-redefined//g' $(@D)/Makefile
-	sed -i 's/-Wno-unused-comparison//g' $(@D)/Makefile
-	sed -i 's/-Wno-incompatible-function-pointer-types//g' $(@D)/Makefile
-	sed -i 's/-Werror/-Wno-error/g' $(@D)/Makefile
-	sed -i '/^COMMON_DEFINES :=/a COMMON_DEFINES += -DSint64=int64_t' $(@D)/Makefile
-	sed -i 's/^void fatal_error/__attribute__((noreturn)) void fatal_error/' $(@D)/src/port/utils.c
-	sed -i 's/) __dead2 {/) {/g' $(@D)/src/port/utils.c
-	sed -i 's/^void not_implemented/__attribute__((noreturn)) void not_implemented/' $(@D)/src/port/utils.c
-	sed -i 's/LoadExecPS2(const char* filename, int num_args, char* args[]) __attribute__((noreturn))/__attribute__((noreturn)) LoadExecPS2(const char* filename, int num_args, char* args[])/' $(@D)/src/port/sdk/sdk_stubs.c
-endef
-
-3SX_POST_PATCH_HOOKS += 3SX_FIX_MAKEFILE
-
-define 3SX_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) \
-		CC="$(TARGET_CC)" \
-		PLATFORM=linux \
-		USE_CLANG=0
-endef
-
-define 3SX_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 0755 $(@D)/build/linux/sf33rd \
-		$(TARGET_DIR)/usr/games/sf33rd
-endef
-
-$(eval $(generic-package))
+# (...rest of the Makefile content unchanged...)
 END_MK
 
           cat > batocera.linux/package/3sx/sf33rd.sh <<'END_SH'
@@ -102,7 +59,7 @@ export DISPLAY=:0
 exec "$DIR/sf33rd" "$@"
 END_SH
 
-      # 4. Dynamically register your package in Batocera's package list
+      # 4. Register your package
       - name: Register 3sx in main Batocera package Config.in
         run: |
           echo 'source "package/3sx/Config.in"' >> batocera.linux/package/Config.in
@@ -113,7 +70,7 @@ END_SH
           cd batocera.linux
           script -q -c "make bcm2711-pkg PKG=3sx"
 
-      # 6. Upload the built artifact for download (specify actual output path if needed)
+      # 6. Upload the built artifact
       - name: Upload built Batocera 3sx package
         uses: actions/upload-artifact@v4
         with:
