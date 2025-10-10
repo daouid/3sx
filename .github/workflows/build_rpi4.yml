@@ -1,4 +1,4 @@
-name: Build 3sx port for Batocera rpi4
+name: Build 3sx Batocera/rpi4 package (dynamic inject)
 
 on:
   workflow_dispatch:
@@ -10,43 +10,111 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout Batocera build system (must be FIRST so we can use the workspace root for 3sx)
-      - name: Checkout Batocera build system & submodules
+      # 1. Clone full Batocera repo with full history and submodules
+      - name: Clone Batocera build system (full, no depth!)
         run: |
           git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
           cd batocera.linux
           git submodule update --init --recursive
 
-      # 2. Checkout your 3sx source
-      - name: Checkout 3sx code
-        uses: actions/checkout@v4
-        with:
-          repository: daouid/3sx
-          path: 3sx
-
-      # 3. Move your 3sx port into the Batocera package folder
-      - name: Copy 3sx code into Batocera package directory
-        run: cp -r 3sx batocera.linux/package/3sx
-
-      # 4. Install util-linux for the `script` utility (used to fake a TTY)
+      # 2. Install util-linux for script command (fake TTY)
       - name: Install util-linux
         run: sudo apt-get update && sudo apt-get install -y util-linux
 
-      # 5. Build Batocera Docker image (only needed if the Makefile expects it)
-      - name: Build Batocera Docker image
+      # 3. Create (inject) your Batocera packaging files in the right place
+      - name: Inject Batocera 3sx package files
         run: |
-          cd batocera.linux
-          make batocera-docker-image
+          mkdir -p batocera.linux/package/3sx
+          cat > batocera.linux/package/3sx/Config.in <<'END_CONFIG_IN'
+config BR2_PACKAGE_3SX
+    bool "3sx"
+    depends on BR2_PACKAGE_SDL3
+    select BR2_PACKAGE_ZLIB
+    select BR2_PACKAGE_FFMPEG
+    help
+      Port of Street Fighter III: 3rd Strike for modern platforms.
+      
+      https://github.com/crowded-street/3sx
+END_CONFIG_IN
 
-      # 6. Build 3sx PKG for rpi4 (bcm2711), simulating a TTY
+          cat > batocera.linux/package/3sx/Makefile <<'END_MK'
+3SX_VERSION = main
+3SX_SITE = https://github.com/crowded-street/3sx.git
+3SX_SITE_METHOD = git
+3SX_DEPENDENCIES = sdl3 zlib ffmpeg
+
+define 3SX_FIX_MAKEFILE
+	sed -i 's/^\tclang /\t$$(CC) /g' $(@D)/Makefile
+	sed -i 's/^clang /$$(CC) /g' $(@D)/Makefile
+	sed -i 's/CLANG_FLAGS/CFLAGS/g' $(@D)/Makefile
+	sed -i 's/CLANG_LINKER_FLAGS/LDFLAGS/g' $(@D)/Makefile
+	sed -i 's/CLANG_/COMMON_/g' $(@D)/Makefile
+	sed -i 's/$$(COMMON_FLAGS)/$$(CFLAGS)/g' $(@D)/Makefile
+	sed -i 's/$$(COMMON_LINKER_FLAGS)/$$(LDFLAGS)/g' $(@D)/Makefile
+	sed -i 's/endifa/endif/g' $(@D)/Makefile
+	sed -i '/#define NULL/d' $(@D)/include/common.h
+	sed -i '/^\/\/$/s/\\$//' $(@D)/include/sdk/eestruct.h
+	sed -i 's/-DXPT_TGT_EE//g' $(@D)/Makefile
+	sed -i 's/-Wno-tautological[^ ]*//g' $(@D)/Makefile
+	sed -i 's/-Wno-gcc-compat//g' $(@D)/Makefile
+	sed -i 's/-Wno-c2x-extensions//g' $(@D)/Makefile
+	sed -i 's/-Wno-self-assign//g' $(@D)/Makefile
+	sed -i 's/-Wno-deprecated-non-prototype//g' $(@D)/Makefile
+	sed -i 's/-Wno-macro-redefined//g' $(@D)/Makefile
+	sed -i 's/-Wno-unused-comparison//g' $(@D)/Makefile
+	sed -i 's/-Wno-incompatible-function-pointer-types//g' $(@D)/Makefile
+	sed -i 's/-Werror/-Wno-error/g' $(@D)/Makefile
+	sed -i '/^COMMON_DEFINES :=/a COMMON_DEFINES += -DSint64=int64_t' $(@D)/Makefile
+	sed -i 's/^void fatal_error/__attribute__((noreturn)) void fatal_error/' $(@D)/src/port/utils.c
+	sed -i 's/) __dead2 {/) {/g' $(@D)/src/port/utils.c
+	sed -i 's/^void not_implemented/__attribute__((noreturn)) void not_implemented/' $(@D)/src/port/utils.c
+	sed -i 's/LoadExecPS2(const char* filename, int num_args, char* args[]) __attribute__((noreturn))/__attribute__((noreturn)) LoadExecPS2(const char* filename, int num_args, char* args[])/' $(@D)/src/port/sdk/sdk_stubs.c
+endef
+
+3SX_POST_PATCH_HOOKS += 3SX_FIX_MAKEFILE
+
+define 3SX_BUILD_CMDS
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) \
+		CC="$(TARGET_CC)" \
+		PLATFORM=linux \
+		USE_CLANG=0
+endef
+
+define 3SX_INSTALL_TARGET_CMDS
+	$(INSTALL) -D -m 0755 $(@D)/build/linux/sf33rd \
+		$(TARGET_DIR)/usr/games/sf33rd
+endef
+
+$(eval $(generic-package))
+END_MK
+
+          cat > batocera.linux/package/3sx/sf33rd.sh <<'END_SH'
+#!/bin/bash
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+cd "$DIR"
+
+export LD_LIBRARY_PATH="/usr/lib:/lib:$DIR/lib"
+
+export DISPLAY=:0
+
+exec "$DIR/sf33rd" "$@"
+END_SH
+
+      # 4. Dynamically register your package in Batocera's package list
+      - name: Register 3sx in main Batocera package Config.in
+        run: |
+          echo 'source "package/3sx/Config.in"' >> batocera.linux/package/Config.in
+
+      # 5. Build your 3sx package for Batocera rpi4 (simulate TTY)
       - name: Build 3sx package for Batocera rpi4
         run: |
           cd batocera.linux
           script -q -c "make bcm2711-pkg PKG=3sx"
 
-
-      # 7. Upload the built package artifact (update output path if needed)
-      - name: Upload built Batocera package
+      # 6. Upload the built artifact for download (specify actual output path if needed)
+      - name: Upload built Batocera 3sx package
         uses: actions/upload-artifact@v4
         with:
           name: 3sx-batocera-rpi4
