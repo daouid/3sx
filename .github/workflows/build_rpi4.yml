@@ -11,66 +11,36 @@ jobs:
 
     steps:
       # 1. Clone full Batocera repo
-      - name: Clone Batocera build system (full, no depth!)
+      - name: Clone Batocera build system
         run: |
           git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
           cd batocera.linux
           git submodule update --init --recursive
 
-      # 2. Install util-linux for script command (fake TTY)
+      # 2. Install util-linux for script utility
       - name: Install util-linux
         run: sudo apt-get update && sudo apt-get install -y util-linux
 
-      # 3. Inject Batocera 3sx package files
-      - name: Inject Batocera 3sx package files
+      # 3. Copy 3sx package files into Batocera tree
+      - name: Copy package files
         run: |
           mkdir -p batocera.linux/package/3sx
-          cat > batocera.linux/package/3sx/Config.in <<'END_CONFIG_IN'
-config BR2_PACKAGE_3SX
-    bool "3sx"
-    depends on BR2_PACKAGE_SDL3
-    select BR2_PACKAGE_ZLIB
-    select BR2_PACKAGE_FFMPEG
-    help
-      Port of Street Fighter III: 3rd Strike for modern platforms.
+          cp tools/batocera/rpi4/Config.in batocera.linux/package/3sx/Config.in
+          cp tools/batocera/rpi4/3sx.mk batocera.linux/package/3sx/Makefile
+          cp tools/batocera/3sx.sh batocera.linux/package/3sx/3sx.sh
 
-      https://github.com/crowded-street/3sx
-END_CONFIG_IN
-
-          cat > batocera.linux/package/3sx/Makefile <<'END_MK'
-3SX_VERSION = main
-3SX_SITE = https://github.com/crowded-street/3sx.git
-3SX_SITE_METHOD = git
-3SX_DEPENDENCIES = sdl3 zlib ffmpeg
-# (...rest of the Makefile content unchanged...)
-END_MK
-
-          cat > batocera.linux/package/3sx/sf33rd.sh <<'END_SH'
-#!/bin/bash
-
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-cd "$DIR"
-
-export LD_LIBRARY_PATH="/usr/lib:/lib:$DIR/lib"
-
-export DISPLAY=:0
-
-exec "$DIR/sf33rd" "$@"
-END_SH
-
-      # 4. Register your package
-      - name: Register 3sx in main Batocera package Config.in
+      # 4. Register your package so Batocera build system sees it
+      - name: Register 3sx in Batocera package Config.in
         run: |
           echo 'source "package/3sx/Config.in"' >> batocera.linux/package/Config.in
 
-      # 5. Build your 3sx package for Batocera rpi4 (simulate TTY)
+      # 5. Build the package for rpi4 (simulate TTY for Batocera buildroot)
       - name: Build 3sx package for Batocera rpi4
         run: |
           cd batocera.linux
           script -q -c "make bcm2711-pkg PKG=3sx"
 
-      # 6. Upload the built artifact
+      # 6. Upload the built output for download (adjust output path if needed)
       - name: Upload built Batocera 3sx package
         uses: actions/upload-artifact@v4
         with:
