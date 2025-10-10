@@ -13,7 +13,7 @@ jobs:
       - name: Checkout 3sx repo
         uses: actions/checkout@v4
       
-      - name: Clone Batocera build system (full repo)
+      - name: Clone Batocera build system
         run: |
           git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
           cd batocera.linux
@@ -27,29 +27,75 @@ jobs:
           sudo apt-get install -y util-linux clang curl nasm \
             libx11-dev libxext-dev libxrandr-dev libxrender-dev libxfixes-dev \
             libxi-dev libxcursor-dev libxinerama-dev libxss-dev \
-            libwayland-dev libwayland-bin libxkbcommon-dev libdrm-dev libgbm-dev make g++ gcc patch
+            libwayland-dev libwayland-bin libxkbcommon-dev libdrm-dev libgbm-dev \
+            make g++ gcc patch rsync cpio unzip bc wget file
       
-      - name: Move 3sx source + recipe to Batocera
+      - name: Move 3sx source and recipe to Batocera
         run: |
           mkdir -p batocera.linux/package/3sx
           rsync -ar --exclude .git --exclude batocera.linux --exclude .github ./ batocera.linux/package/3sx/
           cp tools/batocera/rpi4/3sx.mk batocera.linux/package/3sx/3sx.mk
           cp tools/batocera/rpi4/Config.in batocera.linux/package/3sx/Config.in
       
-      - name: Register 3sx in batocera-system Config.in
-        run: |
-          grep -qxF 'source "package/3sx/Config.in"' batocera.linux/package/batocera/core/batocera-system/Config.in || \
-            echo 'source "package/3sx/Config.in"' >> batocera.linux/package/batocera/core/batocera-system/Config.in
-
-      
-      - name: Build 3sx Batocera/rpi4 package
+      - name: Register 3sx in root Config.in
         run: |
           cd batocera.linux
-          script -q -c "make bcm2711-pkg PKG=3sx"
+          if ! grep -qxF 'source "package/3sx/Config.in"' Config.in; then
+            echo 'source "package/3sx/Config.in"' >> Config.in
+          fi
       
-      - name: Upload built Batocera 3sx package
+      - name: Register 3sx in batocera-system Config.in
+        run: |
+          cd batocera.linux
+          SYSTEM_CONFIG="package/batocera/core/batocera-system/Config.in"
+          if [ -f "$SYSTEM_CONFIG" ]; then
+            if ! grep -qxF 'source "package/3sx/Config.in"' "$SYSTEM_CONFIG"; then
+              echo 'source "package/3sx/Config.in"' >> "$SYSTEM_CONFIG"
+            fi
+          else
+            echo "Warning: $SYSTEM_CONFIG not found, skipping"
+          fi
+      
+      - name: Enable 3sx in defconfig
+        run: |
+          cd batocera.linux
+          DEFCONFIG="configs/batocera-bcm2711_defconfig"
+          if [ -f "$DEFCONFIG" ]; then
+            if ! grep -q "BR2_PACKAGE_3SX=y" "$DEFCONFIG"; then
+              echo "BR2_PACKAGE_3SX=y" >> "$DEFCONFIG"
+            fi
+          fi
+      
+      - name: Build 3sx package for Raspberry Pi 4
+        run: |
+          cd batocera.linux
+          make bcm2711-pkg PKG=3sx
+        timeout-minutes: 120
+      
+      - name: Verify build output
+        run: |
+          cd batocera.linux
+          if [ -d "output/bcm2711/build/3sx"* ]; then
+            echo "Build successful!"
+            ls -lah output/bcm2711/build/3sx*
+          else
+            echo "Build directory not found"
+            exit 1
+          fi
+      
+      - name: Upload built package
         uses: actions/upload-artifact@v4
         with:
           name: 3sx-batocera-rpi4
-          path: batocera.linux/output/packages/bcm2711/*
-
+          path: |
+            batocera.linux/output/bcm2711/build/3sx*/
+            batocera.linux/output/bcm2711/target/usr/bin/3sx*
+          if-no-files-found: warn
+      
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: batocera.linux/output/bcm2711/build/3sx*/
+          if-no-files-found: ignore
