@@ -36,10 +36,11 @@ jobs:
           cp tools/batocera/rpi4/3sx.mk batocera.linux/package/3sx/3sx.mk
           cp tools/batocera/rpi4/Config.in batocera.linux/package/3sx/Config.in
       
-      - name: Register 3sx in Batocera package Config.in
+      - name: Register 3sx in batocera-system Config.in
         run: |
-          grep -qxF 'source "package/3sx/Config.in"' batocera.linux/package/Config.in || \
-            echo 'source "package/3sx/Config.in"' >> batocera.linux/package/Config.in
+          grep -qxF 'source "package/3sx/Config.in"' batocera.linux/package/batocera/core/batocera-system/Config.in || \
+            echo 'source "package/3sx/Config.in"' >> batocera.linux/package/batocera/core/batocera-system/Config.in
+
       
       - name: Build 3sx Batocera/rpi4 package
         run: |
