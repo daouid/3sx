@@ -10,9 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      # Step 1: Setup Batocera first so target path is always ready
+      - name: Clone Batocera build system
+        run: |
+          git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
+          cd batocera.linux
+          git submodule update --init --recursive
+
+      # Step 2: Checkout your 3sx repo (source and packaging files)
+      - name: Checkout 3sx repo
         uses: actions/checkout@v4
-      
+
+      # Step 3: Install build dependencies
       - name: Install build dependencies
         run: |
           sudo apt-get update
@@ -20,33 +29,44 @@ jobs:
             libx11-dev libxext-dev libxrandr-dev libxrender-dev libxfixes-dev \
             libxi-dev libxcursor-dev libxinerama-dev libxss-dev \
             libwayland-dev libwayland-bin libxkbcommon-dev libdrm-dev libgbm-dev make g++ gcc patch
-      
-      - name: Clone Batocera build system
-        run: |
-          git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
-          cd batocera.linux
-          git submodule update --init --recursive
-      
-      - name: Copy 3sx source and recipe to Batocera package directory
+
+      # Step 4: Cache Batocera output and third_party dependencies
+      - name: Cache Batocera build output
+        uses: actions/cache@v4
+        with:
+          path: batocera.linux/output
+          key: batocera-output-${{ runner.os }}-${{ github.sha }}
+
+      - name: Cache 3sx dependencies (third_party)
+        uses: actions/cache@v4
+        with:
+          path: third_party
+          key: 3sx-third-party-${{ runner.os }}-${{ hashFiles('build-deps.sh') }}
+
+      # Step 5: Move full 3sx repo (source, packaging, config) to Batocera package directory
+      - name: Move 3sx source + recipe to Batocera
         run: |
           mkdir -p batocera.linux/package/3sx
-          cp -r * batocera.linux/package/3sx/
+          cp -r . batocera.linux/package/3sx/
+          # Overwrite/Copy package files explicitly if needed
           cp tools/batocera/rpi4/3sx.mk batocera.linux/package/3sx/3sx.mk
           cp tools/batocera/rpi4/Config.in batocera.linux/package/3sx/Config.in
-      
-      - name: Register 3sx package in Batocera main Config.in
-        run: echo 'source "package/3sx/Config.in"' >> batocera.linux/package/Config.in
-      
+
+      # Step 6: Register package in Batocera main Config.in (append only if not present)
+      - name: Register 3sx in Batocera Config.in
+        run: |
+          grep -qxF 'source "package/3sx/Config.in"' batocera.linux/package/Config.in || \
+            echo 'source "package/3sx/Config.in"' >> batocera.linux/package/Config.in
+
+      # Step 7: Build for Pi4 (simulate TTY)
       - name: Build 3sx Batocera/rpi4 package
         run: |
           cd batocera.linux
           script -q -c "make bcm2711-pkg PKG=3sx"
-      
+
+      # Step 8: Upload output artifact for download
       - name: Upload built Batocera 3sx package
         uses: actions/upload-artifact@v4
         with:
           name: 3sx-batocera-rpi4
           path: batocera.linux/output/packages/bcm2711/*
-
-
-
