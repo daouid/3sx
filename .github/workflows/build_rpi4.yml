@@ -27,7 +27,9 @@ jobs:
           cd batocera.linux
           make batocera-docker-image
 
-      - name: Build 3sx package for rpi4
+      - name: Build 3sx package for rpi4 (bcm2711)
         run: |
           cd batocera.linux
+          export BATOCERA_DOCKER_OPTIONS="-t"
           make bcm2711-pkg PKG=3sx
+
