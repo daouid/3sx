@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Clone full Batocera repo with full history and submodules
+      # 1. Clone full Batocera repo with all history and submodules
       - name: Clone Batocera build system (full, no depth!)
         run: |
           git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
@@ -21,7 +21,7 @@ jobs:
       - name: Install util-linux
         run: sudo apt-get update && sudo apt-get install -y util-linux
 
-      # 3. Create (inject) your Batocera packaging files in the right place
+      # 3. Inject Batocera 3sx package files
       - name: Inject Batocera 3sx package files
         run: |
           mkdir -p batocera.linux/package/3sx
