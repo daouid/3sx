@@ -1,4 +1,4 @@
-name: Build 3sx for Batocera rpi4
+name: Build 3sx port for Batocera rpi4
 
 on:
   workflow_dispatch:
@@ -8,30 +8,45 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: batocera-linux/batocera.linux
-          path: batocera.linux
 
-      - uses: actions/checkout@v4
+    steps:
+      # 1. Checkout Batocera build system (must be FIRST so we can use the workspace root for 3sx)
+      - name: Checkout Batocera build system & submodules
+        run: |
+          git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
+          cd batocera.linux
+          git submodule update --init --recursive
+
+      # 2. Checkout your 3sx source
+      - name: Checkout 3sx code
+        uses: actions/checkout@v4
         with:
           repository: daouid/3sx
           path: 3sx
 
-      - name: Copy 3sx into Batocera package
+      # 3. Move your 3sx port into the Batocera package folder
+      - name: Copy 3sx code into Batocera package directory
         run: cp -r 3sx batocera.linux/package/3sx
 
+      # 4. Install util-linux for the `script` utility (used to fake a TTY)
+      - name: Install util-linux
+        run: sudo apt-get update && sudo apt-get install -y util-linux
+
+      # 5. Build Batocera Docker image (only needed if the Makefile expects it)
       - name: Build Batocera Docker image
         run: |
           cd batocera.linux
           make batocera-docker-image
 
-      - name: Build Batocera package with fake TTY
+      # 6. Build 3sx PKG for rpi4 (bcm2711), simulating a TTY
+      - name: Build 3sx package for Batocera rpi4 with TTY
         run: |
           cd batocera.linux
-          sudo apt-get update && sudo apt-get install -y util-linux
           script -q -c "make bcm2711-pkg PKG=3sx"
 
-
-
+      # 7. Upload the built package artifact (update output path if needed)
+      - name: Upload built Batocera package
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3sx-batocera-rpi4
+          path: batocera.linux/output/packages/bcm2711/*
