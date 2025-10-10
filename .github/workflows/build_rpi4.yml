@@ -14,37 +14,34 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 2. Clone Batocera build system
+      # 2. Install build dependencies
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y util-linux clang curl nasm
+
+      # 3. Clone Batocera build system
       - name: Clone Batocera build system
         run: |
           git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
           cd batocera.linux
           git submodule update --init --recursive
-      
-      # 3. Install util-linux for script utility
-      - name: Install util-linux
-        run: sudo apt-get update && sudo apt-get install -y util-linux
-      
-      # 4. Build dependencies for 3sx
+
+      # 4. Build dependencies (ffmpeg and SDL3) for 3sx
       - name: Build 3sx dependencies (ffmpeg and SDL3)
-        run: |
-          sh build-deps.sh
-          cd tools/batocera
-          
+        run: bash build-deps.sh
+
       # 5. Configure CMake for 3sx
       - name: Configure CMake
-        run: |
-          cmake -B build
+        run: cmake -B build
 
       # 6. Build the project with CMake
       - name: Build 3sx
-        run: |
-          cmake --build build
+        run: cmake --build build
 
-      # 7. Install the built binary to destination (example: /tmp/install)
+      # 7. Install the built binary
       - name: Install 3sx
-        run: |
-          cmake --install build --prefix /tmp/install
+        run: cmake --install build --prefix /tmp/install
 
       # 8. Upload built package
       - name: Upload built Batocera 3sx package
