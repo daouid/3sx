@@ -10,46 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      # 3. Clone Batocera build system
-      - name: Clone Batocera build system
-        run: |
-          git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
-          cd batocera.linux
-          git submodule update --init --recursive
-
-      # 2. Install build dependencies
+    
       - name: Install build dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y util-linux clang curl nasm \
             libx11-dev libxext-dev libxrandr-dev libxrender-dev libxfixes-dev \
             libxi-dev libxcursor-dev libxinerama-dev libxss-dev \
-            libwayland-dev libwayland-bin libxkbcommon-dev libdrm-dev libgbm-dev
-
-
-      # 4. Build dependencies (ffmpeg and SDL3) for 3sx
-      - name: Build 3sx dependencies (ffmpeg and SDL3)
-        run: bash build-deps.sh
-
-      # 5. Configure CMake for 3sx
-      - name: Configure CMake
-        run: CC=clang CXX=clang++ cmake -B build -DCMAKE_BUILD_TYPE=Release
-
-      # 6. Build the project with CMake
-      - name: Build 3sx
-        run: cmake --build build
-
-      # 7. Install the built binary
-      - name: Install 3sx
-        run: cmake --install build --prefix /tmp/install
-
-      # 8. Upload built package
+            libwayland-dev libwayland-bin libxkbcommon-dev libdrm-dev libgbm-dev make g++ gcc patch
+    
+      - name: Clone Batocera build system
+        run: |
+          git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
+          cd batocera.linux
+          git submodule update --init --recursive
+    
+      - name: Build 3sx Batocera/rpi4 package
+        run: |
+          cd batocera.linux
+          make bcm2711-pkg PKG=3sx
+    
       - name: Upload built Batocera 3sx package
         uses: actions/upload-artifact@v4
         with:
           name: 3sx-batocera-rpi4
-          path: /tmp/install/*
+          path: batocera.linux/output/packages/bcm2711/*
+
