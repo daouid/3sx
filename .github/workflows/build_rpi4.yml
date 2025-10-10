@@ -28,22 +28,29 @@ jobs:
 
       - name: Add 3sx package to Batocera overlay
         run: |
-          set -e
+          set -euo pipefail
           mkdir -p batocera.linux/package/batocera/utils/3sx
           rsync -ar --exclude .git --exclude batocera.linux --exclude .github ./ batocera.linux/package/batocera/utils/3sx/
           cp tools/batocera/rpi4/3sx.mk batocera.linux/package/batocera/utils/3sx/3sx.mk
           cp tools/batocera/rpi4/Config.in batocera.linux/package/batocera/utils/3sx/Config.in
 
-      - name: Register 3sx in root Config.in
+      - name: Register 3sx in root Config.in (BR2_EXTERNAL path)
         run: |
-          set -e
+          set -euo pipefail
           cd batocera.linux
-          LINE='source "package/batocera/utils/3sx/Config.in"'
+          # Remove any previously added wrong literal include (without BR2_EXTERNAL)
+          sed -i '\|^source "package/batocera/utils/3sx/Config.in"$|d' Config.in
+          # Add the correct include using Batocera's br2-external variable
+          LINE='source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/utils/3sx/Config.in"'
           if ! grep -qxF "$LINE" Config.in; then
             echo "$LINE" >> Config.in
           fi
+          # Sanity checks
+          test -f package/batocera/utils/3sx/Config.in
+          test -f package/batocera/utils/3sx/3sx.mk
+          tail -n 20 Config.in
 
-      # Do NOT source from batocera-system/Config.in; selection is not required for pkg build
+      # Do NOT source from batocera-system/Config.in; not needed for pkg-only builds
 
       - name: Build 3sx for Raspberry Pi 4 (bcm2711)
         run: |
