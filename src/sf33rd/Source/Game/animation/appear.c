@@ -1,4 +1,9 @@
-#include "sf33rd/Source/Game/appear.h"
+/**
+ * @file appear.c
+ * Character Appear Animation
+ */
+
+#include "sf33rd/Source/Game/animation/appear.h"
 #include "common.h"
 #include "sf33rd/Source/Game/CALDIR.h"
 #include "sf33rd/Source/Game/CHARSET.h"
@@ -14,7 +19,6 @@
 #include "sf33rd/Source/Game/SE.h"
 #include "sf33rd/Source/Game/Sound3rd.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/app_data.h"
 #include "sf33rd/Source/Game/bg.h"
 #include "sf33rd/Source/Game/bg_data.h"
 #include "sf33rd/Source/Game/eff97.h"
@@ -23,6 +27,8 @@
 #include "sf33rd/Source/Game/effM7.h"
 #include "sf33rd/Source/Game/ta_sub.h"
 #include "sf33rd/Source/Game/workuser.h"
+
+#include "sf33rd/Source/Game/animation/app_data.h"
 
 s8 Appear_car_stop[] = { 0, 0 };
 s8 Appear_hv[] = { 0, 0 };
@@ -124,10 +130,6 @@ void Appear_00000(PLW* wk) {
 }
 
 void Appear_01000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
     s16 work;
     s16 id_w;
 
@@ -188,10 +190,6 @@ void Appear_01000(PLW* wk) {
 }
 
 void Appear_03000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
     switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3]++;
@@ -792,10 +790,6 @@ void Appear_13000(PLW* wk) {
 }
 
 void Appear_14000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init2(WORK * wk, s16 koc, s32 index, s32 ip, s16 scf);
-#endif
-
     s16 work;
     s16 id_w = wk->wu.id ^ 1;
 
@@ -991,10 +985,6 @@ void Appear_17000(PLW* wk) {
 }
 
 void Appear_18000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
     s16 work;
 
     switch (wk->wu.routine_no[3]) {
@@ -1191,9 +1181,6 @@ void Appear_20000(PLW* wk) {
 }
 
 void Appear_21000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
     s16 work;
 
     switch (wk->wu.routine_no[3]) {
@@ -1249,10 +1236,6 @@ void Appear_22000(PLW* wk) {
 }
 
 void Appear_23000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
     s16 work;
     switch (wk->wu.routine_no[3]) {
     case 0:
@@ -1591,10 +1574,6 @@ void Appear_29000(PLW* wk) {
 }
 
 void animal_decide(PLW* wk) {
-#if defined(TARGET_PS2)
-    s32 effect_M0_init(u8 pl_rl, u8 animal_type);
-#endif
-
     u8 work2;
     s16 work = random_16();
 
@@ -1619,11 +1598,8 @@ void animal_decide(PLW* wk) {
 }
 
 void don_appear_check(PLW* wk) {
-#if defined(TARGET_PS2)
-    s32 effect_M0_init(u8 pl_rl, u8 animal_type);
-#endif
-
     s16 id_w = wk->wu.id ^ 1;
+
     if (plw[id_w].player_number == 7) {
         effect_M0_init(wk->wu.rl_flag, 6);
     }
@@ -1683,11 +1659,8 @@ void Appear_31000(PLW* wk) {
 }
 
 void Appear_32000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
     s16 work;
+
     switch (wk->wu.routine_no[3]) {
     case 0:
         wk->wu.routine_no[3] += 1;
@@ -1754,10 +1727,6 @@ void Appear_33000(PLW* wk) {
 }
 
 void Appear_34000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-#endif
-
     s16 work;
 
     switch (wk->wu.routine_no[3]) {
