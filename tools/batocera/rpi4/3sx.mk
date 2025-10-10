@@ -1,5 +1,5 @@
 3SX_VERSION = main
-3SX_SITE = https://github.com/crowded-street/3sx.git
+3SX_SITE = 3SX_SITE = https://github.com/daouid/3sx.git
 3SX_SITE_METHOD = git
 3SX_DEPENDENCIES = sdl3 zlib ffmpeg
 
