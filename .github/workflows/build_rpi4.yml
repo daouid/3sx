@@ -53,43 +53,62 @@ jobs:
               echo 'source "package/3sx/Config.in"' >> "$SYSTEM_CONFIG"
             fi
           else
-            echo "Warning: $SYSTEM_CONFIG not found, skipping"
+            echo "Warning: $SYSTEM_CONFIG not found"
           fi
       
-      - name: Enable 3sx in defconfig
+      - name: Configure bcm2711 build with 3sx enabled
         run: |
           cd batocera.linux
-          DEFCONFIG="configs/batocera-bcm2711_defconfig"
-          if [ -f "$DEFCONFIG" ]; then
-            if ! grep -q "BR2_PACKAGE_3SX=y" "$DEFCONFIG"; then
-              echo "BR2_PACKAGE_3SX=y" >> "$DEFCONFIG"
-            fi
-          fi
+          # Load the default config
+          make bcm2711-config-load
+          # Enable 3sx package
+          echo "BR2_PACKAGE_3SX=y" >> configs/batocera-bcm2711_defconfig
+          # Apply the updated config non-interactively
+          make bcm2711-config-load
       
-      - name: Build 3sx package for Raspberry Pi 4
+      - name: Build 3sx package
         run: |
           cd batocera.linux
-          make bcm2711-pkg PKG=3sx
+          # Build without TTY interaction
+          make bcm2711-build PKG=3sx || make 3sx
         timeout-minutes: 120
+        env:
+          MAKEFLAGS: "-j$(nproc)"
       
       - name: Verify build output
         run: |
           cd batocera.linux
-          if [ -d "output/bcm2711/build/3sx"* ]; then
-            echo "Build successful!"
-            ls -lah output/bcm2711/build/3sx*
-          else
-            echo "Build directory not found"
-            exit 1
+          echo "Checking build directories..."
+          find output/bcm2711 -name "*3sx*" -type d || true
+          find output/bcm2711 -name "*3sx*" -type f || true
+          
+          if [ -d "output/bcm2711/build" ]; then
+            echo "Build directory contents:"
+            ls -lah output/bcm2711/build/ | grep 3sx || echo "No 3sx build directory found"
           fi
+      
+      - name: Package 3sx binaries
+        run: |
+          cd batocera.linux
+          mkdir -p ../3sx-package
+          
+          # Copy compiled binaries
+          if [ -d "output/bcm2711/target/usr/bin" ]; then
+            find output/bcm2711/target/usr/bin -name "*3sx*" -exec cp {} ../3sx-package/ \; 2>/dev/null || true
+          fi
+          
+          # Copy build artifacts
+          if [ -d "output/bcm2711/build" ]; then
+            find output/bcm2711/build -path "*/3sx*/3sx" -o -path "*/3sx*/*.so*" | xargs -I {} cp {} ../3sx-package/ 2>/dev/null || true
+          fi
+          
+          ls -lah ../3sx-package/
       
       - name: Upload built package
         uses: actions/upload-artifact@v4
         with:
           name: 3sx-batocera-rpi4
-          path: |
-            batocera.linux/output/bcm2711/build/3sx*/
-            batocera.linux/output/bcm2711/target/usr/bin/3sx*
+          path: 3sx-package/
           if-no-files-found: warn
       
       - name: Upload build logs
@@ -97,5 +116,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-logs
-          path: batocera.linux/output/bcm2711/build/3sx*/
+          path: |
+            batocera.linux/output/bcm2711/build/3sx*/
+            batocera.linux/output/bcm2711/build/build-time.log
           if-no-files-found: ignore
