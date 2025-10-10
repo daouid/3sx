@@ -12,15 +12,15 @@ jobs:
     steps:
       - name: Checkout 3sx repo
         uses: actions/checkout@v4
-      
-      - name: Clone Batocera build system
+
+      - name: Clone Batocera build system (full repo)
         run: |
           git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
           cd batocera.linux
           git fetch --all
           git checkout master
           git submodule update --init --recursive
-      
+
       - name: Install build dependencies
         run: |
           sudo apt-get update
@@ -29,21 +29,21 @@ jobs:
             libxi-dev libxcursor-dev libxinerama-dev libxss-dev \
             libwayland-dev libwayland-bin libxkbcommon-dev libdrm-dev libgbm-dev \
             make g++ gcc patch rsync cpio unzip bc wget file
-      
+
       - name: Move 3sx source and recipe to Batocera
         run: |
           mkdir -p batocera.linux/package/3sx
           rsync -ar --exclude .git --exclude batocera.linux --exclude .github ./ batocera.linux/package/3sx/
           cp tools/batocera/rpi4/3sx.mk batocera.linux/package/3sx/3sx.mk
           cp tools/batocera/rpi4/Config.in batocera.linux/package/3sx/Config.in
-      
+
       - name: Register 3sx in root Config.in
         run: |
           cd batocera.linux
           if ! grep -qxF 'source "package/3sx/Config.in"' Config.in; then
             echo 'source "package/3sx/Config.in"' >> Config.in
           fi
-      
+
       - name: Register 3sx in batocera-system Config.in
         run: |
           cd batocera.linux
@@ -53,26 +53,20 @@ jobs:
               echo 'source "package/3sx/Config.in"' >> "$SYSTEM_CONFIG"
             fi
           fi
-      
-      - name: Build 3sx Batocera/rpi4 package (CI SAFE)
+
+      - name: Build 3sx Batocera/rpi4 package (use script)
         run: |
           cd batocera.linux
-          if [ ! -f .config ]; then
-            cp boards/batocera/bcm2711/batocera-bcm2711.config .config 2>/dev/null || \
-            cp boards/batocera/rpi4/batocera-rpi4.config .config 2>/dev/null || \
-            touch .config
-          fi
-          grep -q 'BR2_PACKAGE_3SX=y' .config || echo 'BR2_PACKAGE_3SX=y' >> .config
-          CI=1 MAKEFLAGS="-j$(nproc)" DEBIAN_FRONTEND=noninteractive make bcm2711-pkg PKG=3sx
+          script -q -c "make bcm2711-pkg PKG=3sx"
         timeout-minutes: 120
-      
+
       - name: Verify build output
         run: |
           cd batocera.linux
           echo "Checking for 3sx build artifacts..."
           find output/bcm2711 -name "*3sx*" -type f || echo "No 3sx files found"
           find output/bcm2711 -name "*3sx*" -type d || echo "No 3sx directories found"
-      
+
       - name: Upload built package
         uses: actions/upload-artifact@v4
         with:
