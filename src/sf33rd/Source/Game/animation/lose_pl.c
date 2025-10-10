@@ -1,4 +1,9 @@
-#include "sf33rd/Source/Game/LOSE_PL.h"
+/**
+ * @file lose_pl.c
+ * Losing Character Animations
+ */
+
+#include "sf33rd/Source/Game/animation/lose_pl.h"
 #include "common.h"
 #include "sf33rd/Source/Game/CHARSET.h"
 #include "sf33rd/Source/Game/EFFC1.h"
@@ -36,11 +41,6 @@ void Lose_00000(PLW* wk) {
 }
 
 void Lose_10000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    s32 set_field_hosei_flag(PLW * pl, s32 pos, s16 ix);
-#endif
-
     if ((pcon_rno[0] == 2) && (pcon_rno[1] == 3)) {
         switch (wk->wu.routine_no[3]) {
         case 0:
@@ -82,12 +82,6 @@ void Lose_10000(PLW* wk) {
 }
 
 void Lose_20000(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    s32 set_field_hosei_flag(PLW * pl, s32 pos, s16 ix);
-    s32 effect_C1_init(WORK * wk);
-#endif
-
     s16 work;
 
     if ((pcon_rno[0] == 2) && (pcon_rno[1] == 3)) {
@@ -125,10 +119,6 @@ void Lose_20000(PLW* wk) {
 }
 
 void Lose_30000(PLW* wk) {
-#if defined(TARGET_PS2)
-    s32 set_field_hosei_flag(PLW * pl, s32 pos, s16 ix);
-#endif
-
     if ((pcon_rno[0] == 2) && (pcon_rno[1] == 3)) {
         switch (wk->wu.routine_no[3]) {
         case 0:
@@ -175,10 +165,6 @@ void Lose_30000(PLW* wk) {
 }
 
 void Normal_normal_Loser(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    s32 set_field_hosei_flag(PLW * pl, s32 pos, s16 ix);
-#endif
     s16 work;
 
     if ((pcon_rno[1] == 0) || (pcon_rno[1] == 4)) {
@@ -206,11 +192,6 @@ void Normal_normal_Loser(PLW* wk) {
 }
 
 void Judge_normal_loser(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    s32 set_field_hosei_flag(PLW * pl, s32 pos, s16 ix);
-#endif
-
     s16 work;
 
     switch (wk->wu.routine_no[3]) {
@@ -234,11 +215,6 @@ void Judge_normal_loser(PLW* wk) {
 }
 
 void meta_lose_pause(PLW* wk) {
-#if defined(TARGET_PS2)
-    void set_char_move_init(WORK * wk, s16 koc, s32 index);
-    s32 set_field_hosei_flag(PLW * pl, s32 pos, s16 ix);
-#endif
-
     bg_app_stop = 1;
 
     if ((pcon_rno[1] == 0) || (pcon_rno[1] == 4)) {

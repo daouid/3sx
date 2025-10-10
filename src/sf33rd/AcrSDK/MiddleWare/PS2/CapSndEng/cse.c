@@ -77,9 +77,7 @@ s32 cseTsbRequest(u16 bank, u16 code, s32 NumArgSets, ...) {
 }
 
 s32 cseCheckVTransStatus(u32 vtrans_check_type) {
-#if defined(SOUND_DISABLED)
     return 0;
-#endif
 
     CSE_RPCQUEUE_RESULT param;
     CSE_VTRANS_RESULT* pResult;

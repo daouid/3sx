@@ -13,6 +13,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 # ======================================
 
 include_directories(
+    ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/include/sdk
     ${PROJECT_SOURCE_DIR}/include/cri
@@ -45,9 +46,13 @@ target_compile_definitions(3sx PRIVATE
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:RELEASE>
     TARGET_SDL3
-    SOUND_DISABLED
     XPT_TGT_EE
     _POSIX_C_SOURCE
+)
+
+# Feature toggles
+target_compile_definitions(3sx PRIVATE
+    MEMCARD_DISABLED
 )
 
 target_compile_options(3sx PRIVATE
