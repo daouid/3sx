@@ -1,4 +1,4 @@
-name: Build 3sx Batocera/rpi4 package (dynamic inject)
+name: Build 3sx Batocera/rpi4 package
 
 on:
   workflow_dispatch:
