@@ -65,9 +65,6 @@ jobs:
           fi
           # Ensure the package is enabled
           grep -q 'BR2_PACKAGE_3SX=y' .config || echo 'BR2_PACKAGE_3SX=y' >> .config
-          # Make olddefconfig non-interactive to prevent TTY errors
-          yes "" | make olddefconfig
-          # Build only the package
           MAKEFLAGS="-j$(nproc)" DEBIAN_FRONTEND=noninteractive make bcm2711-pkg PKG=3sx
         timeout-minutes: 120
       
