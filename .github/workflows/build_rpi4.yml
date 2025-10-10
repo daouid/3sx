@@ -10,7 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Clone full Batocera repo
+      # 0. Ensure repository is checked out
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # 1. Clone Batocera build system
       - name: Clone Batocera build system
         run: |
           git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
@@ -21,7 +25,13 @@ jobs:
       - name: Install util-linux
         run: sudo apt-get update && sudo apt-get install -y util-linux
 
-      # 3. Copy 3sx package files into Batocera tree
+      # 3. Debug: list package files (remove this after successful run)
+      - name: Debug - list package files for troubleshooting
+        run: |
+          ls -l tools/batocera/rpi4/
+          ls -l tools/batocera/
+
+      # 4. Copy 3sx package files into Batocera tree
       - name: Copy package files
         run: |
           mkdir -p batocera.linux/package/3sx
@@ -29,18 +39,17 @@ jobs:
           cp tools/batocera/rpi4/3sx.mk batocera.linux/package/3sx/Makefile
           cp tools/batocera/3sx.sh batocera.linux/package/3sx/3sx.sh
 
-      # 4. Register your package so Batocera build system sees it
+      # 5. Register your package so Batocera build system sees it
       - name: Register 3sx in Batocera package Config.in
-        run: |
-          echo 'source "package/3sx/Config.in"' >> batocera.linux/package/Config.in
+        run: echo 'source "package/3sx/Config.in"' >> batocera.linux/package/Config.in
 
-      # 5. Build the package for rpi4 (simulate TTY for Batocera buildroot)
+      # 6. Build the package for rpi4 (simulate TTY for Batocera buildroot)
       - name: Build 3sx package for Batocera rpi4
         run: |
           cd batocera.linux
           script -q -c "make bcm2711-pkg PKG=3sx"
 
-      # 6. Upload the built output for download (adjust output path if needed)
+      # 7. Upload the built output for download (adjust output path if needed)
       - name: Upload built Batocera 3sx package
         uses: actions/upload-artifact@v4
         with:
