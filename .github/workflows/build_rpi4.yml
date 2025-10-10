@@ -47,10 +47,10 @@ jobs:
       - name: Move 3sx source + recipe to Batocera
         run: |
           mkdir -p batocera.linux/package/3sx
-          cp -r . batocera.linux/package/3sx/
-          # Overwrite/Copy package files explicitly if needed
+          find . -mindepth 1 -maxdepth 1 ! -name batocera.linux ! -name .github ! -name .git -exec cp -r {} batocera.linux/package/3sx/ \;
           cp tools/batocera/rpi4/3sx.mk batocera.linux/package/3sx/3sx.mk
           cp tools/batocera/rpi4/Config.in batocera.linux/package/3sx/Config.in
+
 
       # Step 6: Register package in Batocera main Config.in (append only if not present)
       - name: Register 3sx in Batocera Config.in
