@@ -17,9 +17,6 @@ jobs:
         run: |
           git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
           cd batocera.linux
-          git fetch --all
-          git checkout master
-          git submodule update --init --recursive
 
       - name: Install minimal host dependencies
         run: |
@@ -50,13 +47,11 @@ jobs:
           test -f package/batocera/utils/3sx/3sx.mk
           tail -n 20 Config.in
 
-      # Do NOT source from batocera-system/Config.in; not needed for pkg-only builds
-
       - name: Build 3sx for Raspberry Pi 4 (bcm2711)
         run: |
           cd batocera.linux
           script -q -c "make bcm2711-pkg PKG=3sx"
-        timeout-minutes: 120
+        timeout-minutes: 180
 
       - name: Verify build output
         run: |
