@@ -39,10 +39,11 @@ jobs:
           make batocera-docker-image
 
       # 6. Build 3sx PKG for rpi4 (bcm2711), simulating a TTY
-      - name: Build 3sx package for Batocera rpi4 with TTY
+      - name: Build 3sx package for Batocera rpi4
         run: |
           cd batocera.linux
           script -q -c "make bcm2711-pkg PKG=3sx"
+
 
       # 7. Upload the built package artifact (update output path if needed)
       - name: Upload built Batocera package
