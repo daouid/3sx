@@ -54,21 +54,22 @@ jobs:
             fi
           fi
       
-      - name: Pre-configure with 3sx enabled
+      - name: Build 3sx Batocera/rpi4 package (CI-safe)
         run: |
           cd batocera.linux
-          cp configs/batocera-bcm2711_defconfig .config
-          echo "BR2_PACKAGE_3SX=y" >> .config
-      
-      - name: Build 3sx package directly
-        run: |
-          cd batocera.linux
-          # Set non-interactive mode and build the package directly
-          DEBIAN_FRONTEND=noninteractive make O=output/bcm2711 3sx
+          # Create .config from board config if it doesn't exist, use fallback if needed
+          if [ ! -f .config ]; then
+            cp boards/batocera/bcm2711/batocera-bcm2711.config .config 2>/dev/null || \
+            cp boards/batocera/rpi4/batocera-rpi4.config .config 2>/dev/null || \
+            touch .config
+          fi
+          # Ensure the package is enabled
+          grep -q 'BR2_PACKAGE_3SX=y' .config || echo 'BR2_PACKAGE_3SX=y' >> .config
+          # Make olddefconfig non-interactive to prevent TTY errors
+          yes "" | make olddefconfig
+          # Build only the package
+          MAKEFLAGS="-j$(nproc)" DEBIAN_FRONTEND=noninteractive make bcm2711-pkg PKG=3sx
         timeout-minutes: 120
-        env:
-          MAKEFLAGS: "-j$(nproc)"
-          DEBIAN_FRONTEND: "noninteractive"
       
       - name: Verify build output
         run: |
