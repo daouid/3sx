@@ -54,18 +54,16 @@ jobs:
             fi
           fi
       
-      - name: Build 3sx Batocera/rpi4 package (CI-safe)
+      - name: Build 3sx Batocera/rpi4 package (CI SAFE)
         run: |
           cd batocera.linux
-          # Create .config from board config if it doesn't exist, use fallback if needed
           if [ ! -f .config ]; then
             cp boards/batocera/bcm2711/batocera-bcm2711.config .config 2>/dev/null || \
             cp boards/batocera/rpi4/batocera-rpi4.config .config 2>/dev/null || \
             touch .config
           fi
-          # Ensure the package is enabled
           grep -q 'BR2_PACKAGE_3SX=y' .config || echo 'BR2_PACKAGE_3SX=y' >> .config
-          MAKEFLAGS="-j$(nproc)" DEBIAN_FRONTEND=noninteractive make bcm2711-pkg PKG=3sx
+          CI=1 MAKEFLAGS="-j$(nproc)" DEBIAN_FRONTEND=noninteractive make bcm2711-pkg PKG=3sx
         timeout-minutes: 120
       
       - name: Verify build output
