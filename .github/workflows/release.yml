@@ -122,7 +122,9 @@ jobs:
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          zip -j artifacts/3sx-macos.zip build/3sx
+          cd build
+          # Correctly zip the .app bundle recursively
+          zip -r ../artifacts/3sx-macos.zip 3sx.app
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
