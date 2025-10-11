@@ -25,8 +25,8 @@ jobs:
       - name: Install build dependencies
         run: |
           apt-get update
-          # Added curl to the list of packages
-          apt-get install -y build-essential make clang cmake ninja-build pkg-config zip autoconf automake libtool curl
+          # Added nasm to the list of packages
+          apt-get install -y build-essential make clang cmake ninja-build pkg-config zip autoconf automake libtool curl nasm
 
       - name: Build dependencies from source
         run: |
@@ -41,13 +41,13 @@ jobs:
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          zip -j artifacts/3sx-linux.zip build/3sx
+          zip -j artifacts/sf33rd-linux.zip build/sf33rd
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: 3sx-linux
-          path: artifacts/3sx-linux.zip
+          name: sf33rd-linux
+          path: artifacts/sf33rd-linux.zip
 
   build-windows:
     name: Build (Windows)
@@ -64,8 +64,9 @@ jobs:
           install: >-
             git
             zip
-            # Added curl to the list of packages
             curl
+            # Added nasm to the list of packages
+            nasm
             mingw-w64-x86_64-toolchain
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
@@ -88,13 +89,13 @@ jobs:
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          zip -j artifacts/3sx-windows.zip build/3sx.exe build/*.dll
+          zip -j artifacts/sf33rd-windows.zip build/sf33rd.exe build/*.dll
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: 3sx-windows
-          path: artifacts/3sx-windows.zip
+          name: sf33rd-windows
+          path: artifacts/sf33rd-windows.zip
 
   build-macos:
     name: Build (macOS)
@@ -106,8 +107,8 @@ jobs:
           submodules: recursive
 
       - name: Install dependencies
-        # Added curl to the list of Homebrew packages
-        run: brew install cmake ninja pkg-config zip curl
+        # Added nasm to the list of Homebrew packages
+        run: brew install cmake ninja pkg-config zip curl nasm
 
       - name: Build dependencies from source
         run: |
@@ -122,13 +123,13 @@ jobs:
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          zip -j artifacts/3sx-macos.zip build/3sx
+          zip -j artifacts/sf33rd-macos.zip build/sf33rd
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: 3sx-macos
-          path: artifacts/3sx-macos.zip
+          name: sf33rd-macos
+          path: artifacts/sf33rd-macos.zip
 
   release:
     name: Create Release
