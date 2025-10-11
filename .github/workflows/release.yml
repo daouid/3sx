@@ -1,9 +1,15 @@
-name: Build and Release
+name: Create Release
 
 on:
   push:
-    branches:
-      - "main"
+    # This workflow will ONLY run when a matching tag is pushed.
+    # Pushes to branches like 'main' will be ignored.
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+' # e.g., v1.2.3
+      - '*rc*'                  # e.g., v1.0.0-rc1
+      - '*alpha*'               # e.g., v1.1.0-alpha
+      - '*beta*'                # e.g., v1.1.0-beta
+      - '*release*'             # e.g., release-20251011
 
 jobs:
   build-linux:
@@ -40,7 +46,6 @@ jobs:
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          # Package executable and shared libraries from dependency build folders
           zip -j artifacts/3sx-linux.zip build/3sx third_party/ffmpeg/build/lib/*.so* third_party/sdl3/build/lib/*.so*
 
       - name: Upload artifact
@@ -90,7 +95,6 @@ jobs:
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          # Package executable and DLLs from dependency build folders
           zip -j artifacts/3sx-windows.zip build/3sx.exe third_party/ffmpeg/build/bin/*.dll third_party/sdl3/build/bin/*.dll
 
       - name: Upload artifact
@@ -125,7 +129,6 @@ jobs:
         run: |
           mkdir -p artifacts
           cd build
-          # Correctly zip the .app bundle recursively
           zip -r ../artifacts/3sx-macos.zip 3sx.app
 
       - name: Upload artifact
@@ -141,28 +144,21 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Generate timestamp
-        id: timestamp
-        run: echo "timestamp=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
-
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           merge-multiple: true
           path: artifacts/
 
-      - name: Create Release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: "Build ${{ steps.timestamp.outputs.timestamp }}"
-          tag_name: "build-${{ steps.timestamp.outputs.timestamp }}"
+          name: "Release ${{ github.ref_name }}"
+          tag_name: ${{ github.ref_name }}
           files: artifacts/*.zip
           body: |
-            Automated build from main branch
+            Automated release for ${{ github.ref_name }}
             
             **Commit:** `${{ github.sha }}`
-            **Message:** ${{ github.event.head_commit.message }}
-            **Author:** ${{ github.event.head_commit.author.name }}
-            **Date:** ${{ steps.timestamp.outputs.timestamp }}
-          prerelease: true
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
           token: ${{ secrets.GITHUB_TOKEN }}
