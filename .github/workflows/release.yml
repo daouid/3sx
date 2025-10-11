@@ -40,7 +40,8 @@ jobs:
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          zip -j artifacts/3sx-linux.zip build/3sx
+          # Package executable and shared libraries from dependency build folders
+          zip -j artifacts/3sx-linux.zip build/3sx third_party/ffmpeg/build/lib/*.so* third_party/sdl3/build/lib/*.so*
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -89,7 +90,8 @@ jobs:
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          zip -j artifacts/3sx-windows.zip build/3sx.exe build/*.dll
+          # Package executable and DLLs from dependency build folders
+          zip -j artifacts/3sx-windows.zip build/3sx.exe third_party/ffmpeg/build/bin/*.dll third_party/sdl3/build/bin/*.dll
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
