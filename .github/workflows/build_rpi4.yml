@@ -17,11 +17,11 @@ jobs:
         run: |
           git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
           cd batocera.linux
-          git checkout v41
+          git checkout 41
           git submodule sync --recursive
           git submodule update --init --recursive --jobs 4
           make batocera-docker-image
-          export BATOCERA_DOCKER_IMAGE=batoceralinux/batocera.linux-build:v41
+          export BATOCERA_DOCKER_IMAGE=batoceralinux/batocera.linux-build:41
 
 
 
