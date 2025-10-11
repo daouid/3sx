@@ -57,7 +57,6 @@ target_compile_definitions(3sx PRIVATE
 
 target_compile_options(3sx PRIVATE
     -Wall
-    -Werror
     -Wpointer-to-int-cast
     -Wno-macro-redefined
     -Wno-deprecated-non-prototype
@@ -71,6 +70,7 @@ target_compile_options(3sx PRIVATE
     -Wno-incompatible-pointer-types
     -Wno-incompatible-function-pointer-types
     -Wno-pointer-sign
+    -fno-strict-aliasing
 )
 
 target_link_libraries(3sx PRIVATE
