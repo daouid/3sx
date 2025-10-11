@@ -12,11 +12,6 @@ jobs:
     container:
       image: ubuntu:25.04
     steps:
-      - name: Install Git
-        run: |
-          apt-get update
-          apt-get install -y git
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -25,29 +20,22 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y build-essential git cmake ninja-build pkg-config zip
+          apt-get install -y git build-essential make clang cmake ninja-build pkg-config zip autoconf automake libtool
 
-      - name: Build dependencies
-        run: ./build-deps.sh
-
-      - name: Configure CMake
+      - name: Build dependencies from source
         run: |
-          mkdir build
-          cd build
-          cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+          chmod +x build-deps.sh
+          ./build-deps.sh
 
-      - name: Build for Linux
+      - name: Configure and build with CMake
         run: |
-          cd build
-          ninja
+          cmake -S . -B build -G "Ninja"
+          cmake --build build
 
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          cd build
-          cmake --install . --prefix ../staging
-          cd ..
-          zip -r artifacts/3sx-linux.zip staging/bin/3sx
+          zip -j artifacts/3sx-linux.zip build/3sx
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -79,27 +67,21 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Build dependencies
-        run: ./build-deps.sh
-
-      - name: Configure CMake
+      - name: Build dependencies from source
         run: |
-          mkdir build
-          cd build
-          cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+          chmod +x build-deps.sh
+          ./build-deps.sh
 
-      - name: Build for Windows
+      - name: Configure and build with CMake
         run: |
-          cd build
-          ninja
+          cmake -S . -B build -G "Ninja"
+          cmake --build build
 
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          cd build
-          cmake --install . --prefix ../staging
-          cd ..
-          zip -r artifacts/3sx-windows.zip staging/bin/3sx.exe
+          # Package the main executable and any required DLLs from the build directory
+          zip -j artifacts/3sx-windows.zip build/3sx.exe build/*.dll
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -117,29 +99,22 @@ jobs:
           submodules: recursive
 
       - name: Install dependencies
-        run: brew install cmake ninja zip
+        run: brew install cmake ninja pkg-config zip
 
-      - name: Build dependencies
-        run: ./build-deps.sh
-
-      - name: Configure CMake
+      - name: Build dependencies from source
         run: |
-          mkdir build
-          cd build
-          cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+          chmod +x build-deps.sh
+          ./build-deps.sh
 
-      - name: Build for macOS
+      - name: Configure and build with CMake
         run: |
-          cd build
-          ninja
+          cmake -S . -B build -G "Ninja"
+          cmake --build build
 
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          cd build
-          cmake --install . --prefix ../staging
-          cd ..
-          zip -r artifacts/3sx-macos.zip staging/bin/3sx
+          zip -j artifacts/3sx-macos.zip build/3sx
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
