@@ -25,21 +25,35 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y build-essential make clang cmake ninja-build pkg-config libsdl3-dev zip
+          apt-get install -y build-essential git cmake ninja-build pkg-config zip
+
+      - name: Build dependencies
+        run: ./build-deps.sh
+
+      - name: Configure CMake
+        run: |
+          mkdir build
+          cd build
+          cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
 
       - name: Build for Linux
-        run: make PLATFORM=linux
+        run: |
+          cd build
+          ninja
 
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          zip -j artifacts/sf33rd-linux.zip build/anniversary/linux/sf33rd
+          cd build
+          cmake --install . --prefix ../staging
+          cd ..
+          zip -r artifacts/3sx-linux.zip staging/bin/3sx
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sf33rd-linux
-          path: artifacts/sf33rd-linux.zip
+          name: 3sx-linux
+          path: artifacts/3sx-linux.zip
 
   build-windows:
     name: Build (Windows)
@@ -54,32 +68,44 @@ jobs:
           update: true
           msystem: MINGW64
           install: >-
-            make
+            git
             zip
-            mingw-w64-x86_64-clang
+            mingw-w64-x86_64-toolchain
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
-            mingw-w64-x86_64-sdl3
-            mingw-w64-x86_64-pkg-config
 
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
+      - name: Build dependencies
+        run: ./build-deps.sh
+
+      - name: Configure CMake
+        run: |
+          mkdir build
+          cd build
+          cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+
       - name: Build for Windows
-        run: make PLATFORM=windows
+        run: |
+          cd build
+          ninja
 
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          zip -j artifacts/sf33rd-windows.zip build/anniversary/windows/sf33rd.exe build/anniversary/windows/SDL3.dll
+          cd build
+          cmake --install . --prefix ../staging
+          cd ..
+          zip -r artifacts/3sx-windows.zip staging/bin/3sx.exe
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sf33rd-windows
-          path: artifacts/sf33rd-windows.zip
+          name: 3sx-windows
+          path: artifacts/3sx-windows.zip
 
   build-macos:
     name: Build (macOS)
@@ -91,21 +117,35 @@ jobs:
           submodules: recursive
 
       - name: Install dependencies
-        run: brew install sdl3 cmake ninja pkg-config zip
+        run: brew install cmake ninja zip
+
+      - name: Build dependencies
+        run: ./build-deps.sh
+
+      - name: Configure CMake
+        run: |
+          mkdir build
+          cd build
+          cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
 
       - name: Build for macOS
-        run: make PLATFORM=macos
+        run: |
+          cd build
+          ninja
 
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          zip -j artifacts/sf33rd-macos.zip build/anniversary/macos/sf33rd
+          cd build
+          cmake --install . --prefix ../staging
+          cd ..
+          zip -r artifacts/3sx-macos.zip staging/bin/3sx
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sf33rd-macos
-          path: artifacts/sf33rd-macos.zip
+          name: 3sx-macos
+          path: artifacts/3sx-macos.zip
 
   release:
     name: Create Release
