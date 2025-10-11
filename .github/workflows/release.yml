@@ -1,0 +1,141 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build-linux:
+    name: Build (Linux)
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:25.04
+    steps:
+      - name: Install Git
+        run: |
+          apt-get update
+          apt-get install -y git
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y build-essential make clang cmake ninja-build pkg-config libsdl3-dev zip
+
+      - name: Build for Linux
+        run: make PLATFORM=linux
+
+      - name: Package artifact
+        run: |
+          mkdir -p artifacts
+          zip -j artifacts/sf33rd-linux.zip build/anniversary/linux/sf33rd
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sf33rd-linux
+          path: artifacts/sf33rd-linux.zip
+
+  build-windows:
+    name: Build (Windows)
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: MINGW64
+          install: >-
+            make
+            zip
+            mingw-w64-x86_64-clang
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-sdl3
+            mingw-w64-x86_64-pkg-config
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build for Windows
+        run: make PLATFORM=windows
+
+      - name: Package artifact
+        run: |
+          mkdir -p artifacts
+          zip -j artifacts/sf33rd-windows.zip build/anniversary/windows/sf33rd.exe build/anniversary/windows/SDL3.dll
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sf33rd-windows
+          path: artifacts/sf33rd-windows.zip
+
+  build-macos:
+    name: Build (macOS)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: brew install sdl3 cmake ninja pkg-config zip
+
+      - name: Build for macOS
+        run: make PLATFORM=macos
+
+      - name: Package artifact
+        run: |
+          mkdir -p artifacts
+          zip -j artifacts/sf33rd-macos.zip build/anniversary/macos/sf33rd
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sf33rd-macos
+          path: artifacts/sf33rd-macos.zip
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-windows, build-macos]
+    permissions:
+      contents: write
+    steps:
+      - name: Generate timestamp
+        id: timestamp
+        run: echo "timestamp=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: artifacts/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Build ${{ steps.timestamp.outputs.timestamp }}"
+          tag_name: "build-${{ steps.timestamp.outputs.timestamp }}"
+          files: artifacts/*.zip
+          body: |
+            Automated build from main branch
+            
+            **Commit:** `${{ github.sha }}`
+            **Message:** ${{ github.event.head_commit.message }}
+            **Author:** ${{ github.event.head_commit.author.name }}
+            **Date:** ${{ steps.timestamp.outputs.timestamp }}
+          prerelease: true
+          token: ${{ secrets.GITHUB_TOKEN }}
