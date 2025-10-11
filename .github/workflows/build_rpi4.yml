@@ -17,14 +17,8 @@ jobs:
         run: |
           git clone https://github.com/batocera-linux/batocera.linux.git batocera.linux
           cd batocera.linux
-          git checkout 41
-          git submodule sync --recursive
-          git submodule update --init --recursive --jobs 4
+          git submodule update --init
           make batocera-docker-image
-          export BATOCERA_DOCKER_IMAGE=batoceralinux/batocera.linux-build:41
-
-
-
 
       - name: Install minimal host dependencies
         run: |
