@@ -95,7 +95,10 @@ jobs:
       - name: Package artifact
         run: |
           mkdir -p artifacts
-          zip -j artifacts/3sx-windows.zip build/3sx.exe third_party/ffmpeg/build/bin/*.dll third_party/sdl3/build/bin/*.dll
+          # Find and copy the required DLL
+          cp /mingw64/bin/libwinpthread-1.dll .
+          zip -j artifacts/3sx-windows.zip build/3sx.exe libwinpthread-1.dll third_party/ffmpeg/build/bin/*.dll third_party/sdl3/build/bin/*.dll
+
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
