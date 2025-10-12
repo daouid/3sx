@@ -69,13 +69,12 @@ jobs:
           install: >-
             git
             zip
-            curl
-            nasm
             make
-            diffutils
-            mingw-w64-x86_64-toolchain
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-nasm
+            mingw-w64-x86_64-clang
+            mingw-w64-x86_64-headers-git
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -89,7 +88,10 @@ jobs:
 
       - name: Configure and build with CMake
         run: |
-          cmake -S . -B build -G "Ninja"
+          set -o pipefail
+          CC=clang CXX=clang++ cmake -S . -B build \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release
           cmake --build build
 
       - name: Package artifact
@@ -99,12 +101,12 @@ jobs:
           cp /mingw64/bin/libwinpthread-1.dll .
           zip -j artifacts/3sx-windows.zip build/3sx.exe libwinpthread-1.dll third_party/ffmpeg/build/bin/*.dll third_party/sdl3/build/bin/*.dll
 
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: 3sx-windows
           path: artifacts/3sx-windows.zip
+
 
   build-macos:
     name: Build (macOS)
