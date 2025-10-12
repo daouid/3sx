@@ -4,9 +4,6 @@
 #include "sf33rd/Source/Game/BBBSCOM.h"
 #include "sf33rd/Source/Game/Continue.h"
 #include "sf33rd/Source/Game/DC_Ghost.h"
-#include "sf33rd/Source/Game/DEMO00.h"
-#include "sf33rd/Source/Game/DEMO01.h"
-#include "sf33rd/Source/Game/DEMO02.h"
 #include "sf33rd/Source/Game/EFFECT.h"
 #include "sf33rd/Source/Game/Entry.h"
 #include "sf33rd/Source/Game/Flash_LP.h"
@@ -43,7 +40,7 @@
 #include "sf33rd/Source/Game/count.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
 #include "sf33rd/Source/Game/effect_init.h"
-#include "sf33rd/Source/Game/end_main.h"
+#include "sf33rd/Source/Game/ending/end_main.h"
 #include "sf33rd/Source/Game/main.h"
 #include "sf33rd/Source/Game/menu.h"
 #include "sf33rd/Source/Game/op_sub.h"
@@ -55,6 +52,10 @@
 #include "sf33rd/Source/Game/texcash.h"
 #include "sf33rd/Source/Game/workuser.h"
 #include "structs.h"
+
+#include "sf33rd/Source/Game/demo/demo00.h"
+#include "sf33rd/Source/Game/demo/demo01.h"
+#include "sf33rd/Source/Game/demo/demo02.h"
 
 void Wait_Auto_Load(struct _TASK* /* unused */);
 void Loop_Demo(struct _TASK* /* unused */);

@@ -1,0 +1,169 @@
+name: Create Release
+
+on:
+  push:
+    # This workflow will ONLY run when a matching tag is pushed.
+    # Pushes to branches like 'main' will be ignored.
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+' # e.g., v1.2.3
+      - '*rc*'                  # e.g., v1.0.0-rc1
+      - '*alpha*'               # e.g., v1.1.0-alpha
+      - '*beta*'                # e.g., v1.1.0-beta
+      - '*release*'             # e.g., release-20251011
+
+jobs:
+  build-linux:
+    name: Build (Linux)
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:25.04
+    steps:
+      - name: Install Git
+        run: |
+          apt-get update
+          apt-get install -y git
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install build dependencies
+        run: |
+          apt-get update
+          apt-get install -y build-essential make clang cmake ninja-build pkg-config zip autoconf automake libtool curl nasm libx11-dev libxi-dev libxrandr-dev libxcursor-dev libxinerama-dev libxext-dev mesa-common-dev libglu1-mesa-dev libwayland-dev libxkbcommon-x11-dev
+
+      - name: Build dependencies from source
+        run: |
+          chmod +x build-deps.sh
+          ./build-deps.sh
+
+      - name: Configure and build with CMake
+        run: |
+          cmake -S . -B build -G "Ninja" -DCMAKE_C_FLAGS="-std=gnu11 -Wall -Wpointer-to-int-cast -Wno-macro-redefined -Wno-deprecated-non-prototype -Wno-tautological-overlap-compare -Wno-c2x-extensions -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-function -Wno-int-to-pointer-cast -Wno-int-conversion -Wno-incompatible-pointer-types -Wno-incompatible-function-pointer-types -Wno-pointer-sign"
+          cmake --build build
+
+      - name: Package artifact
+        run: |
+          mkdir -p artifacts
+          zip -j artifacts/3sx-linux.zip build/3sx third_party/ffmpeg/build/lib/*.so* third_party/sdl3/build/lib/*.so*
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3sx-linux
+          path: artifacts/3sx-linux.zip
+
+  build-windows:
+    name: Build (Windows)
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: MINGW64
+          install: >-
+            git
+            zip
+            make
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-nasm
+            mingw-w64-x86_64-clang
+            mingw-w64-x86_64-headers-git
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build dependencies from source
+        run: |
+          chmod +x build-deps.sh
+          ./build-deps.sh
+
+      - name: Configure and build with CMake
+        run: |
+          set -o pipefail
+          CC=clang CXX=clang++ cmake -S . -B build \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+
+      - name: Package artifact
+        run: |
+          mkdir -p artifacts
+          # Find and copy the required DLL
+          cp /mingw64/bin/libwinpthread-1.dll .
+          zip -j artifacts/3sx-windows.zip build/3sx.exe libwinpthread-1.dll third_party/ffmpeg/build/bin/*.dll third_party/sdl3/build/bin/*.dll
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3sx-windows
+          path: artifacts/3sx-windows.zip
+
+
+  build-macos:
+    name: Build (macOS)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: brew install cmake ninja pkg-config zip curl nasm
+
+      - name: Build dependencies from source
+        run: |
+          chmod +x build-deps.sh
+          ./build-deps.sh
+
+      - name: Configure and build with CMake
+        run: |
+          cmake -S . -B build -G "Ninja" -DCMAKE_C_FLAGS="-std=gnu11 -Wall -Wpointer-to-int-cast -Wno-macro-redefined -Wno-deprecated-non-prototype -Wno-tautological-overlap-compare -Wno-c2x-extensions -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-function -Wno-int-to-pointer-cast -Wno-int-conversion -Wno-incompatible-pointer-types -Wno-incompatible-function-pointer-types -Wno-pointer-sign"
+          cmake --build build
+
+      - name: Package artifact
+        run: |
+          mkdir -p artifacts
+          cd build
+          zip -r ../artifacts/3sx-macos.zip 3sx.app
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3sx-macos
+          path: artifacts/3sx-macos.zip
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-windows, build-macos]
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Release ${{ github.ref_name }}"
+          tag_name: ${{ github.ref_name }}
+          files: artifacts/*.zip
+          body: |
+            Automated release for ${{ github.ref_name }}
+            
+            **Commit:** `${{ github.sha }}`
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
+          token: ${{ secrets.GITHUB_TOKEN }}

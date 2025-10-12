@@ -1,5 +1,6 @@
 #include "port/sdl/sdl_adx_sound.h"
 #include "common.h"
+#include "port/io/afs.h"
 #include "sf33rd/Source/Game/GD3rd.h"
 
 #include <SDL3/SDL.h>
@@ -14,10 +15,6 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#if defined(_WIN32)
-#include <malloc.h> // for _aligned_malloc / _aligned_free
-#endif
 
 #define SAMPLE_RATE 48000
 #define N_CHANNELS 2
@@ -105,23 +102,16 @@ static void pipeline_destroy(ADXDecoderPipeline* pipeline) {
 }
 
 static void* load_file(int file_id, int* size) {
+    // FIXME: Remove dependency on GD3rd.h
     const unsigned int file_size = fsGetFileSize(file_id);
-    const size_t buff_size = (file_size + 2048 - 1) & ~(2048 - 1); // sceCdRead reads data in 2048-byte chunks
-    const size_t alignment = 64;                                   // ADXF requires buff to be aligned to 64
+    *size = file_size;
+    const size_t buff_size = (file_size + 2048 - 1) & ~(2048 - 1); // AFS reads data in 2048-byte chunks
+    void* buff = malloc(buff_size);
 
-#if defined(_WIN32)
-    void* buff = _aligned_malloc(buff_size, alignment);
-#else
-    void* buff = aligned_alloc(alignment, buff_size);
-#endif
+    AFSHandle handle = AFS_Open(file_id);
+    AFS_ReadSync(handle, fsCalSectorSize(file_size), buff);
+    AFS_Close(handle);
 
-    REQ req;
-    req.fnum = file_id;
-    fsOpen(&req);
-    req.size = file_size;
-    *size = req.size;
-    req.sect = fsCalSectorSize(req.size);
-    fsFileReadSync(&req, req.sect, buff);
     return buff;
 }
 
@@ -191,9 +181,10 @@ static void loop_info_init(ADXLoopInfo* info, const uint8_t* data) {
 
     switch (version) {
     case 3:
-        info->looping_enabled = AV_RB32(data + 0x18);
+        const Uint16 loop_enabled_16 = AV_RB16(data + 0x16);
 
-        if (info->looping_enabled) {
+        if (loop_enabled_16 == 1) {
+            info->looping_enabled = true;
             info->start_sample = AV_RB32(data + 0x1C);
             info->end_sample = AV_RB32(data + 0x24);
         }
@@ -201,9 +192,10 @@ static void loop_info_init(ADXLoopInfo* info, const uint8_t* data) {
         break;
 
     case 4:
-        info->looping_enabled = AV_RB32(data + 0x24);
+        const Uint32 loop_enabled_32 = AV_RB32(data + 0x24);
 
-        if (info->looping_enabled) {
+        if (loop_enabled_32 == 1) {
+            info->looping_enabled = true;
             info->start_sample = AV_RB32(data + 0x28);
             info->end_sample = AV_RB32(data + 0x30);
         }
@@ -339,11 +331,7 @@ static void track_destroy(ADXTrack* track) {
     loop_info_destroy(&track->loop_info);
 
     if (track->should_free_data_after_use) {
-#if defined(_WIN32)
-        _aligned_free(track->data);
-#else
         free(track->data);
-#endif
     }
 
     SDL_zerop(track);
@@ -421,7 +409,7 @@ void SDLADXSound_StartMem(void* buf, size_t size) {
     SDLADXSound_Stop();
 
     ADXTrack* track = alloc_track();
-    track_init(track, -1, buf, size, false);
+    track_init(track, -1, buf, size, true);
 }
 
 int SDLADXSound_GetNumFiles() {
@@ -454,18 +442,22 @@ void SDLADXSound_SetOutVol(int volume) {
     SDL_SetAudioStreamGain(stream, gain);
 }
 
-int SDLADXSound_GetStat() {
+void ADX_SetMono(bool mono) {
+    // FIXME: Do we really need this?
+}
+
+ADXState SDLADXSound_GetState() {
     if (!has_tracks) {
-        return 0; // ADXT_STAT_STOP
+        return ADX_STATE_STOP;
     }
 
     if (stream_is_empty()) {
-        return 5; // ADXT_STAT_PLAYEND
+        return ADX_STATE_PLAYEND;
     } else {
         if (SDLADXSound_IsPaused()) {
-            return 0; // ADXT_STAT_STOP
+            return ADX_STATE_STOP;
         } else {
-            return 3; // ADXT_STAT_PLAYING
+            return ADX_STATE_PLAYING;
         }
     }
 }
