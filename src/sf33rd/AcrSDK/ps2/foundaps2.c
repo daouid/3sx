@@ -1,6 +1,5 @@
 #include "sf33rd/AcrSDK/ps2/foundaps2.h"
 #include "common.h"
-#include "sf33rd/AcrSDK/MiddleWare/PS2/ADX/flADX.h"
 #include "sf33rd/AcrSDK/MiddleWare/PS2/acrmw.h"
 #include "sf33rd/AcrSDK/common/fbms.h"
 #include "sf33rd/AcrSDK/common/memfound.h"
@@ -14,8 +13,6 @@
 #include "sf33rd/AcrSDK/ps2/flps2vram.h"
 #include "sf33rd/AcrSDK/ps2/ps2PAD.h"
 #include "structs.h"
-
-#include "port/sdk_threads.h"
 
 #include <eekernel.h>
 #include <libcdvd.h>
@@ -131,19 +128,13 @@ u32 flLoadCheckColor[20];
 
 // forward decls
 static s32 system_work_init();
-static s32 system_hard_init();
 static void flPS2VramFullClear();
 static void flPS2InitRenderBuff(u32 fbdepth, u32 zbdepth, u32 inter_mode, u32 video_mode, u32 dispw);
 static void flPS2SwapDBuff(s32 dbi, s32 irq_type);
 static void flPS2DrawPreparation();
-void flPS2VSyncCallback();
 
 s32 flInitialize(s32 /* unused */, s32 /* unused */) {
     if (system_work_init() == 0) {
-        return 0;
-    }
-
-    if (system_hard_init() == 0) {
         return 0;
     }
 
@@ -202,71 +193,6 @@ s32 system_work_init() {
     flPS2FlipCancelFlag = 0;
 
     return 1;
-}
-
-s32 system_hard_init() {
-#if !defined(TARGET_PS2)
-    // This is PS2-specific hardware initialization code, which means we can omit it for non-PS2 systems
-    return 1;
-#endif
-
-    s32 i;
-
-    sceSifInitRpc(0);
-    sceSifInitIopHeap();
-    sceCdInit(SCECdINIT);
-    sceCdMmode(SCECdDVD);
-
-    while (1) {
-        if (sceSifRebootIop("cdrom0:\\THIRD\\IOP\\IOPRP280.IMG;1") != 0) {
-            break;
-        }
-    }
-
-    while (1) {
-        if (sceSifSyncIop() != 0) {
-            break;
-        }
-    }
-
-    sceSifInitRpc(0);
-    sceSifInitIopHeap();
-    sceCdInit(SCECdINIT);
-    sceCdMmode(SCECdDVD);
-    sceFsReset();
-    flPS2IopModuleLoad("cdrom0:\\THIRD\\IOP\\MODULES\\SIO2MAN.IRX;1", 0, NULL, 0);
-    flPS2PADModuleInit();
-    flPS2IopModuleLoad("cdrom0:\\THIRD\\IOP\\MODULES\\MCMAN.IRX;1", 0, NULL, 0);
-    flPS2IopModuleLoad("cdrom0:\\THIRD\\IOP\\MODULES\\MCSERV.IRX;1", 0, NULL, 0);
-    flPS2IopModuleLoad("cdrom0:\\THIRD\\IOP\\MODULES\\LIBSD.IRX;1", 0, NULL, 0);
-    flAdxModuleInit();
-    flPS2IopModuleLoad("cdrom0:\\THIRD\\IOP\\MOD_MW\\CSELIB00.IRX;1", 0, NULL, 0);
-    sceGsResetPath();
-    sceDmaReset(1);
-
-    for (i = 0; i < 10; i++) {
-        flPs2State.DmaChan[i] = sceDmaGetChan(i);
-    }
-
-    sceVpu0Reset();
-    flPs2VIF1Control.channel_id = 1;
-    flPS2DmaInitControl(&flPs2VIF1Control, 0x1000, flPS2DmaInterrupt);
-
-    return 1;
-}
-
-void flPS2VSyncCallback() {
-    flPs2State.Irq_count += 1;
-
-    if ((flPs2State.Irq_count > flPs2State.FrameCount) && (flPs2State.Db_change_enable == 1)) {
-        flPs2State.FrameCount = flPs2State.FrameCountNext;
-        flPs2State.Db_change_enable = 0;
-        flPs2State.Dbi ^= 1;
-        flPS2SwapDBuff(flPs2State.Dbi, 0);
-    }
-
-    flmwVSyncCallback();
-    ExitHandler();
 }
 
 u32 flPS2CheckDbChangeFlag() {
@@ -659,7 +585,6 @@ void flPS2InitRenderBuff(u32 fbdepth, u32 zbdepth, u32 inter_mode, u32 video_mod
     ds->acr_prmodecont.I64[1] = SCE_GS_PRMODECONT;
     ds->acr_dimx.I64[0] = SCE_GS_SET_DIMX(4, 2, 5, 3, 0, 6, 1, 7, 5, 3, 4, 2, 1, 7, 0, 6);
     ds->acr_dimx.I64[1] = SCE_GS_DIMX;
-    sceGsSyncVCallback((s32 (*)(s32))flPS2VSyncCallback);
 }
 
 void flPS2SwapDBuff(s32 dbi, s32 irq_type) {

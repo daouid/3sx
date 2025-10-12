@@ -3,7 +3,6 @@
 #include "sf33rd/AcrSDK/MiddleWare/PS2/CapSndEng/cse.h"
 #include "sf33rd/AcrSDK/ps2/flps2debug.h"
 #include "sf33rd/AcrSDK/ps2/foundaps2.h"
-#include "sf33rd/Source/Common/FileSizeAFS.h"
 #include "sf33rd/Source/Game/RAMCNT.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
 #include "sf33rd/Source/Game/color3rd.h"
@@ -12,51 +11,29 @@
 #include "sf33rd/Source/Game/workuser.h"
 #include "structs.h"
 
-#include "port/sdk_threads.h"
-
-#include <cri_mw.h>
-#include <libcdvd.h>
-#include <libgraph.h>
+#include "port/io/afs.h"
 
 typedef struct {
-    // total size: 0x4
-    u8 trycount;    // offset 0x0, size 0x1
-    u8 spindlctrl;  // offset 0x1, size 0x1
-    u8 datapattern; // offset 0x2, size 0x1
-    u8 pad;         // offset 0x3, size 0x1
-} PS2CDReadMode;
-
-typedef struct {
-    // total size: 0x4
-    u8 type;  // offset 0x0, size 0x1
-    u8 ix;    // offset 0x1, size 0x1
-    u8 frre;  // offset 0x2, size 0x1
-    u8 kokey; // offset 0x3, size 0x1
+    u8 type;
+    u8 ix;
+    u8 frre;
+    u8 kokey;
 } LDREQ_TBL;
 
 typedef void (*LDREQ_Process_Func)(REQ*);
 
-u16 DskDrvErrBe;
-u16 DskDrvErrType;
-u16 DskDrvErrRetry;
-PS2CDReadMode ps2CdReadMode;
-s16 plt_req[2]; // size: 0x4, address: 0x579084
+const u8 lpr_wrdata[3] = { 0x03, 0xC0, 0x3C };
+const u8 lpc_seldat[2] = { 10, 11 };
+const u8 lpt_seldat[4] = { 3, 4, 5, 0 };
+
+s16 plt_req[2];
 u8 ldreq_break;
-struct _adx_fs* adxf = NULL;
+REQ q_ldreq[16];
+u8 ldreq_result[294];
 
-#if defined(TARGET_PS2)
-u8 sf3ptinfo[3352];
-#else
-u8 sf3ptinfo[3352 + 12];
-#endif
+static AFSHandle afs_handle = AFS_NONE;
 
-REQ q_ldreq[16];      // size: 0x280, address: 0x5E1DD0
-u8 ldreq_result[294]; // size: 0x126, address: 0x5E1CA0
-
-const u8 lpr_wrdata[3] = { 0x03, 0xC0, 0x3C }; // size: 0x3, address: 0x51FCF0
-const u8 lpc_seldat[2] = { 10, 11 };           // size: 0x2, address: 0x51FCF8
-const u8 lpt_seldat[4] = { 3, 4, 5, 0 };       // size: 0x4, address: 0x51FD00
-
+// forward decls
 s32 Push_LDREQ_Queue(REQ* ldreq);
 void Push_LDREQ_Queue_Metamor();
 void q_ldreq_error(REQ* curr);
@@ -64,130 +41,37 @@ void disp_ldreq_status();
 void Push_LDREQ_Queue_Union(s16 ix);
 s32 Check_LDREQ_Queue_Union(s16 ix);
 
-// forward decls
 const LDREQ_Process_Func ldreq_process[6];
 s8* ldreq_process_name[];
 const LDREQ_TBL ldreq_tbl[294];
 const s16 ldreq_ix[43][2];
 
-s32 Setup_Directory_Record_Data() {
-    DskDrvErrBe = 0;
-    DskDrvErrType = 0xFFFF;
-    DskDrvErrRetry = 0;
-
-    ADXF_LoadPartitionNw(0, "SF33RD.AFS", NULL, sf3ptinfo);
-
-    while (1) {
-        if (ADXF_GetPtStat(0) == ADXF_STAT_READEND) {
-            break;
-        }
-
-#if defined(TARGET_PS2)
-        sceGsSyncV(0);
-#else
-        // CRI relies on VSync interrupts to execute its file system server.
-        // On modern platforms we don't call the VSync interrupt handler until
-        // we get to the main loop. That's why we have to emulate the interrupt
-        // manually like this.
-        begin_interrupt();
-        ADXPS2_ExecVint(0);
-        end_interrupt();
-#endif
-
-        ADXM_ExecMain();
-    }
-
-    ps2CdReadMode.trycount = 64;
-    ps2CdReadMode.spindlctrl = 1;
-    ps2CdReadMode.datapattern = 0;
-    ps2CdReadMode.pad = 0;
-    return 1;
-}
-
-void fsUpdateDiskDriveError() {
-    s32 chkNext = 0;
-
-    switch (sceCdGetDiskType()) {
-    case SCECdNODISC:
-        DskDrvErrType = 1;
-        break;
-
-    case SCECdDETCT:
-        DskDrvErrType = 5;
-        break;
-
-    default:
-        DskDrvErrType = 2;
-        break;
-
-    case SCECdPS2CD:
-    case SCECdPS2CDDA:
-    case SCECdPS2DVD:
-        chkNext = 1;
-        break;
-    }
-
-    if (chkNext == 0) {
-        return;
-    }
-
-    switch (sceCdGetError()) {
-    case SCECdErNO:
-        DskDrvErrType = 0xFFFF;
-        break;
-
-    default:
-        DskDrvErrType = 5;
-        break;
-
-    case SCECdErCUD:
-    case SCECdErIPI:
-    case SCECdErILI:
-    case SCECdErREAD:
-        DskDrvErrType = 4;
-        break;
-
-    case SCECdErTRMOPN:
-        DskDrvErrType = 0;
-        break;
-    }
-}
-
 s32 fsOpen(REQ* req) {
-    if (req->fnum >= AFS_FILE_COUNT) {
+    if (req->fnum >= AFS_GetFileCount()) {
         return 0;
     }
 
-    if (appFileSizes[req->fnum] == 0) {
-        return 0;
+    if (afs_handle != AFS_NONE) {
+        AFS_Close(afs_handle);
     }
 
-    if (adxf != NULL) {
-        ADXF_Close(adxf);
-    }
-
-    adxf = ADXF_OpenAfs(0, req->fnum);
-
-    if (adxf == NULL) {
-        return 0;
-    }
+    afs_handle = AFS_Open(req->fnum);
 
     req->info.number = 1;
-    req->info.size = appFileSizes[req->fnum];
     return 1;
 }
 
 void fsClose(REQ* /* unused */) {
-    ADXF_Close(adxf);
-    adxf = NULL;
+    AFS_Close(afs_handle);
+    afs_handle = AFS_NONE;
 }
 
 u32 fsGetFileSize(u16 fnum) {
-    if (fnum >= AFS_FILE_COUNT) {
+    if (fnum >= AFS_GetFileCount()) {
         return 0;
     }
 
-    return appFileSizes[fnum];
+    return AFS_GetSize(fnum);
 }
 
 u32 fsCalSectorSize(u32 size) {
@@ -195,44 +79,46 @@ u32 fsCalSectorSize(u32 size) {
 }
 
 s32 fsCansel(REQ* /* unused */) {
-    if (adxf != NULL && ADXF_GetStat(adxf) == ADXF_STAT_READING) {
-        ADXF_StopNw(adxf);
+    if ((afs_handle != AFS_NONE) && (AFS_GetState(afs_handle) == AFS_READ_STATE_READING)) {
+        AFS_Stop(afs_handle);
     }
 
     return 1;
 }
 
 s32 fsCheckCommandExecuting() {
-    if (adxf == NULL) {
+    if (afs_handle == AFS_NONE) {
         return 0;
     }
 
-    if (ADXF_GetStat(adxf) == ADXF_STAT_READING || ADXF_GetStat(adxf) == ADXF_STAT_ERROR) {
+    switch (AFS_GetState(afs_handle)) {
+    case AFS_READ_STATE_READING:
+    case AFS_READ_STATE_ERROR:
         return 1;
-    }
 
-    return 0;
+    case AFS_READ_STATE_IDLE:
+    case AFS_READ_STATE_FINISHED:
+        return 0;
+    }
 }
 
 s32 fsRequestFileRead(REQ* /* unused */, u32 sec, void* buff) {
-    ADXF_ReadNw(adxf, sec, buff);
+    AFS_Read(afs_handle, sec, buff);
     return 1;
 }
 
 s32 fsCheckFileReaded(REQ* /* unused */) {
-    s32 rnum = ADXF_GetStat(adxf);
-    fsUpdateDiskDriveError();
-
-    if (rnum == ADXF_STAT_ERROR) {
-        DskDrvErrBe = 1;
+    switch (AFS_GetState(afs_handle)) {
+    case AFS_READ_STATE_ERROR:
         return 2;
-    }
 
-    if (rnum == ADXF_STAT_READING) {
+    case AFS_READ_STATE_READING:
         return 0;
-    }
 
-    return 1;
+    case AFS_READ_STATE_IDLE:
+    case AFS_READ_STATE_FINISHED:
+        return 1;
+    }
 }
 
 s32 fsFileReadSync(REQ* req, u32 sec, void* buff) {
@@ -258,23 +144,15 @@ s32 fsFileReadSync(REQ* req, u32 sec, void* buff) {
 }
 
 void waitVsyncDummy() {
-    ADXM_ExecMain();
+    AFS_RunServer(); // FIXME: Ideally we should only call this from the main loop
     cseExecServer();
-
-#if defined(TARGET_PS2)
-    sceGsSyncV(0);
-#else
-    begin_interrupt();
-    ADXPS2_ExecVint(0);
-    end_interrupt();
-#endif
 }
 
 s32 load_it_use_any_key2(u16 fnum, void** adrs, s16* key, u8 kokey, u8 group) {
     u32 size;
     u32 err;
 
-    if (fnum >= AFS_FILE_COUNT) {
+    if (fnum >= AFS_GetFileCount()) {
         flLogOut("ファイルナンバーに異常があります。ファイル番号：%d\n", fnum);
         while (1) {}
     }
@@ -387,10 +265,6 @@ void Push_LDREQ_Queue_Player(s16 id, s16 ix) {
 }
 
 void Push_LDREQ_Queue_BG(s16 ix) {
-#if defined(TARGET_PS2)
-    void Push_LDREQ_Queue_Union(s32 ix);
-#endif
-
     Push_LDREQ_Queue_Union(ix + 20);
     Push_LDREQ_Queue_Metamor();
 }
@@ -418,10 +292,6 @@ void Push_LDREQ_Queue_Union(s16 ix) {
 }
 
 void Push_LDREQ_Queue_Metamor() {
-#if defined(TARGET_PS2)
-    void Push_LDREQ_Queue_Direct(s32 ix, s16 id);
-#endif
-
     switch ((My_char[0] == 0x12) + (My_char[1] == 0x12) * 2) {
     case 1:
         Push_LDREQ_Queue_Direct(My_char[1] + 0xD4, 0);
@@ -558,10 +428,6 @@ s32 Check_LDREQ_Queue_Player(s16 id) {
 }
 
 s32 Check_LDREQ_Queue_BG(s16 ix) {
-#if defined(TARGET_PS2)
-    s32 Check_LDREQ_Queue_Union(s32 ix);
-#endif
-
     return Check_LDREQ_Queue_Union(ix + 20);
 }
 
@@ -599,18 +465,12 @@ void q_ldreq_error(REQ* curr) {
     flLogOut("Q_LDREQ_ERROR : ロード処理の指定に誤りがあります。\n");
 }
 
-const LDREQ_Process_Func ldreq_process[6] = {
-    // size: 0x18, address: 0x51FE30
-    q_ldreq_error, q_ldreq_texture_group, q_ldreq_color_data, q_ldreq_color_data, q_ldreq_color_data, q_ldreq_color_data
-};
+const LDREQ_Process_Func ldreq_process[6] = { q_ldreq_error,      q_ldreq_texture_group, q_ldreq_color_data,
+                                              q_ldreq_color_data, q_ldreq_color_data,    q_ldreq_color_data };
 
-s8* ldreq_process_name[] = {
-    // size: 0x18, address: 0x573AB0
-    "EMP", "TEX", "COL", "SCR", "SND", "KNJ",
-};
+s8* ldreq_process_name[] = { "EMP", "TEX", "COL", "SCR", "SND", "KNJ" };
 
 const LDREQ_TBL ldreq_tbl[294] = {
-    // size: 0x0, address: 0x51FE80
     {
         0x1,
         0x1,
@@ -2377,15 +2237,14 @@ const LDREQ_TBL ldreq_tbl[294] = {
     },
 };
 
-const s16 ldreq_ix[43][2] = {
-    // size: 0xAC, address: 0x520320
-    { 0x0000, 0x0005 }, { 0x0005, 0x0003 }, { 0x000A, 0x0004 }, { 0x000F, 0x0004 }, { 0x0013, 0x0003 },
-    { 0x0019, 0x0005 }, { 0x001E, 0x0004 }, { 0x0023, 0x0005 }, { 0x0028, 0x0003 }, { 0x002D, 0x0004 },
-    { 0x0032, 0x0003 }, { 0x0037, 0x0004 }, { 0x003C, 0x0004 }, { 0x0041, 0x0004 }, { 0x0046, 0x0004 },
-    { 0x004B, 0x0004 }, { 0x0050, 0x0003 }, { 0x0055, 0x0003 }, { 0x005A, 0x0003 }, { 0x005F, 0x0004 },
-    { 0x0064, 0x0005 }, { 0x0069, 0x0003 }, { 0x006E, 0x0003 }, { 0x0073, 0x0003 }, { 0x0078, 0x0003 },
-    { 0x007D, 0x0003 }, { 0x0082, 0x0003 }, { 0x0087, 0x0003 }, { 0x008C, 0x0003 }, { 0x0091, 0x0003 },
-    { 0x0096, 0x0003 }, { 0x009B, 0x0003 }, { 0x00A0, 0x0003 }, { 0x00A5, 0x0003 }, { 0x00AA, 0x0003 },
-    { 0x00AF, 0x0003 }, { 0x00B4, 0x0003 }, { 0x00B9, 0x0003 }, { 0x00BE, 0x0003 }, { 0x00C3, 0x0003 },
-    { 0x00C8, 0x0005 }, { 0x00CE, 0x0004 }, { 0x0016, 0x0003 },
-};
+const s16 ldreq_ix[43][2] = { { 0x0000, 0x0005 }, { 0x0005, 0x0003 }, { 0x000A, 0x0004 }, { 0x000F, 0x0004 },
+                              { 0x0013, 0x0003 }, { 0x0019, 0x0005 }, { 0x001E, 0x0004 }, { 0x0023, 0x0005 },
+                              { 0x0028, 0x0003 }, { 0x002D, 0x0004 }, { 0x0032, 0x0003 }, { 0x0037, 0x0004 },
+                              { 0x003C, 0x0004 }, { 0x0041, 0x0004 }, { 0x0046, 0x0004 }, { 0x004B, 0x0004 },
+                              { 0x0050, 0x0003 }, { 0x0055, 0x0003 }, { 0x005A, 0x0003 }, { 0x005F, 0x0004 },
+                              { 0x0064, 0x0005 }, { 0x0069, 0x0003 }, { 0x006E, 0x0003 }, { 0x0073, 0x0003 },
+                              { 0x0078, 0x0003 }, { 0x007D, 0x0003 }, { 0x0082, 0x0003 }, { 0x0087, 0x0003 },
+                              { 0x008C, 0x0003 }, { 0x0091, 0x0003 }, { 0x0096, 0x0003 }, { 0x009B, 0x0003 },
+                              { 0x00A0, 0x0003 }, { 0x00A5, 0x0003 }, { 0x00AA, 0x0003 }, { 0x00AF, 0x0003 },
+                              { 0x00B4, 0x0003 }, { 0x00B9, 0x0003 }, { 0x00BE, 0x0003 }, { 0x00C3, 0x0003 },
+                              { 0x00C8, 0x0005 }, { 0x00CE, 0x0004 }, { 0x0016, 0x0003 } };
