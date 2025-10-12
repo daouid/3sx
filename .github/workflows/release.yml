@@ -15,6 +15,13 @@ jobs:
     container:
       image: ubuntu:25.04
     steps:
+      # Step 1: Install Git FIRST
+      - name: Install Git
+        run: |
+          apt-get update
+          apt-get install -y git
+
+      # Step 2: Now checkout can use Git to handle submodules
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -28,10 +35,11 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          apt-get update
+          # Git is already installed, just need the build tools
           apt-get install -y $(cat tools/requirements-ubuntu-sdl3.txt)
           apt-get install -y clang zip
 
+      # ... (the rest of your steps remain the same)
       - name: Build dependencies from source
         run: |
           chmod +x build-deps.sh
@@ -52,6 +60,7 @@ jobs:
         with:
           name: 3sx-linux
           path: artifacts/3sx-linux.zip
+
 
   build-windows:
     name: Build (Windows)
