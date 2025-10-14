@@ -20,7 +20,6 @@ static const Uint64 target_frame_time_ns = 1000000000.0 / target_fps;
 
 SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
-static SDL_Texture* screen_texture = NULL;
 
 static Uint64 frame_deadline = 0;
 static Uint64 frame_end_times[FRAME_END_TIMES_MAX];
@@ -32,18 +31,6 @@ static Uint64 frame_counter = 0;
 static bool should_save_screenshot = false;
 static Uint64 last_mouse_motion_time = 0;
 static const int mouse_hide_delay_ms = 2000; // 2 seconds
-
-static void create_screen_texture() {
-    if (screen_texture != NULL) {
-        SDL_DestroyTexture(screen_texture);
-    }
-
-    int target_width, target_height;
-    SDL_GetRenderOutputSize(renderer, &target_width, &target_height);
-    screen_texture = SDL_CreateTexture(
-        renderer, SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, target_width * 2, target_height * 2);
-    SDL_SetTextureScaleMode(screen_texture, SDL_SCALEMODE_LINEAR);
-}
 
 int SDLApp_Init() {
     SDL_SetAppMetadata(app_name, "0.1", NULL);
@@ -72,9 +59,6 @@ int SDLApp_Init() {
 
     // Initialize game renderer
     SDLGameRenderer_Init(renderer);
-
-    // Initialize screen texture
-    create_screen_texture();
 
     // Initialize pads
     SDLPad_Init();
@@ -156,10 +140,6 @@ bool SDLApp_PollEvents() {
             handle_mouse_motion();
             break;
 
-        case SDL_EVENT_WINDOW_RESIZED:
-            create_screen_texture();
-            break;
-
         case SDL_EVENT_QUIT:
             continue_running = false;
             break;
@@ -224,13 +204,6 @@ static void update_fps() {
     fps = 1000 / average_frame_time_ms;
 }
 
-static void save_texture(SDL_Texture* texture, const char* filename) {
-    SDL_SetRenderTarget(renderer, texture);
-    const SDL_Surface* rendered_surface = SDL_RenderReadPixels(renderer, NULL);
-    SDL_SaveBMP(rendered_surface, filename);
-    SDL_DestroySurface(rendered_surface);
-}
-
 void SDLApp_EndFrame() {
     // Run sound processing
     ADX_ProcessTracks();
@@ -239,27 +212,18 @@ void SDLApp_EndFrame() {
 
     SDLGameRenderer_RenderFrame();
 
-    if (should_save_screenshot) {
-        save_texture(cps3_canvas, "screenshot_cps3.bmp");
-    }
-
-    SDL_SetRenderTarget(renderer, screen_texture);
-
-    // Render window background
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // black bars
-    SDL_RenderClear(renderer);
-
-    // Render content
-    const SDL_FRect dst_rect = get_letterbox_rect(screen_texture->w, screen_texture->h);
+    // Render to window
+    SDL_SetRenderTarget(renderer, NULL);
+    int win_w, win_h;
+    SDL_GetWindowSize(window, &win_w, &win_h);
+    const SDL_FRect dst_rect = get_letterbox_rect(win_w, win_h);
     SDL_RenderTexture(renderer, cps3_canvas, NULL, &dst_rect);
     SDL_RenderTexture(renderer, message_canvas, NULL, &dst_rect);
 
-    // Render screen texture to screen
-    SDL_SetRenderTarget(renderer, NULL);
-    SDL_RenderTexture(renderer, screen_texture, NULL, NULL);
-
     if (should_save_screenshot) {
-        save_texture(screen_texture, "screenshot_screen.bmp");
+        const SDL_Surface* rendered_surface = SDL_RenderReadPixels(renderer, NULL);
+        SDL_SaveBMP(rendered_surface, "screenshot.bmp");
+        SDL_DestroySurface(rendered_surface);
     }
 
 #if defined(DEBUG)
