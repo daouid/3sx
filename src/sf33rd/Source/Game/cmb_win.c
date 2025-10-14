@@ -400,9 +400,6 @@ void combo_window_push(s8 PL, s8 KIND) {
     s32 xx;
     s16 i;
 
-    s32 assign1;
-    s32 assign2;
-
     if (KIND < 3) {
         score = SCORE_CALCULATION(PL);
         grade_max_combo_check(PL ^ 1, hit_num);
@@ -516,7 +513,7 @@ void combo_window_push(s8 PL, s8 KIND) {
         i = 3;
         xx = 100000;
 
-        assign1 = cmst_buff[PL][cst_write[PL]].first_digit = -1;
+        cmst_buff[PL][cst_write[PL]].first_digit = -1;
 
         while (i >= 0) {
             cmst_buff[PL][cst_write[PL]].pts_digit[i] = Pts_Buff / xx & 0xFF;
@@ -527,7 +524,7 @@ void combo_window_push(s8 PL, s8 KIND) {
             }
 
             i--;
-            assign2 = xx /= 10;
+            xx /= 10;
         }
 
         cmst_buff[PL][cst_write[PL]].move[1] = cmst_buff[PL][cst_write[PL]].first_digit + 6;

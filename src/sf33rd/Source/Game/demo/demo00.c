@@ -308,7 +308,6 @@ void Warning_Init() {
 // FIXME: When is this ever called?
 void Put_Warning(s16 type) {
     Polygon tex[4];
-    f32 video_y = 16.0f;
 
     tex[0].col = tex[1].col = tex[2].col = tex[3].col = 0xFFFFFFFF;
 

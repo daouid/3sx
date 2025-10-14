@@ -66,8 +66,6 @@ void Pause_Check(struct _TASK* task_ptr) {
 }
 
 void Pause_Move(struct _TASK* task_ptr) {
-    u16 sw = ~PLsw[Pause_ID][1] & PLsw[Pause_ID][0];
-
     if (Exit_Menu) {
         Exit_Pause(task_ptr);
     }

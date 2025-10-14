@@ -92,11 +92,6 @@ void GameOver_1st() {
 }
 
 void GameOver_2nd() {
-    s16 temp_v1_3;
-    s16 temp_v1_4;
-    s8 temp_v1_2;
-    u32 temp_v1;
-
     switch (GO_No[1]) {
     case 0:
         GO_No[1] += 1;

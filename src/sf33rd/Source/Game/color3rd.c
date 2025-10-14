@@ -184,7 +184,6 @@ void load_any_color(u16 ix, u8 kokey) {
 }
 
 void set_hitmark_color() {
-    u16* hmcol = (u16*)&hitmark_color;
     s16 i;
 
     for (i = 0; i < 64; i++) {

@@ -923,7 +923,6 @@ void Game_Manage_8_1() {
 }
 
 void Game_Manage_81_0() {
-    s16 ix;
     s16 time;
     s16 pos_id;
     s16 pos_id2;
@@ -932,7 +931,6 @@ void Game_Manage_81_0() {
     C_No[2]++;
     C_Timer = 20;
     Forbid_Break = -1;
-    ix = 0;
     pos_id = 0;
     pos_id2 = 0;
     time = 1;
