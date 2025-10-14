@@ -4,11 +4,11 @@
 #include "sf33rd/Source/Game/Grade.h"
 #include "sf33rd/Source/Game/PLCNT.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
-#include "sf33rd/Source/Game/Sound3rd.h"
 #include "sf33rd/Source/Game/sc_data.h"
 #include "sf33rd/Source/Game/sc_sub.h"
 #include "sf33rd/Source/Game/workuser.h"
 
+#include "sf33rd/Source/Game/sound/sound3rd.h"
 #include <string.h>
 
 // bss
