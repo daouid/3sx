@@ -1,10 +1,10 @@
 #include "sf33rd/Source/Game/Game.h"
 #include "common.h"
+#include "sf33rd/AcrSDK/common/pad.h"
 #include "sf33rd/Source/Common/PPGWork.h"
 #include "sf33rd/Source/Game/BBBSCOM.h"
 #include "sf33rd/Source/Game/Continue.h"
 #include "sf33rd/Source/Game/DC_Ghost.h"
-#include "sf33rd/Source/Game/EFFECT.h"
 #include "sf33rd/Source/Game/Entry.h"
 #include "sf33rd/Source/Game/Flash_LP.h"
 #include "sf33rd/Source/Game/GameOver.h"
@@ -23,25 +23,26 @@
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/SYS_sub2.h"
 #include "sf33rd/Source/Game/SysDir.h"
-#include "sf33rd/Source/Game/TATE00.h"
+#include "sf33rd/Source/Game/stage/tate00.h"
 #include "sf33rd/Source/Game/VITAL.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
 #include "sf33rd/Source/Game/Win.h"
-#include "sf33rd/Source/Game/bg.h"
-#include "sf33rd/Source/Game/bg_data.h"
-#include "sf33rd/Source/Game/bg_sub.h"
+#include "sf33rd/Source/Game/stage/bg.h"
+#include "sf33rd/Source/Game/stage/bg_data.h"
+#include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "sf33rd/Source/Game/cmb_win.h"
 #include "sf33rd/Source/Game/color3rd.h"
 #include "sf33rd/Source/Game/count.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
-#include "sf33rd/Source/Game/effect_init.h"
+#include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/effect/effect_init.h"
 #include "sf33rd/Source/Game/ending/end_main.h"
 #include "sf33rd/Source/Game/main.h"
 #include "sf33rd/Source/Game/sc_sub.h"
 #include "sf33rd/Source/Game/sel_pl.h"
 #include "sf33rd/Source/Game/spgauge.h"
 #include "sf33rd/Source/Game/stun.h"
-#include "sf33rd/Source/Game/ta_sub.h"
+#include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
 #include "sf33rd/Source/Game/workuser.h"
 #include "structs.h"
@@ -447,7 +448,7 @@ void Game2_0() {
         Play_Mode = 3;
         All_Clear_Timer();
         break;
-    
+
     default:
         // Do nothing
         break;
@@ -1773,9 +1774,9 @@ s16 Ck_Coin() {
     case 0:
         PL_id = -1;
 
-        if (~p1sw_1 & p1sw_0 & 0x4000) {
+        if (~p1sw_1 & p1sw_0 & SWK_START) {
             PL_id = 0;
-        } else if (~p2sw_1 & p2sw_0 & 0x4000) {
+        } else if (~p2sw_1 & p2sw_0 & SWK_START) {
             PL_id = 1;
         }
 

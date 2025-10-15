@@ -1,7 +1,6 @@
 #include "sf33rd/Source/Game/PLPCA.h"
 #include "common.h"
 #include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/EFF02.h"
 #include "sf33rd/Source/Game/Grade.h"
 #include "sf33rd/Source/Game/HITCHECK.h"
 #include "sf33rd/Source/Game/PLCNT.h"
@@ -11,8 +10,9 @@
 #include "sf33rd/Source/Game/Pow_Pow.h"
 #include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/SysDir.h"
-#include "sf33rd/Source/Game/bg.h"
+#include "sf33rd/Source/Game/effect/eff02.h"
 #include "sf33rd/Source/Game/sc_sub.h"
+#include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/workuser.h"
 
 #include "sf33rd/Source/Game/io/pulpul.h"

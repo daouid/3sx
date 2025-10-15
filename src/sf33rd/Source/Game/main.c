@@ -12,16 +12,16 @@
 #include "sf33rd/Source/Compress/zlibApp.h"
 #include "sf33rd/Source/Game/AcrUtil.h"
 #include "sf33rd/Source/Game/DC_Ghost.h"
-#include "sf33rd/Source/Game/EFFECT.h"
 #include "sf33rd/Source/Game/MTRANS.h"
 #include "sf33rd/Source/Game/PLCNT.h"
 #include "sf33rd/Source/Game/RAMCNT.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/SYS_sub2.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/bg.h"
+#include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/color3rd.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
+#include "sf33rd/Source/Game/effect/effect.h"
 #include "sf33rd/Source/Game/init3rd.h"
 #include "sf33rd/Source/Game/texcash.h"
 #include "sf33rd/Source/Game/workuser.h"
@@ -208,17 +208,17 @@ static void game_step_0() {
                 sysSLOW = 1;
 
                 switch (io_w.data[1].sw_new) {
-                case 0x2000:
+                case SWK_LEFT_STICK:
                     mpp_w.sysStop = 0;
                     // fallthrough
 
-                case 0x80:
+                case SWK_LEFT_SHOULDER:
                     Slow_Timer = 1;
                     break;
 
                 default:
-                    switch (io_w.data[1].sw & 0x880) {
-                    case 0x880:
+                    switch (io_w.data[1].sw & (SWK_LEFT_SHOULDER | SWK_LEFT_TRIGGER)) {
+                    case SWK_LEFT_SHOULDER | SWK_LEFT_TRIGGER:
                         if ((sysFF = Debug_w[1]) == 0) {
                             sysFF = 1;
                         }
@@ -228,7 +228,7 @@ static void game_step_0() {
 
                         break;
 
-                    case 0x800:
+                    case SWK_LEFT_TRIGGER:
                         if (Slow_Timer == 0) {
                             if ((Slow_Timer = Debug_w[0]) == 0) {
                                 Slow_Timer = 1;
@@ -248,7 +248,7 @@ static void game_step_0() {
                     break;
                 }
             }
-        } else if (io_w.data[1].sw_new & 0x2000) {
+        } else if (io_w.data[1].sw_new & SWK_LEFT_STICK) {
             mpp_w.sysStop = 1;
         }
     }

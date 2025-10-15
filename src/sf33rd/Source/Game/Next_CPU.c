@@ -1,19 +1,7 @@
 #include "sf33rd/Source/Game/Next_CPU.h"
 #include "common.h"
+#include "sf33rd/AcrSDK/common/pad.h"
 #include "sf33rd/Source/Game/Com_Data.h"
-#include "sf33rd/Source/Game/EFF38.h"
-#include "sf33rd/Source/Game/EFF42.h"
-#include "sf33rd/Source/Game/EFF58.h"
-#include "sf33rd/Source/Game/EFF75.h"
-#include "sf33rd/Source/Game/EFF98.h"
-#include "sf33rd/Source/Game/EFFA5.h"
-#include "sf33rd/Source/Game/EFFECT.h"
-#include "sf33rd/Source/Game/Eff39.h"
-#include "sf33rd/Source/Game/Eff43.h"
-#include "sf33rd/Source/Game/Eff76.h"
-#include "sf33rd/Source/Game/EffA9.h"
-#include "sf33rd/Source/Game/EffE0.h"
-#include "sf33rd/Source/Game/EffK6.h"
 #include "sf33rd/Source/Game/Grade.h"
 #include "sf33rd/Source/Game/MMTMCNT.h"
 #include "sf33rd/Source/Game/PLCNT.h"
@@ -23,10 +11,23 @@
 #include "sf33rd/Source/Game/Sel_Data.h"
 #include "sf33rd/Source/Game/SysDir.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/bg.h"
-#include "sf33rd/Source/Game/bg_data.h"
-#include "sf33rd/Source/Game/bg_sub.h"
+#include "sf33rd/Source/Game/stage/bg.h"
+#include "sf33rd/Source/Game/stage/bg_data.h"
+#include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
+#include "sf33rd/Source/Game/effect/eff38.h"
+#include "sf33rd/Source/Game/effect/eff39.h"
+#include "sf33rd/Source/Game/effect/eff42.h"
+#include "sf33rd/Source/Game/effect/eff43.h"
+#include "sf33rd/Source/Game/effect/eff58.h"
+#include "sf33rd/Source/Game/effect/eff75.h"
+#include "sf33rd/Source/Game/effect/eff76.h"
+#include "sf33rd/Source/Game/effect/eff98.h"
+#include "sf33rd/Source/Game/effect/effa5.h"
+#include "sf33rd/Source/Game/effect/effa9.h"
+#include "sf33rd/Source/Game/effect/effe0.h"
+#include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/effect/effk6.h"
 #include "sf33rd/Source/Game/sc_sub.h"
 #include "sf33rd/Source/Game/workuser.h"
 
@@ -1072,16 +1073,16 @@ void Sel_CPU_Sub(s16 PL_id, u16 sw, u16 /* unused */) {
     }
 
     if (Time_Over) {
-        sw = 16;
+        sw = SWK_WEST;
     }
 
     if (VS_Index[PL_id] >= 8) {
-        sw = 16;
+        sw = SWK_WEST;
     }
 
-    lever_sw = sw & 3;
+    lever_sw = sw & (SWK_UP | SWK_DOWN);
 
-    if (lever_sw & 2) {
+    if (lever_sw & SWK_DOWN) {
         if (Temporary_EM[Player_id] == 2) {
             return;
         }
@@ -1092,7 +1093,7 @@ void Sel_CPU_Sub(s16 PL_id, u16 sw, u16 /* unused */) {
         Temporary_EM[Player_id] = 2;
     }
 
-    if (lever_sw & 1) {
+    if (lever_sw & SWK_UP) {
         if (Temporary_EM[Player_id] == 1) {
             return;
         }
@@ -1103,7 +1104,7 @@ void Sel_CPU_Sub(s16 PL_id, u16 sw, u16 /* unused */) {
         Temporary_EM[Player_id] = 1;
     }
 
-    if (sw & 0xFF0) {
+    if (sw & SWK_ATTACKS) {
         Sel_EM_Complete[PL_id] = 1;
         EM_id = EM_List[Player_id][Temporary_EM[Player_id] - 1];
         My_char[COM_id] = EM_id;
