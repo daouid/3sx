@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "port/sdl/sdl_game_renderer.h"
 #include "common.h"
 #include "sf33rd/AcrSDK/ps2/flps2etc.h"
@@ -5,11 +8,8 @@
 #include "sf33rd/AcrSDK/ps2/foundaps2.h"
 
 #include <libgraph.h>
-
 #include <SDL3/SDL.h>
 
-#include <stdio.h>
-#include <stdlib.h>
 
 #define RENDER_TASK_MAX 1024
 #define TEXTURES_TO_DESTROY_MAX 1024
