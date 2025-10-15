@@ -2,7 +2,7 @@
 #include "sf33rd/Source/Game/bg.h"
 #include "sf33rd/Source/Game/bg_data.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
-#include "sf33rd/Source/Game/effect_init.h"
+#include "sf33rd/Source/Game/effect/effect_init.h"
 #include "sf33rd/Source/Game/workuser.h"
 
 #include "sf33rd/Source/Game/sound/se.h"
