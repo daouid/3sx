@@ -10,10 +10,9 @@
 #include "sf33rd/Source/Game/color3rd.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
 #include "sf33rd/Source/Game/effect/effect.h"
-#include "sf33rd/Source/Game/ta_sub.h"
-#include "sf33rd/Source/Game/texcash.h"
-
 #include "sf33rd/Source/Game/opening/opening.h"
+#include "sf33rd/Source/Game/stage/ta_sub.h"
+#include "sf33rd/Source/Game/texcash.h"
 
 // forward decls
 void efff6_move_common(WORK_Other* ewk);

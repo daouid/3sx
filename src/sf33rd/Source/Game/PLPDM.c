@@ -12,7 +12,7 @@
 #include "sf33rd/Source/Game/Pow_Pow.h"
 #include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/SysDir.h"
-#include "sf33rd/Source/Game/bg.h"
+#include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/cmb_win.h"
 #include "sf33rd/Source/Game/effect/effa7.h"
 #include "sf33rd/Source/Game/effect/effd9.h"

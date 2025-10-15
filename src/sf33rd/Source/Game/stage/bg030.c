@@ -1,15 +1,20 @@
-#include "sf33rd/Source/Game/bg030.h"
+/**
+ * @file bg_030.c
+ * Shopping District, Hong Kong
+ */
+
+#include "sf33rd/Source/Game/stage/bg030.h"
 #include "common.h"
 #include "sf33rd/Source/Game/PLCNT.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/bg.h"
-#include "sf33rd/Source/Game/bg_data.h"
-#include "sf33rd/Source/Game/bg_sub.h"
 #include "sf33rd/Source/Game/effect/eff05.h"
 #include "sf33rd/Source/Game/effect/eff06.h"
 #include "sf33rd/Source/Game/effect/eff71.h"
 #include "sf33rd/Source/Game/effect/effl2.h"
-#include "sf33rd/Source/Game/ta_sub.h"
+#include "sf33rd/Source/Game/stage/bg.h"
+#include "sf33rd/Source/Game/stage/bg_data.h"
+#include "sf33rd/Source/Game/stage/bg_sub.h"
+#include "sf33rd/Source/Game/stage/ta_sub.h"
 
 void BG030() {
     bgw_ptr = &bg_w.bgw[1];

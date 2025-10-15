@@ -1,13 +1,18 @@
-#include "sf33rd/Source/Game/bns_bg2.h"
+/**
+ * @file bns_bg2.c
+ * Car Crush Minigame Stage
+ */
+
+#include "sf33rd/Source/Game/stage/bns_bg2.h"
 #include "common.h"
 #include "sf33rd/Source/Game/PLCNT.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/bg.h"
-#include "sf33rd/Source/Game/bg_data.h"
-#include "sf33rd/Source/Game/bg_sub.h"
 #include "sf33rd/Source/Game/effect/eff05.h"
 #include "sf33rd/Source/Game/effect/eff12.h"
 #include "sf33rd/Source/Game/effect/eff35.h"
+#include "sf33rd/Source/Game/stage/bg.h"
+#include "sf33rd/Source/Game/stage/bg_data.h"
+#include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "sf33rd/Source/Game/workuser.h"
 
 void Bonus_bg2() {

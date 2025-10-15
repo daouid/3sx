@@ -1,10 +1,15 @@
-#include "sf33rd/Source/Game/bg_sub.h"
+/**
+ * @file bg_sub.c
+ * Stage Subroutines
+ */
+
+#include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "common.h"
 #include "sf33rd/Source/Game/PLCNT.h"
 #include "sf33rd/Source/Game/PLS02.h"
-#include "sf33rd/Source/Game/bg.h"
-#include "sf33rd/Source/Game/bg_data.h"
-#include "sf33rd/Source/Game/ta_sub.h"
+#include "sf33rd/Source/Game/stage/bg.h"
+#include "sf33rd/Source/Game/stage/bg_data.h"
+#include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/workuser.h"
 #include "structs.h"
 
@@ -270,11 +275,6 @@ void bg_chase_move() {
 }
 
 void chase_start_check() {
-#if defined(TARGET_PS2)
-    void cal_bg_speed_data_x(s32 /* unused */, s32 bg_num, s32 tm);
-    void cal_bg_speed_data_y(s32 /* unused */, s32 bg_num, s32 tm);
-#endif
-
     s16 work;
     s16 work2;
 
@@ -756,11 +756,6 @@ void bg_y_move_check() {
 }
 
 void zoom_ud_check() {
-#if defined(TARGET_PS2)
-    void Frame_Up(u32 x, u32 y, u16 add);
-    void Frame_Down(u32 x, u32 y, u16 add);
-#endif
-
     s16 work;
     s16 work2;
     s16 pos_w;
@@ -887,11 +882,6 @@ void suzi_sync_pos_set(WORK_Other* ewk) {
 }
 
 void Bg_Family_Set() {
-#if defined(TARGET_PS2)
-    void Scrn_Move_Set(s32 bgnm, s32 x, s32 y);
-    void Family_Set_W(s32 fmnm, s32 x, s32 y);
-#endif
-
     s8 i;
     s16 x;
     s16 y;
@@ -907,11 +897,6 @@ void Bg_Family_Set() {
 }
 
 void Bg_Family_Set_appoint(s32 num_of_bg) {
-#if defined(TARGET_PS2)
-    void Scrn_Move_Set(s32 bgnm, s32 x, s32 y);
-    void Family_Set_W(s32 fmnm, s32 x, s32 y);
-#endif
-
     s16 x = bg_w.bgw[num_of_bg].position_x;
     s16 y = bg_w.bgw[num_of_bg].position_y;
 
@@ -922,11 +907,6 @@ void Bg_Family_Set_appoint(s32 num_of_bg) {
 }
 
 void Bg_Family_Set_2() {
-#if defined(TARGET_PS2)
-    void Scrn_Move_Set(s32 bgnm, s32 x, s32 y);
-    void Family_Set_W(s32 fmnm, s32 x, s32 y);
-#endif
-
     s8 i;
     s16 x;
     s16 y;
@@ -943,11 +923,6 @@ void Bg_Family_Set_2() {
 }
 
 void Bg_Family_Set_2_appoint(s32 num_of_bg) {
-#if defined(TARGET_PS2)
-    void Scrn_Move_Set(s32 bgnm, s32 x, s32 y);
-    void Family_Set_W(s32 fmnm, s32 x, s32 y);
-#endif
-
     s16 x;
     s16 y;
 
@@ -961,11 +936,6 @@ void Bg_Family_Set_2_appoint(s32 num_of_bg) {
 }
 
 void ake_Family_Set2() {
-#if defined(TARGET_PS2)
-    void Scrn_Move_Set(s32 bgnm, s32 x, s32 y);
-    void Family_Set_W(s32 fmnm, s32 x, s32 y);
-#endif
-
     s16 x = bg_w.bgw[3].position_x;
     s16 y = bg_w.bgw[3].position_y;
 
@@ -1221,10 +1191,6 @@ void akebono_initialize() {
 }
 
 void bg_etc_write(s16 type) {
-#if defined(TARGET_PS2)
-    void Bg_Texture_Load2(u32 type);
-#endif
-
     u8 i;
 
     Family_Init();

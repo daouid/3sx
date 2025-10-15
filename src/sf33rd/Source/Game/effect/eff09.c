@@ -14,18 +14,17 @@
 #include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
 #include "sf33rd/Source/Game/aboutspr.h"
-#include "sf33rd/Source/Game/bg.h"
-#include "sf33rd/Source/Game/bg_data.h"
-#include "sf33rd/Source/Game/bg_sub.h"
+#include "sf33rd/Source/Game/animation/appear.h"
 #include "sf33rd/Source/Game/color3rd.h"
 #include "sf33rd/Source/Game/effect/effb4.h"
 #include "sf33rd/Source/Game/effect/effect.h"
-#include "sf33rd/Source/Game/ta_sub.h"
+#include "sf33rd/Source/Game/sound/se.h"
+#include "sf33rd/Source/Game/stage/bg.h"
+#include "sf33rd/Source/Game/stage/bg_data.h"
+#include "sf33rd/Source/Game/stage/bg_sub.h"
+#include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
 #include "sf33rd/Source/Game/workuser.h"
-
-#include "sf33rd/Source/Game/animation/appear.h"
-#include "sf33rd/Source/Game/sound/se.h"
 
 const s16 eff09_data[2][9] = { { 0, 2, 8492, 832, 192, 10, 0, 1, 0 }, { 19, 2, 8492, 528, 108, 78, 1, 0, 0 } };
 

@@ -8,15 +8,14 @@
 #include "common.h"
 #include "sf33rd/Source/Game/CALDIR.h"
 #include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/ta_sub.h"
-#include "sf33rd/Source/Game/texcash.h"
-#include "structs.h"
-
 #include "sf33rd/Source/Game/debug/Debug.h"
 #include "sf33rd/Source/Game/effect/eff36.h"
 #include "sf33rd/Source/Game/effect/effect.h"
 #include "sf33rd/Source/Game/opening/op_sub.h"
 #include "sf33rd/Source/Game/opening/opening.h"
+#include "sf33rd/Source/Game/stage/ta_sub.h"
+#include "sf33rd/Source/Game/texcash.h"
+#include "structs.h"
 
 typedef const s16* ConstShortArray;
 extern ConstShortArray eff48_adrs_tbl[];

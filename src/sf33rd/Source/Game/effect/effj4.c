@@ -8,8 +8,8 @@
 #include "sf33rd/Source/Game/PLCNT.h"
 #include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/aboutspr.h"
-#include "sf33rd/Source/Game/bg_data.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/stage/bg_data.h"
 #include "sf33rd/Source/Game/workuser.h"
 
 void effect_J4_move(WORK_Other* ewk) {

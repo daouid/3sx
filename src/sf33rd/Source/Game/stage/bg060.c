@@ -1,15 +1,20 @@
-#include "sf33rd/Source/Game/bg060.h"
+/**
+ * @file bg_060.c
+ * Home Sweet Home, Germany
+ */
+
+#include "sf33rd/Source/Game/stage/bg060.h"
 #include "common.h"
 #include "sf33rd/Source/Game/PLCNT.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/bg.h"
-#include "sf33rd/Source/Game/bg_data.h"
-#include "sf33rd/Source/Game/bg_sub.h"
 #include "sf33rd/Source/Game/effect/eff05.h"
 #include "sf33rd/Source/Game/effect/eff24.h"
 #include "sf33rd/Source/Game/effect/eff44.h"
 #include "sf33rd/Source/Game/effect/eff60.h"
-#include "sf33rd/Source/Game/ta_sub.h"
+#include "sf33rd/Source/Game/stage/bg.h"
+#include "sf33rd/Source/Game/stage/bg_data.h"
+#include "sf33rd/Source/Game/stage/bg_sub.h"
+#include "sf33rd/Source/Game/stage/ta_sub.h"
 
 void BG060() {
     bgw_ptr = &bg_w.bgw[1];
@@ -46,10 +51,6 @@ void bg0602() {
 }
 
 void bg0602_init00() {
-#if defined(TARGET_PS2)
-    s32 effect_24_init();
-#endif
-
     bgw_ptr->r_no_1 = 0;
     bgw_ptr->r_no_0++;
     bgw_ptr->zuubun = 0;

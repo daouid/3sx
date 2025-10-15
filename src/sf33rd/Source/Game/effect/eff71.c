@@ -10,7 +10,7 @@
 #include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/eff72.h"
 #include "sf33rd/Source/Game/effect/effect.h"
-#include "sf33rd/Source/Game/ta_sub.h"
+#include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/workuser.h"
 
 const s16 eff71_time_tbl[8] = { 2, 8, 12, 9, 4, 6, 50, 3 };

@@ -10,13 +10,12 @@
 #include "sf33rd/Source/Game/PLS02.h"
 #include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/aboutspr.h"
-#include "sf33rd/Source/Game/bg.h"
 #include "sf33rd/Source/Game/effect/eff02.h"
 #include "sf33rd/Source/Game/effect/effect.h"
-#include "sf33rd/Source/Game/workuser.h"
-
 #include "sf33rd/Source/Game/io/pulpul.h"
 #include "sf33rd/Source/Game/sound/se_data.h"
+#include "sf33rd/Source/Game/stage/bg.h"
+#include "sf33rd/Source/Game/workuser.h"
 
 void effect_A7_move(WORK_Other* ewk) {
     const HMDT* tad;

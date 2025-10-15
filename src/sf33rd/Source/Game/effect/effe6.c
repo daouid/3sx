@@ -9,16 +9,15 @@
 #include "sf33rd/Source/Game/CALDIR.h"
 #include "sf33rd/Source/Game/CHARSET.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/bg.h"
 #include "sf33rd/Source/Game/color3rd.h"
 #include "sf33rd/Source/Game/effect/effect.h"
-#include "sf33rd/Source/Game/ta_sub.h"
+#include "sf33rd/Source/Game/ending/end_00.h"
+#include "sf33rd/Source/Game/ending/end_data.h"
+#include "sf33rd/Source/Game/stage/bg.h"
+#include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
 #include "sf33rd/Source/Game/texgroup.h"
 #include "sf33rd/Source/Game/workuser.h"
-
-#include "sf33rd/Source/Game/ending/end_00.h"
-#include "sf33rd/Source/Game/ending/end_data.h"
 
 void effe6_0000(WORK_Other* ewk);
 void effe6_0001(WORK_Other* ewk);
