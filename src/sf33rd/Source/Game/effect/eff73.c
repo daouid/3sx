@@ -6,14 +6,14 @@
 #include "sf33rd/Source/Game/effect/eff73.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLS02.h"
-#include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 const s32 eff73_sp_tbl[4][3] = {
     { 0x28000, -0x18000, -0x800 }, { 0x10000, 0x8000, 0x20000 }, { -0x4000, 0x0, 0x0 }, { -0x10000, 0x8000, 0x28000 }
@@ -38,8 +38,8 @@ void effect_73_move(WORK_Other* ewk) {
     case 1:
         if (!EXE_flag && !Game_pause) {
             char_move(&ewk->wu);
-            add_x_sub(ewk);
-            add_y_sub(ewk);
+            add_x_sub(&ewk->wu);
+            add_y_sub(&ewk->wu);
             ewk->wu.old_rno[0]--;
 
             if (ewk->wu.old_rno[0] < 0) {
@@ -58,8 +58,8 @@ void effect_73_move(WORK_Other* ewk) {
     case 2:
         if (!EXE_flag && !Game_pause) {
             char_move(&ewk->wu);
-            add_x_sub(ewk);
-            add_y_sub(ewk);
+            add_x_sub(&ewk->wu);
+            add_y_sub(&ewk->wu);
 
             if (ewk->wu.xyz[1].disp.pos < 64) {
                 ewk->wu.routine_no[0]++;
@@ -76,8 +76,8 @@ void effect_73_move(WORK_Other* ewk) {
     case 3:
         if (!EXE_flag && !Game_pause) {
             char_move(&ewk->wu);
-            add_x_sub(ewk);
-            add_y_sub(ewk);
+            add_x_sub(&ewk->wu);
+            add_y_sub(&ewk->wu);
 
             if (ewk->wu.xyz[1].disp.pos < 56) {
                 ewk->wu.routine_no[0] = 99;

@@ -6,16 +6,16 @@
 #include "sf33rd/Source/Game/effect/effm2.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLS02.h"
-#include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/effect.h"
 #include "sf33rd/Source/Game/effect/effm0.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 void effm2_move(WORK_Other* ewk);
 void effm2_move2(WORK_Other* ewk);
@@ -95,7 +95,7 @@ void effm2_move(WORK_Other* ewk) {
 
     case 2:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
 
         if (!range_x_check3(ewk, 64)) {
             ewk->wu.routine_no[0] = 99;
@@ -145,7 +145,7 @@ void effm2_move2(WORK_Other* ewk) {
 
     case 1:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
         dis_w = oya_ptr->xyz[0].disp.pos - ewk->wu.xyz[0].disp.pos;
 
         if (dis_w < 0) {

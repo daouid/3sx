@@ -6,16 +6,16 @@
 #include "sf33rd/Source/Game/effect/eff31.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CALDIR.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/caldir.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 void effect_31_move(WORK_Other* ewk) {
     switch (ewk->wu.routine_no[0]) {
@@ -35,8 +35,8 @@ void effect_31_move(WORK_Other* ewk) {
     case 1:
         if (!EXE_flag && !Game_pause) {
             char_move(&ewk->wu);
-            add_x_sub(ewk);
-            add_y_sub(ewk);
+            add_x_sub(&ewk->wu);
+            add_y_sub(&ewk->wu);
             ewk->wu.old_rno[0]--;
 
             if (ewk->wu.old_rno[0] < 1) {

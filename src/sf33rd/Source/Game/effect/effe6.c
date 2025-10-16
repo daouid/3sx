@@ -6,18 +6,18 @@
 #include "sf33rd/Source/Game/effect/effe6.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CALDIR.h"
-#include "sf33rd/Source/Game/CHARSET.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
 #include "sf33rd/Source/Game/color3rd.h"
 #include "sf33rd/Source/Game/effect/effect.h"
 #include "sf33rd/Source/Game/ending/end_00.h"
 #include "sf33rd/Source/Game/ending/end_data.h"
+#include "sf33rd/Source/Game/engine/caldir.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
 #include "sf33rd/Source/Game/texgroup.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 void effe6_0000(WORK_Other* ewk);
 void effe6_0001(WORK_Other* ewk);
@@ -292,7 +292,7 @@ void effe6_0005(WORK_Other* ewk) {
         break;
 
     case 2:
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
 
         if (ewk->wu.xyz[0].disp.pos > -1216) {
             ewk->wu.routine_no[2] = 99;
@@ -532,7 +532,7 @@ void effe6_0012(WORK_Other* ewk) {
         break;
 
     case 2:
-        add_y_sub(ewk);
+        add_y_sub(&ewk->wu);
 
         if (ewk->wu.xyz[1].disp.pos < 48) {
             ewk->wu.routine_no[2] = 99;
@@ -564,7 +564,7 @@ void effe6_0013(WORK_Other* ewk) {
         break;
 
     case 1:
-        add_y_sub(ewk);
+        add_y_sub(&ewk->wu);
 
         if (ewk->wu.type == 50) {
             if (ewk->wu.xyz[1].disp.pos > 272) {
@@ -688,8 +688,8 @@ void effe6_0015(WORK_Other* ewk) {
                 ewk->wu.xyz[0].disp.pos = 544;
                 ewk->wu.xyz[1].disp.pos = 48;
             } else {
-                add_x_sub(ewk);
-                add_y_sub(ewk);
+                add_x_sub(&ewk->wu);
+                add_y_sub(&ewk->wu);
             }
         }
 

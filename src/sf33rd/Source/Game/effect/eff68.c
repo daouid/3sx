@@ -6,15 +6,15 @@
 #include "sf33rd/Source/Game/effect/eff68.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CALDIR.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/caldir.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 void effect_68_move(WORK_Other* ewk) {
     switch (ewk->wu.routine_no[0]) {
@@ -53,8 +53,8 @@ void effect_68_move(WORK_Other* ewk) {
                 set_char_move_init(&ewk->wu, 0, ewk->wu.char_index);
             }
 
-            add_x_sub(ewk);
-            add_y_sub(ewk);
+            add_x_sub(&ewk->wu);
+            add_y_sub(&ewk->wu);
         }
 
         disp_pos_trans_entry(ewk);
@@ -70,8 +70,8 @@ void effect_68_move(WORK_Other* ewk) {
                 cal_all_speed_data(&ewk->wu, ewk->wu.routine_no[4], ewk->wu.old_rno[6], ewk->wu.old_rno[7], 1, 1);
             }
 
-            add_x_sub(ewk);
-            add_y_sub(ewk);
+            add_x_sub(&ewk->wu);
+            add_y_sub(&ewk->wu);
             char_move(&ewk->wu);
         }
 
@@ -90,8 +90,8 @@ void effect_68_move(WORK_Other* ewk) {
                 set_char_move_init(&ewk->wu, 0, ewk->wu.char_index);
             }
 
-            add_x_sub(ewk);
-            add_y_sub(ewk);
+            add_x_sub(&ewk->wu);
+            add_y_sub(&ewk->wu);
             char_move(&ewk->wu);
         }
 
@@ -110,8 +110,8 @@ void effect_68_move(WORK_Other* ewk) {
                 set_char_move_init(&ewk->wu, 0, ewk->wu.char_index);
             }
 
-            add_x_sub(ewk);
-            add_y_sub(ewk);
+            add_x_sub(&ewk->wu);
+            add_y_sub(&ewk->wu);
         }
 
         disp_pos_trans_entry(ewk);

@@ -6,10 +6,10 @@
 #include "sf33rd/Source/Game/effect/effg8.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLS02.h"
 #include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
 #include "sf33rd/Source/Game/stage/bg_data.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
@@ -62,8 +62,8 @@ void effect_G8_move(WORK_Other* ewk) {
         /* fallthrough */
 
     case 3:
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
 
         if (effg8_range_check(ewk)) {
             ewk->wu.routine_no[0] = 99;

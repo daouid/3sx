@@ -5,17 +5,17 @@
 
 #include "sf33rd/Source/Game/effect/effj8.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLS02.h"
-#include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/eff05.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 void effect_J8_move(WORK_Other* ewk) {
     if (obr_no_disp_check()) {
@@ -75,8 +75,8 @@ void dragonfly_l_move_1(WORK_Other* ewk) {
 
 s16 dragonfly_l_move_2(WORK_Other* ewk) {
     char_move(&ewk->wu);
-    add_x_sub(ewk);
-    add_y_sub(ewk);
+    add_x_sub(&ewk->wu);
+    add_y_sub(&ewk->wu);
 
     if (ewk->wu.xyz[0].disp.pos <= bg_w.bgw[1].l_limit2 - bg_w.pos_offset - 24) {
         dragonfly_stop_timer(ewk);
@@ -91,8 +91,8 @@ s16 dragonfly_l_move_2(WORK_Other* ewk) {
 }
 
 s16 dragonfly_l_move_3(WORK_Other* ewk) {
-    add_x_sub(ewk);
-    add_y_sub(ewk);
+    add_x_sub(&ewk->wu);
+    add_y_sub(&ewk->wu);
 
     if (ewk->wu.xyz[0].disp.pos <= bg_w.bgw[1].l_limit2 - bg_w.pos_offset - 24) {
         dragonfly_stop_timer(ewk);
@@ -181,8 +181,8 @@ void dragonfly_r_move_1(WORK_Other* ewk) {
 
 s16 dragonfly_r_move_2(WORK_Other* ewk) {
     char_move(&ewk->wu);
-    add_x_sub(ewk);
-    add_y_sub(ewk);
+    add_x_sub(&ewk->wu);
+    add_y_sub(&ewk->wu);
 
     if (ewk->wu.xyz[0].disp.pos > bg_w.bgw[1].r_limit2 + bg_w.pos_offset + 24) {
         dragonfly_stop_timer(ewk);
@@ -197,8 +197,8 @@ s16 dragonfly_r_move_2(WORK_Other* ewk) {
 }
 
 s16 dragonfly_r_move_3(WORK_Other* ewk) {
-    add_x_sub(ewk);
-    add_y_sub(ewk);
+    add_x_sub(&ewk->wu);
+    add_y_sub(&ewk->wu);
 
     if (ewk->wu.xyz[0].disp.pos >= bg_w.bgw[1].r_limit2 + bg_w.pos_offset + 24) {
         dragonfly_stop_timer(ewk);
@@ -308,8 +308,8 @@ void dragonfly_move_0000(WORK_Other* ewk) {
             break;
         }
 
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
         break;
     }
 }
@@ -409,8 +409,8 @@ void dragonfly_move_0004(WORK_Other* ewk) {
             break;
         }
 
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
         break;
     }
 }

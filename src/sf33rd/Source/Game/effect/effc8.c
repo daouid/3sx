@@ -6,13 +6,13 @@
 #include "sf33rd/Source/Game/effect/effc8.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 const s32 effc8_data_tbl[4] = { 0x30000, 0x200, 0, -0x1800 };
 
@@ -78,8 +78,8 @@ void effect_C8_move(WORK_Other* ewk) {
 
     case 3:
         if (!EXE_flag && !Game_pause) {
-            add_x_sub(ewk);
-            add_y_sub(ewk);
+            add_x_sub(&ewk->wu);
+            add_y_sub(&ewk->wu);
             char_move(&ewk->wu);
 
             if (ewk->wu.cg_type) {

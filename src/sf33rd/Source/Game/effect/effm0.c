@@ -6,16 +6,16 @@
 #include "sf33rd/Source/Game/effect/effm0.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLCNT.h"
-#include "sf33rd/Source/Game/PLS02.h"
-#include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/plcnt.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 void animal_init(WORK_Other* ewk);
 void animal_control(WORK_Other* ewk);
@@ -159,7 +159,7 @@ void animal_0000(WORK_Other* ewk) {
         break;
 
     case 2:
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
         char_move(&ewk->wu);
 
         if (!range_x_check3(ewk, 48)) {
@@ -169,7 +169,7 @@ void animal_0000(WORK_Other* ewk) {
         break;
 
     case 3:
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
         char_move(&ewk->wu);
         ewk->wu.routine_no[0] = 99;
         ewk->wu.routine_no[1]++;
@@ -198,7 +198,7 @@ void animal_0001(WORK_Other* ewk) {
         break;
 
     case 2:
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
         char_move(&ewk->wu);
 
         if (!range_x_check3(ewk, 32)) {
@@ -233,7 +233,7 @@ void animal_0002(WORK_Other* ewk) {
         break;
 
     case 2:
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
         char_move(&ewk->wu);
 
         if (!range_x_check3(ewk, 32)) {
@@ -284,7 +284,7 @@ void animal_0004(WORK_Other* ewk) {
 
     case 3:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
 
         if (!range_x_check3(ewk, 32)) {
             ewk->wu.routine_no[0] = 99;
@@ -327,7 +327,7 @@ void animal_0005(WORK_Other* ewk) {
             break;
         }
 
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
         break;
 
     case 3:
@@ -341,7 +341,7 @@ void animal_0005(WORK_Other* ewk) {
         break;
 
     case 4:
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
         char_move(&ewk->wu);
 
         if (!range_x_check3(ewk, 32)) {

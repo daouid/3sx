@@ -6,16 +6,16 @@
 #include "sf33rd/Source/Game/effect/eff46.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLS02.h"
-#include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 void eff46_move(WORK_Other* ewk);
 s16 eff46_appear_check(WORK_Other* ewk);
@@ -77,10 +77,10 @@ void eff46_move(WORK_Other* ewk) {
 
     case 2:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
 
         if (ewk->wu.xyz[1].disp.pos >= ewk->wu.old_rno[0]) {
-            add_y_sub(ewk);
+            add_y_sub(&ewk->wu);
         }
 
         if (!range_x_check3(ewk, 64)) {

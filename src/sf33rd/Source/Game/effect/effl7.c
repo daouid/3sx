@@ -6,18 +6,18 @@
 #include "sf33rd/Source/Game/effect/effl7.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CALDIR.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLS02.h"
-#include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
 #include "sf33rd/Source/Game/animation/win_pl.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/caldir.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 // forward declaration
 const s16 effl7_data_tbl[16];
@@ -67,8 +67,8 @@ void effl7_move(WORK_Other* ewk) {
 
     case 1:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
         ewk->wu.old_rno[0]--;
 
         if (ewk->wu.old_rno[0] <= 0) {
@@ -131,7 +131,7 @@ void effl7_move(WORK_Other* ewk) {
 
     case 5:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
 
         if (range_x_check3(ewk, 64) == 0) {
             ewk->wu.routine_no[1] += 1;

@@ -6,14 +6,14 @@
 #include "sf33rd/Source/Game/effect/effd1.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CALDIR.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLCNT.h"
 #include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/caldir.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/plcnt.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
 #include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 void fall_data_set(WORK_Other* ewk);
 
@@ -46,8 +46,8 @@ void effect_D1_move(WORK_Other* ewk) {
                 ewk->wu.my_priority = ewk->wu.position_z = 20;
             }
 
-            add_x_sub(ewk);
-            add_y_sub(ewk);
+            add_x_sub(&ewk->wu);
+            add_y_sub(&ewk->wu);
         }
 
         pl_eff_trans_entry(ewk);
@@ -64,8 +64,8 @@ void effect_D1_move(WORK_Other* ewk) {
             ewk->wu.old_rno[0]--;
 
             if (ewk->wu.old_rno[0] != 0) {
-                add_x_sub(ewk);
-                add_y_sub(ewk);
+                add_x_sub(&ewk->wu);
+                add_y_sub(&ewk->wu);
             } else {
                 ewk->wu.routine_no[0]++;
             }
