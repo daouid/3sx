@@ -1,4 +1,9 @@
-#include "sf33rd/Source/Game/color3rd.h"
+/**
+ * @file color3rd.c
+ * Loading, conversion, and hardware-upload of color palettes
+ */
+
+#include "sf33rd/Source/Game/rendering/color3rd.h"
 #include "common.h"
 #include "sf33rd/AcrSDK/MiddleWare/PS2/CapSndEng/cse.h"
 #include "sf33rd/AcrSDK/MiddleWare/PS2/CapSndEng/emlMemMap.h"
@@ -6,45 +11,42 @@
 #include "sf33rd/AcrSDK/common/plcommon.h"
 #include "sf33rd/AcrSDK/ps2/flps2vram.h"
 #include "sf33rd/Source/Common/PPGFile.h"
-#include "sf33rd/Source/Game/DC_Ghost.h"
 #include "sf33rd/Source/Game/RAMCNT.h"
 #include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/io/gd3rd.h"
-#include "sf33rd/Source/Game/meta_col.h"
+#include "sf33rd/Source/Game/rendering/dc_ghost.h"
+#include "sf33rd/Source/Game/rendering/meta_col.h"
 #include "sf33rd/Source/Game/sound/sound3rd.h"
 
 typedef struct {
-    // total size: 0x1C00
-    u16 col[2][28][64]; // offset 0x0, size 0x1C00
+    u16 col[2][28][64];
 } COL;
 
 typedef struct {
-    // total size: 0x8
-    u16 data; // offset 0x0, size 0x2
-    u16 type; // offset 0x2, size 0x2
-    u16 apfn; // offset 0x4, size 0x2
-    u16 free; // offset 0x6, size 0x2
+    u16 data;
+    u16 type;
+    u16 apfn;
+    u16 free;
 } col_file_data;
 
 typedef struct {
-    // total size: 0x1000
-    u16 col[2][16][64]; // offset 0x0, size 0x1000
+    u16 col[2][16][64];
 } COL_x1000;
 
 typedef struct {
-    u16 col[64]; // offset 0x0, size 0x80
+    u16 col[64];
 } COL_x80;
 
 typedef struct {
-    u16 col[3][64]; // offset 0x0, size 0x180
+    u16 col[3][64];
 } COL_x180;
 
 typedef struct {
-    u16 col[2][64]; // offset 0x0, size 0x100
+    u16 col[2][64];
 } COL_x100;
 
 typedef struct {
-    u16 col[20][16][16]; // offset 0x0, size 0x2800
+    u16 col[20][16][16];
 } COL_x2800;
 
 // bss
@@ -64,10 +66,6 @@ const u16 hitmark_color[128];
 const col_file_data color_file[161];
 
 void q_ldreq_color_data(REQ* curr) {
-#if defined(TARGET_PS2)
-    void init_trans_color_ram(s32 id, s32 key, u32 type, u32 data);
-#endif
-
     col_file_data* cfn;
     s32 err;
 
@@ -167,10 +165,6 @@ void q_ldreq_color_data(REQ* curr) {
 }
 
 void load_any_color(u16 ix, u8 kokey) {
-#if defined(TARGET_PS2)
-    void init_trans_color_ram(s16 id, s32 key, u32 type, u32 data);
-#endif
-
     col_file_data* cfn;
     s16 key;
 
@@ -199,10 +193,6 @@ void set_hitmark_color() {
 }
 
 void init_trans_color_ram(s16 id, s16 key, u8 type, u16 data) {
-#if defined(TARGET_PS2)
-    void metamor_color_store(s32 wkid);
-#endif
-
     u16* ldadrs;
     u16* tradrs;
     s16 i;

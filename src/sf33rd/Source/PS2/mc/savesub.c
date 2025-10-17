@@ -184,7 +184,7 @@ s32 SaveMove() {
     save_move_jmp[save->r_no_0](save);
     McActMain();
     save_msg_trans(save);
-    task[SAVER_TASK_NUM].timer = 0;
+    task[TASK_SAVER].timer = 0;
 
     return save->return_code;
 }
@@ -2035,7 +2035,7 @@ static void load_data_set_system(_save_work* save) {
     se_level = sw->SE_Level;
 
     if (mpp_w.cutAnalogStickData) {
-        mpp_w.cutAnalogStickData = 0;
+        mpp_w.cutAnalogStickData = false;
         save_w[Present_Mode].AnalogStick = 0;
         save_w[4].AnalogStick = 0;
         save_w[5].AnalogStick = 0;

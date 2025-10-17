@@ -8,9 +8,7 @@
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/SysDir.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/animation/win_pl.h"
-#include "sf33rd/Source/Game/color3rd.h"
 #include "sf33rd/Source/Game/count.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
 #include "sf33rd/Source/Game/effect/eff00.h"
@@ -39,10 +37,12 @@
 #include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/io/pulpul.h"
 #include "sf33rd/Source/Game/main.h"
+#include "sf33rd/Source/Game/rendering/aboutspr.h"
+#include "sf33rd/Source/Game/rendering/color3rd.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
+#include "sf33rd/Source/Game/rendering/texgroup.h"
 #include "sf33rd/Source/Game/stage/bg_data.h"
 #include "sf33rd/Source/Game/stage/bg_sub.h"
-#include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/texgroup.h"
 
 #if defined(DEBUG)
 #include "sf33rd/Source/Game/debug/debug_config.h"
@@ -76,9 +76,9 @@ void set_scrrrl();
 
 // bss
 PLW plw[2];
-ComboType combo_type[2];
+ComboType combo_type[2]; // FIXME: move to PLW instead?
 ZanzouTableEntry zanzou_table[2][48];
-ComboType remake_power[2];
+ComboType remake_power[2]; // FIXME: move to PLW instead?
 
 // sbss
 s16 pcon_rno[4];
@@ -87,8 +87,8 @@ u8 round_slow_flag;
 u8 pcon_dp_flag;
 u8 win_sp_flag;
 char dead_voice_flag;
-SA_WORK super_arts[2];
-PiyoriType piyori_type[2];
+SA_WORK super_arts[2];     // FIXME: move to game state (or to PLW?)
+PiyoriType piyori_type[2]; // FIXME: move to game state (or to PLW?)
 RAMBOD rambod[2];
 RAMHAN ramhan[2];
 u32 omop_spmv_ng_table[2];
@@ -380,11 +380,11 @@ void Player_control() {
     set_quake(&plw[0]);
     set_quake(&plw[1]);
 
-    if ((plw[0].zuru_flag == 0) && (plw[0].zettai_muteki_flag == 0)) {
+    if (!plw[0].zuru_flag && !plw[0].zettai_muteki_flag) {
         hit_push_request(&plw[0].wu);
     }
 
-    if ((plw[1].zuru_flag == 0) && (plw[1].zettai_muteki_flag == 0)) {
+    if (!plw[1].zuru_flag && !plw[1].zettai_muteki_flag) {
         hit_push_request(&plw[1].wu);
     }
 
@@ -430,7 +430,6 @@ void init_app_10000() {
 
             if (plw[1].wu.operator) {
                 mpp_w.useChar[My_char[1]]++;
-                return;
             }
         }
 

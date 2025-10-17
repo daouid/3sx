@@ -5,7 +5,6 @@
 #include "sf33rd/Source/Game/Com_Data.h"
 #include "sf33rd/Source/Game/Entry.h"
 #include "sf33rd/Source/Game/Game.h"
-#include "sf33rd/Source/Game/MMTMCNT.h"
 #include "sf33rd/Source/Game/RANKING.h"
 #include "sf33rd/Source/Game/SYS_sub2.h"
 #include "sf33rd/Source/Game/SysDir.h"
@@ -24,6 +23,7 @@
 #include "sf33rd/Source/Game/main.h"
 #include "sf33rd/Source/Game/menu/ex_data.h"
 #include "sf33rd/Source/Game/menu/menu.h"
+#include "sf33rd/Source/Game/rendering/mmtmcnt.h"
 #include "sf33rd/Source/Game/sc_sub.h"
 #include "sf33rd/Source/Game/sound/sound3rd.h"
 #include "sf33rd/Source/Game/stage/bg.h"
@@ -233,20 +233,20 @@ void Clear_Flash_No() {
     Personal_Disp_Flag = 0;
 }
 
-s32 Cut_Cut_Cut() {
+bool Cut_Cut_Cut() {
     if (Demo_Flag == 0) {
-        return 0;
+        return false;
     }
 
-    if (plw[0].wu.operator && (p1sw_0 & 0xFF0)) {
-        return 1;
+    if (plw[0].wu.operator && (p1sw_0 & SWK_ATTACKS)) {
+        return true;
     }
 
-    if (plw[1].wu.operator && (p2sw_0 & 0xFF0)) {
-        return 1;
+    if (plw[1].wu.operator && (p2sw_0 & SWK_ATTACKS)) {
+        return true;
     }
 
-    return 0;
+    return false;
 }
 
 void Score_Sub() {
@@ -529,12 +529,12 @@ void Game_Data_Init() {
     s32 ix;
 
     Setup_Default_Game_Option();
-    mpp_w.cutAnalogStickData = 0;
+    mpp_w.cutAnalogStickData = false;
 
     if ((flpad_adr[0][0].sw & 0x330) == 0x330) {
-        mpp_w.cutAnalogStickData = 1;
+        mpp_w.cutAnalogStickData = true;
     } else if ((flpad_adr[0][1].sw & 0x330) == 0x330) {
-        mpp_w.cutAnalogStickData = 1;
+        mpp_w.cutAnalogStickData = true;
     }
 
     if (mpp_w.cutAnalogStickData) {
@@ -759,10 +759,10 @@ void cpRevivalTask() {
 }
 
 s32 Check_Menu_Task() {
-    struct _TASK* task_ptr = &task[3];
+    struct _TASK* task_ptr = &task[TASK_MENU];
 
     if (Mode_Type == MODE_NORMAL_TRAINING || Mode_Type == MODE_PARRY_TRAINING) {
-        if (task[3].r_no[0] == 7 && task[3].r_no[1] == 7) {
+        if (task[TASK_MENU].r_no[0] == 7 && task[TASK_MENU].r_no[1] == 7) {
             return 1;
         }
 
@@ -959,27 +959,27 @@ s32 Cut_Cut_Sub(s16 xx) {
         return 1;
     }
 
-    if (plw[0].wu.operator && (p1sw_0 & 0xFF0)) {
+    if (plw[0].wu.operator && (p1sw_0 & SWK_ATTACKS)) {
         return xx;
     }
 
-    if (plw[1].wu.operator && (p2sw_0 & 0xFF0)) {
+    if (plw[1].wu.operator && (p2sw_0 & SWK_ATTACKS)) {
         return xx;
     }
 
     return 1;
 }
 
-s32 Cut_Cut_Loser() {
-    if (Round_Operator[0] && (p1sw_0 & 0xFF0)) {
-        return 1;
+bool Cut_Cut_Loser() {
+    if (Round_Operator[0] && (p1sw_0 & SWK_ATTACKS)) {
+        return true;
     }
 
-    if (Round_Operator[1] && (p2sw_0 & 0xFF0)) {
-        return 1;
+    if (Round_Operator[1] && (p2sw_0 & SWK_ATTACKS)) {
+        return true;
     }
 
-    return 0;
+    return false;
 }
 
 void njWaitVSync_with_N() {
@@ -991,12 +991,12 @@ void Soft_Reset_Sub() {
     sound_all_off();
     SsBgmHalfVolume(0);
 
-    if (task[5].condition == 0) {
-        cpReadyTask(5, Game_Task);
+    if (task[TASK_GAME].condition == 0) {
+        cpReadyTask(TASK_GAME, Game_Task);
     }
 
-    if (Usage == 7 && task[9].condition == 0) {
-        cpReadyTask(9, Debug_Task);
+    if (Usage == 7 && task[TASK_DEBUG].condition == 0) {
+        cpReadyTask(TASK_DEBUG, Debug_Task);
     }
 
     Next_Title_Sub();
@@ -1007,9 +1007,9 @@ void Soft_Reset_Sub() {
     init_pulpul_work();
     pp_operator_check_flag(1);
     Init_Load_Request_Queue_1st();
-    cpExitTask(3);
-    cpExitTask(6);
-    cpExitTask(4);
+    cpExitTask(TASK_MENU);
+    cpExitTask(TASK_SAVER);
+    cpExitTask(TASK_PAUSE);
     setup_pos_remake_key(2);
     Reset_Sub0();
     task->r_no[0] = 1;
@@ -1262,9 +1262,9 @@ void Replay(s16 PL_id) {
         Replay_Status[1] = 2;
 
         if (Mode_Type == 5) {
-            cpExitTask(4);
-            cpReadyTask(3, Menu_Task);
-            task[3].r_no[0] = 13;
+            cpExitTask(TASK_PAUSE);
+            cpReadyTask(TASK_MENU, Menu_Task);
+            task[TASK_MENU].r_no[0] = 13;
         }
 
         Demo_Time_Stop = 1;
@@ -1858,10 +1858,6 @@ void Clear_Break_Com(s16 PL_id) {
     for (x = 0; x <= 19; x++) {
         Break_Com[PL_id][x] = 0;
     }
-}
-
-void Check_Off_Vib() {
-    // Do nothing
 }
 
 s32 Flash_Violent(WORK_Other* /* unused */, s32 /* unused */) {

@@ -2,9 +2,6 @@
 #include "common.h"
 #include "sf33rd/AcrSDK/common/pad.h"
 #include "sf33rd/Source/Game/Com_Data.h"
-#include "sf33rd/Source/Game/DC_Ghost.h"
-#include "sf33rd/Source/Game/MMTMCNT.h"
-#include "sf33rd/Source/Game/MTRANS.h"
 #include "sf33rd/Source/Game/Next_CPU.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/SYS_sub2.h"
@@ -38,6 +35,9 @@
 #include "sf33rd/Source/Game/io/gd3rd.h"
 #include "sf33rd/Source/Game/io/pulpul.h"
 #include "sf33rd/Source/Game/menu/menu.h"
+#include "sf33rd/Source/Game/rendering/dc_ghost.h"
+#include "sf33rd/Source/Game/rendering/mmtmcnt.h"
+#include "sf33rd/Source/Game/rendering/mtrans.h"
 #include "sf33rd/Source/Game/sc_sub.h"
 #include "sf33rd/Source/Game/sound/se.h"
 #include "sf33rd/Source/Game/sound/sound3rd.h"
@@ -608,7 +608,7 @@ void OBJ_1st() {
         return;
     }
 
-    *SO_No = 2;
+    SO_No[0] = 2;
     effect_75_init(42, 3, 2);
     Order[42] = 3;
     Order_Timer[42] = 1;

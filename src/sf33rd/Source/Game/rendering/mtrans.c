@@ -1,17 +1,22 @@
-#include "sf33rd/Source/Game/MTRANS.h"
+/**
+ * @file mtrans.c
+ * Main Graphics Rendering and Transformation Engine
+ */
+
+#include "sf33rd/Source/Game/rendering/mtrans.h"
 #include "common.h"
 #include "sf33rd/AcrSDK/ps2/flps2render.h"
 #include "sf33rd/AcrSDK/ps2/foundaps2.h"
 #include "sf33rd/Source/Common/PPGFile.h"
-#include "sf33rd/Source/Game/DC_Ghost.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/aboutspr.h"
-#include "sf33rd/Source/Game/chren3rd.h"
-#include "sf33rd/Source/Game/color3rd.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
 #include "sf33rd/Source/Game/effect/effect.h"
-#include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/texgroup.h"
+#include "sf33rd/Source/Game/rendering/aboutspr.h"
+#include "sf33rd/Source/Game/rendering/chren3rd.h"
+#include "sf33rd/Source/Game/rendering/color3rd.h"
+#include "sf33rd/Source/Game/rendering/dc_ghost.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
+#include "sf33rd/Source/Game/rendering/texgroup.h"
 #include "sf33rd/Source/PS2/ps2Quad.h"
 #include "structs.h"
 
@@ -1138,9 +1143,6 @@ void mlt_obj_trans_cp3(MultiTexture* mt, WORK* wk, s32 base_y) {
     appRenewTempPriority(wk->position_z);
 }
 
-#if defined(TARGET_PS2)
-INCLUDE_ASM("asm/anniversary/nonmatchings/sf33rd/Source/Game/MTRANS", mlt_obj_trans_rgb_ext);
-#else
 void mlt_obj_trans_rgb_ext(MultiTexture* mt, WORK* wk, s32 base_y) {
     u32* textbl;
     u16* trsbas;
@@ -1368,7 +1370,6 @@ void mlt_obj_trans_rgb_ext(MultiTexture* mt, WORK* wk, s32 base_y) {
         appRenewTempPriority(wk->position_z);
     }
 }
-#endif
 
 void mlt_obj_trans_rgb(MultiTexture* mt, WORK* wk, s32 base_y) {
     u32* textbl;
@@ -1609,13 +1610,8 @@ s32 seqsStoreChip(f32 x, f32 y, s32 w, s32 h, s32 gix, s32 code, s32 attr, s32 a
     s32 u;
     s32 v;
 
-#if defined(TARGET_PS2)
-    f32 dx;
-    f32 dy;
-#else
     const f32 dx = 0;
     const f32 dy = 0;
-#endif
 
     chip = &seqs_w.chip[seqs_w.sprTotal];
     chip->v[0].x = x;
@@ -1643,29 +1639,17 @@ s32 seqsStoreChip(f32 x, f32 y, s32 w, s32 h, s32 gix, s32 code, s32 attr, s32 a
     appRenewTempPriority_1_Chip();
 
     if (attr & 0x8000) {
-#if defined(TARGET_PS2)
-        dx = (((chip->v[1].x - chip->v[0].x) / w) > 1.5f) ? 0.34f : 0.68f;
-#endif
         chip->t[1].s = (u - dx) / 256.0f;
         chip->t[0].s = (u + w - dx) / 256.0f;
     } else {
-#if defined(TARGET_PS2)
-        dx = (((chip->v[1].x - chip->v[0].x) / w) > 1.0f) ? 0.0f : 0.5f;
-#endif
         chip->t[0].s = (u + dx) / 256.0f;
         chip->t[1].s = (u + w + dx) / 256.0f;
     }
 
     if (attr & 0x4000) {
-#if defined(TARGET_PS2)
-        dy = (((chip->v[1].y - chip->v[0].y) / h) > 1.5f) ? 0.34f : 0.68f;
-#endif
         chip->t[1].t = (v - dy) / 256.0f;
         chip->t[0].t = (v + h - dy) / 256.0f;
     } else {
-#if defined(TARGET_PS2)
-        dy = (((chip->v[1].y - chip->v[0].y) / h) > 1.0f) ? 0.0f : 0.5f;
-#endif
         chip->t[0].t = (v + dy) / 256.0f;
         chip->t[1].t = (v + h + dy) / 256.0f;
     }

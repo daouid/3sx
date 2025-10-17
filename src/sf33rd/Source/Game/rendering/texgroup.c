@@ -1,29 +1,31 @@
-#include "sf33rd/Source/Game/texgroup.h"
+/**
+ * @file texgroup.c
+ * Texture Group Manager and Loader
+ */
+
+#include "sf33rd/Source/Game/rendering/texgroup.h"
 #include "common.h"
 #include "sf33rd/AcrSDK/ps2/foundaps2.h"
 #include "sf33rd/Source/Game/RAMCNT.h"
-#include "sf33rd/Source/Game/chren3rd.h"
 #include "sf33rd/Source/Game/engine/charid.h"
 #include "sf33rd/Source/Game/engine/plcnt.h"
 #include "sf33rd/Source/Game/io/gd3rd.h"
 #include "sf33rd/Source/Game/main.h"
-#include "sf33rd/Source/Game/texcash.h"
+#include "sf33rd/Source/Game/rendering/chren3rd.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
 #include "structs.h"
 
-#if !defined(TARGET_PS2)
 #include <stdlib.h>
-#endif
 
 typedef struct {
-    // total size: 0x8
-    s16 x;    // offset 0x0, size 0x2
-    s16 y;    // offset 0x2, size 0x2
-    u16 attr; // offset 0x4, size 0x2
-    u16 code; // offset 0x6, size 0x2
+    s16 x;
+    s16 y;
+    u16 attr;
+    u16 code;
 } TexGroup_UNK_0;
 
-u8 omSelObjNowOnMemoryType = 0xFF; // size: 0x1, address: 0x574414
-TEX_GRP_LD texgrplds[100];         // size: 0x4B0, address: 0x6B49D0
+u8 omSelObjNowOnMemoryType = 0xFF;
+TEX_GRP_LD texgrplds[100];
 
 const TexGroupData texgrpdat[100] = { { 0, -1, 0, 0, 0, 0, 0 },
                                       { 0, 1460 /* pl00.bin */, 0, 1, 3040072, 210820, 0x2CF158 },     // Gill (0)
@@ -270,37 +272,22 @@ void q_ldreq_texture_group(REQ* curr) {
                 // Because 25 is the number of members in CharInitData struct, `i` goes
                 // to 25 too.
 
-#if defined(TARGET_PS2)
-                for (i = 0; i < 25; i++) {
-                    ((u32*)ldchd)[i] += ldchd;
-                }
-
-                cit = (CharInitData*)ldchd;
-#else
                 cit = (CharInitData*)malloc(sizeof(CharInitData));
 
                 for (i = 0; i < 25; i++) {
                     ((uintptr_t*)cit)[i] = ldchd + ((u32*)ldchd)[i];
                 }
-#endif
 
                 cit2 = &char_init_data[plid_data[plt_req[curr->id]]];
                 *cit2 = *cit;
 
-#if !defined(TARGET_PS2)
                 free(cit);
-#endif
 
                 parabora_own_table[plt_req[curr->id]] = cit2->prot;
 
                 // Q specific code
                 if (curr->ix == 18) {
-#if defined(TARGET_PS2)
-                    patchAdrs = ((u32**)ldchd)[8];
-                    patchAdrs[37] = patchAdrs[3];
-#else
                     cit2->cbca[37] = cit2->cbca[3];
-#endif
                 }
 
                 // Akuma specific code
@@ -402,10 +389,6 @@ void checkSelObjFileLoaded() {
 }
 
 void purge_texture_group_of_this(u16 patnum) {
-#if defined(TARGET_PS2)
-    void purge_texture_group(u16 grp);
-#endif
-
     purge_texture_group(obj_group_table[patnum]);
 }
 
@@ -444,10 +427,6 @@ void purge_player_texture(s16 id) {
 }
 
 s32 load_any_texture_patnum(u16 patnum, u8 kokey, u8 _unused) {
-#if defined(TARGET_PS2)
-    s32 load_any_texture_grpnum(u16 grp, u16 kokey);
-#endif
-
     return load_any_texture_grpnum(obj_group_table[patnum], kokey);
 }
 

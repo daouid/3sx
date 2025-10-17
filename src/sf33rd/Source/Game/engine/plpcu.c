@@ -7,7 +7,6 @@
 #include "bin2obj/buttobi.h"
 #include "bin2obj/etc.h"
 #include "common.h"
-#include "sf33rd/Source/Game/MTRANS.h"
 #include "sf33rd/Source/Game/effect/effa7.h"
 #include "sf33rd/Source/Game/effect/effd9.h"
 #include "sf33rd/Source/Game/effect/effe2.h"
@@ -17,6 +16,7 @@
 #include "sf33rd/Source/Game/engine/plpdm.h"
 #include "sf33rd/Source/Game/engine/pls02.h"
 #include "sf33rd/Source/Game/io/pulpul.h"
+#include "sf33rd/Source/Game/rendering/mtrans.h"
 
 void setup_caught_process_flags(PLW* wk);
 void caught_cg_type_check(PLW* wk, PLW* emwk);
@@ -55,8 +55,8 @@ void setup_caught_process_flags(PLW* wk) {
     wk->running_f = 0;
     wk->guard_flag = 3;
     wk->guard_chuu = 0;
-    wk->tsukami_f = 0;
-    wk->tsukamare_f = 1;
+    wk->tsukami_f = false;
+    wk->tsukamare_f = true;
     wk->scr_pos_set_flag = 0;
     wk->dm_hos_flag = 0;
     wk->zuru_timer = 0;
@@ -222,7 +222,7 @@ void caught_cg_type_check(PLW* wk, PLW* emwk) {
 }
 
 s32 check_tsukamare_keizoku_check(PLW* wk, PLW* emwk) {
-    if (emwk->tsukami_f == 0) {
+    if (!emwk->tsukami_f) {
         wk->wu.routine_no[1] = 1;
         wk->wu.routine_no[2] = 88;
         wk->wu.routine_no[3] = 0;

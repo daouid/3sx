@@ -9,7 +9,7 @@
 #include "sf33rd/Source/Game/effect/effc2.h"
 #include "sf33rd/Source/Game/engine/plcnt.h"
 #include "sf33rd/Source/Game/engine/workuser.h"
-#include "sf33rd/Source/Game/texcash.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
 
 void bbbs_com_execute2(PLW* wk) {
     switch (Bonus_Stage_RNO[0]) {
@@ -21,7 +21,7 @@ void bbbs_com_execute2(PLW* wk) {
 
             Bonus_Stage_RNO[0] = 1;
             Bonus_Stage_RNO[1] = 0;
-            wk->zettai_muteki_flag = 1;
+            wk->zettai_muteki_flag = true;
 
             break;
         }
