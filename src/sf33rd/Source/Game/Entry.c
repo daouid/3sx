@@ -1,23 +1,22 @@
 #include "sf33rd/Source/Game/Entry.h"
 #include "common.h"
-#include "sf33rd/Source/Game/Grade.h"
-#include "sf33rd/Source/Game/PLCNT.h"
 #include "sf33rd/Source/Game/RANKING.h"
 #include "sf33rd/Source/Game/Reset.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
-#include "sf33rd/Source/Game/effect/effect_init.h"
+#include "sf33rd/Source/Game/effect/effa2.h"
+#include "sf33rd/Source/Game/ending/end_data.h"
+#include "sf33rd/Source/Game/engine/grade.h"
+#include "sf33rd/Source/Game/engine/plcnt.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
+#include "sf33rd/Source/Game/io/gd3rd.h"
 #include "sf33rd/Source/Game/main.h"
 #include "sf33rd/Source/Game/n_input.h"
 #include "sf33rd/Source/Game/sc_sub.h"
-#include "sf33rd/Source/Game/workuser.h"
-#include "structs.h"
-
-#include "sf33rd/Source/Game/ending/end_data.h"
-#include "sf33rd/Source/Game/io/gd3rd.h"
 #include "sf33rd/Source/Game/sound/se.h"
 #include "sf33rd/Source/Game/sound/sound3rd.h"
+#include "structs.h"
 
 u8 letter_stack[40];
 u8 letter_counter;
@@ -637,7 +636,7 @@ void Entry_08_2nd() {
 
 void Entry_10() {
     if ((E_Number[0][0] == 0x63) && (E_Number[1][0] == 0x63)) {
-        cpExitTask(1);
+        cpExitTask(TASK_ENTRY);
         return;
     }
 
@@ -1411,7 +1410,7 @@ void Break_Into_05(s16 PL_id) {
     }
 
     Stop_Update_Score = 1;
-    cpExitTask(4);
+    cpExitTask(TASK_PAUSE);
 }
 
 void Break_Into_07(s16 PL_id) {

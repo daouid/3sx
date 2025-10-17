@@ -9,21 +9,19 @@
 #include "sf33rd/Source/Common/MemMan.h"
 #include "sf33rd/Source/Common/PPGFile.h"
 #include "sf33rd/Source/Common/PPGWork.h"
-#include "sf33rd/Source/Game/AcrUtil.h"
-#include "sf33rd/Source/Game/DC_Ghost.h"
-#include "sf33rd/Source/Game/MTRANS.h"
-#include "sf33rd/Source/Game/PLS02.h"
 #include "sf33rd/Source/Game/RAMCNT.h"
-#include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/color3rd.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
-#include "sf33rd/Source/Game/stage/bg_data.h"
-#include "sf33rd/Source/Game/workuser.h"
-#include "structs.h"
-
 #include "sf33rd/Source/Game/ending/end_data.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/io/gd3rd.h"
+#include "sf33rd/Source/Game/rendering/color3rd.h"
+#include "sf33rd/Source/Game/rendering/dc_ghost.h"
+#include "sf33rd/Source/Game/rendering/mtrans.h"
+#include "sf33rd/Source/Game/stage/bg_data.h"
+#include "structs.h"
 
 // sbss
 Vertex scrDrawPos[4];
@@ -1339,25 +1337,25 @@ void Family_Init() {
     u8 i;
 
     for (i = 0; i < 8; i++) {
-        fm_pos[i].scr_x.long_pos = 0;
-        fm_pos[i].scr_y.long_pos = 0;
-        fm_pos[i].scr_x_buff.long_pos = 0;
-        fm_pos[i].scr_y_buff.long_pos = 0;
+        fm_pos[i].family_x.long_pos = 0;
+        fm_pos[i].family_y.long_pos = 0;
+        fm_pos[i].family_x_buff.long_pos = 0;
+        fm_pos[i].family_y_buff.long_pos = 0;
     }
 }
 
 void Family_Set_R(s8 fmnm, s16 x, s16 y) {
-    fm_pos[fmnm].scr_x.word_pos.h = x;
-    fm_pos[fmnm].scr_y.word_pos.h = y;
-    fm_pos[fmnm].scr_x_buff.word_pos.h = x;
-    fm_pos[fmnm].scr_y_buff.word_pos.h = y;
+    fm_pos[fmnm].family_x.word_pos.h = x;
+    fm_pos[fmnm].family_y.word_pos.h = y;
+    fm_pos[fmnm].family_x_buff.word_pos.h = x;
+    fm_pos[fmnm].family_y_buff.word_pos.h = y;
 }
 
 void Family_Set_W(s8 fmnm, s16 x, s16 y) {
-    fm_pos[fmnm].scr_x.word_pos.h = x;
-    fm_pos[fmnm].scr_y.word_pos.h = y;
-    fm_pos[fmnm].scr_x_buff.word_pos.h = x;
-    fm_pos[fmnm].scr_y_buff.word_pos.h = y;
+    fm_pos[fmnm].family_x.word_pos.h = x;
+    fm_pos[fmnm].family_y.word_pos.h = y;
+    fm_pos[fmnm].family_x_buff.word_pos.h = x;
+    fm_pos[fmnm].family_y_buff.word_pos.h = y;
 }
 
 void Bg_On_R(u16 s_prm) {
@@ -1390,8 +1388,8 @@ void Irl_Family() {
     u8 i;
 
     for (i = 0; i < 8; i++) {
-        fm_pos[i].scr_x_buff.long_pos = fm_pos[i].scr_x.long_pos;
-        fm_pos[i].scr_y_buff.long_pos = fm_pos[i].scr_y.long_pos;
+        fm_pos[i].family_x_buff.long_pos = fm_pos[i].family_x.long_pos;
+        fm_pos[i].family_y_buff.long_pos = fm_pos[i].family_y.long_pos;
         bg_pos[i].scr_x_buff.long_pos = bg_pos[i].scr_x.long_pos;
         bg_pos[i].scr_y_buff.long_pos = bg_pos[i].scr_y.long_pos;
     }
@@ -1402,9 +1400,9 @@ void Irl_Scrn() {
 
     for (i = 0; i < 8; i++) {
         bg_prm[i].bg_h_shift = scrn_adgjust_x + bg_pos[i].scr_x_buff.word_pos.h;
-        end_prm[i].bg_h_shift = scrn_adgjust_x + fm_pos[i].scr_x_buff.word_pos.h;
+        end_prm[i].bg_h_shift = scrn_adgjust_x + fm_pos[i].family_x_buff.word_pos.h;
         bg_prm[i].bg_v_shift = bg_pos[i].scr_y_buff.word_pos.h - scrn_adgjust_y;
-        end_prm[i].bg_v_shift = fm_pos[i].scr_y_buff.word_pos.h - scrn_adgjust_y;
+        end_prm[i].bg_v_shift = fm_pos[i].family_y_buff.word_pos.h - scrn_adgjust_y;
     }
 }
 

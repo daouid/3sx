@@ -5,25 +5,24 @@
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/SYS_sub2.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/aboutspr.h"
+#include "sf33rd/Source/Game/debug/Debug.h"
+#include "sf33rd/Source/Game/demo/demo00.h"
+#include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
+#include "sf33rd/Source/Game/io/gd3rd.h"
+#include "sf33rd/Source/Game/io/pulpul.h"
+#include "sf33rd/Source/Game/main.h"
+#include "sf33rd/Source/Game/menu/dir_data.h"
+#include "sf33rd/Source/Game/rendering/aboutspr.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
+#include "sf33rd/Source/Game/rendering/texgroup.h"
+#include "sf33rd/Source/Game/sc_sub.h"
+#include "sf33rd/Source/Game/sound/sound3rd.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/bg_data.h"
-#include "sf33rd/Source/Game/debug/Debug.h"
-#include "sf33rd/Source/Game/effect/effect.h"
-#include "sf33rd/Source/Game/main.h"
-#include "sf33rd/Source/Game/sc_sub.h"
-#include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/texgroup.h"
-#include "sf33rd/Source/Game/workuser.h"
 #include "sf33rd/Source/PS2/mc/savesub.h"
 #include "sf33rd/Source/PS2/ps2Quad.h"
 #include "structs.h"
-
-#include "sf33rd/Source/Game/demo/demo00.h"
-#include "sf33rd/Source/Game/io/gd3rd.h"
-#include "sf33rd/Source/Game/io/pulpul.h"
-#include "sf33rd/Source/Game/menu/dir_data.h"
-#include "sf33rd/Source/Game/sound/sound3rd.h"
 
 #if !defined(TARGET_PS2)
 #include <string.h>
@@ -130,7 +129,7 @@ void Init_Task_1st(struct _TASK* task_ptr) {
     Setup_Limit_Time();
     Keep_Zoom_X = Screen_Zoom_X;
     Reset_Bootrom = 1;
-    cpReadyTask(RESET_TASK_NUM, Reset_Task);
+    cpReadyTask(TASK_RESET, Reset_Task);
     Switch_Type = 0;
     Reset_Status[0] = 0;
     Reset_Status[1] = 0;
@@ -163,7 +162,7 @@ void Init_Task_Aload(struct _TASK* task_ptr) {
         if (SaveMove() <= 0) {
             task_ptr->r_no[0] += 1;
             task_ptr->r_no[1] = 0;
-            mpp_w.cutAnalogStickData = 0;
+            mpp_w.cutAnalogStickData = false;
             Forbid_Reset = 1;
         }
 
@@ -195,16 +194,16 @@ void Init_Task_2nd(struct _TASK* task_ptr) {
 }
 
 void Init_Task_End(struct _TASK* task_ptr) {
-    cpReadyTask(GAME_TASK_NUM, Game_Task);
+    cpReadyTask(TASK_GAME, Game_Task);
     task_ptr->r_no[0] += 1;
     task_ptr->r_no[1] = 0;
     G_No[0] = 1;
-    cpReadyTask(ENTRY_TASK_NUM, Entry_Task);
+    cpReadyTask(TASK_ENTRY, Entry_Task);
 
     if (Usage == 7) {
-        cpReadyTask(DEBUG_TASK_NUM, Debug_Task);
+        cpReadyTask(TASK_DEBUG, Debug_Task);
     }
 
-    cpExitTask(0);
+    cpExitTask(TASK_INIT);
     Forbid_Reset = 0;
 }

@@ -4,14 +4,13 @@
  */
 
 #include "common.h"
-#include "sf33rd/Source/Game/DC_Ghost.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
-#include "sf33rd/Source/Game/main.h"
-#include "sf33rd/Source/Game/workuser.h"
-
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/io/gd3rd.h"
+#include "sf33rd/Source/Game/main.h"
 #include "sf33rd/Source/Game/opening/op_sub.h"
 #include "sf33rd/Source/Game/opening/opening.h"
+#include "sf33rd/Source/Game/rendering/dc_ghost.h"
 #include "sf33rd/Source/Game/sound/se.h"
 #include "sf33rd/Source/Game/sound/sound3rd.h"
 
@@ -88,7 +87,6 @@ s16 Title_At_a_Dash() {
 
     switch (D_No[1]) {
     case 0:
-        mpp_w.ctrDemo = 0;
         D_No[1] += 1;
         D_Timer = 30;
 

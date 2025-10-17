@@ -2,21 +2,20 @@
 #include "common.h"
 #include "sf33rd/AcrSDK/common/mlPAD.h"
 #include "sf33rd/AcrSDK/ps2/flps2debug.h"
-#include "sf33rd/Source/Game/MTRANS.h"
-#include "sf33rd/Source/Game/PLCNT.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/debug/Deb_Data.h"
 #include "sf33rd/Source/Game/debug/Debug_ID.h"
 #include "sf33rd/Source/Game/debug/Nakai.h"
 #include "sf33rd/Source/Game/debug/OBJTEST.h"
 #include "sf33rd/Source/Game/effect/effect.h"
-#include "sf33rd/Source/Game/main.h"
-#include "sf33rd/Source/Game/sc_sub.h"
-#include "sf33rd/Source/Game/workuser.h"
-
+#include "sf33rd/Source/Game/engine/plcnt.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/io/ioconv.h"
+#include "sf33rd/Source/Game/main.h"
+#include "sf33rd/Source/Game/rendering/mtrans.h"
+#include "sf33rd/Source/Game/sc_sub.h"
+#include "sf33rd/Source/Game/stage/bg.h"
 
 #define COLOR_WHITE 0xFFFFFFFF
 #define COLOR_YELLOW 0xFFFFFF00
@@ -120,8 +119,8 @@ void Debug_2nd(struct _TASK* task_ptr) {
 
     Debug_Menu_Disp(offset_y[1], offset_y[2]);
 
-    if (io_w.data[1].sw_new & 0x1000) {
-        mpp_w.sysStop = 1;
+    if (io_w.data[1].sw_new & SWK_RIGHT_STICK) {
+        mpp_w.sysStop = true;
         task_ptr->r_no[0] = 1;
         cpRevivalTask();
     }

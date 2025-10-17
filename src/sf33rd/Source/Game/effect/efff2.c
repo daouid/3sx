@@ -6,12 +6,12 @@
 #include "sf33rd/Source/Game/effect/efff2.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLS02.h"
 #include "sf33rd/Source/Game/effect/effect.h"
 #include "sf33rd/Source/Game/ending/end_data.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
-#include "sf33rd/Source/Game/texcash.h"
 
 const s16 efff2_data_tbl1[10][4] = { { 1, 384, 608, 80 }, { 2, 592, 496, 86 }, { 1, 640, 576, 80 }, { 2, 336, 584, 86 },
                                      { 1, 464, 584, 80 }, { 1, 544, 640, 80 }, { 2, 640, 512, 86 }, { 1, 480, 592, 80 },
@@ -64,8 +64,8 @@ void effect_F2_move(WORK_Other* ewk) {
         break;
 
     case 3:
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
 
         if (ewk->wu.xyz[1].disp.pos < 256) {
             ewk->wu.routine_no[1] = 0;

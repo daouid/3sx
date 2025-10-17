@@ -2,61 +2,62 @@
 #include "common.h"
 #include "sf33rd/AcrSDK/common/pad.h"
 #include "sf33rd/Source/Common/PPGWork.h"
-#include "sf33rd/Source/Game/BBBSCOM.h"
 #include "sf33rd/Source/Game/Continue.h"
-#include "sf33rd/Source/Game/DC_Ghost.h"
 #include "sf33rd/Source/Game/Entry.h"
 #include "sf33rd/Source/Game/Flash_LP.h"
 #include "sf33rd/Source/Game/GameOver.h"
-#include "sf33rd/Source/Game/Grade.h"
-#include "sf33rd/Source/Game/HITCHECK.h"
-#include "sf33rd/Source/Game/MMTMCNT.h"
-#include "sf33rd/Source/Game/MTRANS.h"
-#include "sf33rd/Source/Game/Manage.h"
 #include "sf33rd/Source/Game/Next_CPU.h"
-#include "sf33rd/Source/Game/PLCNT.h"
-#include "sf33rd/Source/Game/PLCNT2.h"
-#include "sf33rd/Source/Game/PLCNT3.h"
 #include "sf33rd/Source/Game/RANKING.h"
 #include "sf33rd/Source/Game/Reset.h"
-#include "sf33rd/Source/Game/SLOWF.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/SYS_sub2.h"
 #include "sf33rd/Source/Game/SysDir.h"
-#include "sf33rd/Source/Game/stage/tate00.h"
-#include "sf33rd/Source/Game/VITAL.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
 #include "sf33rd/Source/Game/Win.h"
-#include "sf33rd/Source/Game/stage/bg.h"
-#include "sf33rd/Source/Game/stage/bg_data.h"
-#include "sf33rd/Source/Game/stage/bg_sub.h"
-#include "sf33rd/Source/Game/cmb_win.h"
-#include "sf33rd/Source/Game/color3rd.h"
 #include "sf33rd/Source/Game/count.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
-#include "sf33rd/Source/Game/effect/effect.h"
-#include "sf33rd/Source/Game/effect/effect_init.h"
-#include "sf33rd/Source/Game/ending/end_main.h"
-#include "sf33rd/Source/Game/main.h"
-#include "sf33rd/Source/Game/sc_sub.h"
-#include "sf33rd/Source/Game/sel_pl.h"
-#include "sf33rd/Source/Game/spgauge.h"
-#include "sf33rd/Source/Game/stun.h"
-#include "sf33rd/Source/Game/stage/ta_sub.h"
-#include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
-#include "structs.h"
-
 #include "sf33rd/Source/Game/demo/demo00.h"
 #include "sf33rd/Source/Game/demo/demo01.h"
 #include "sf33rd/Source/Game/demo/demo02.h"
+#include "sf33rd/Source/Game/effect/eff35.h"
+#include "sf33rd/Source/Game/effect/eff58.h"
+#include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/effect/effj2.h"
+#include "sf33rd/Source/Game/ending/end_main.h"
+#include "sf33rd/Source/Game/engine/bbbscom.h"
+#include "sf33rd/Source/Game/engine/cmb_win.h"
+#include "sf33rd/Source/Game/engine/grade.h"
+#include "sf33rd/Source/Game/engine/hitcheck.h"
+#include "sf33rd/Source/Game/engine/manage.h"
+#include "sf33rd/Source/Game/engine/plcnt.h"
+#include "sf33rd/Source/Game/engine/plcnt2.h"
+#include "sf33rd/Source/Game/engine/plcnt3.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/spgauge.h"
+#include "sf33rd/Source/Game/engine/stun.h"
+#include "sf33rd/Source/Game/engine/vital.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/io/gd3rd.h"
 #include "sf33rd/Source/Game/io/pulpul.h"
+#include "sf33rd/Source/Game/main.h"
 #include "sf33rd/Source/Game/menu/menu.h"
 #include "sf33rd/Source/Game/opening/op_sub.h"
 #include "sf33rd/Source/Game/opening/opening.h"
+#include "sf33rd/Source/Game/rendering/color3rd.h"
+#include "sf33rd/Source/Game/rendering/dc_ghost.h"
+#include "sf33rd/Source/Game/rendering/mmtmcnt.h"
+#include "sf33rd/Source/Game/rendering/mtrans.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
+#include "sf33rd/Source/Game/sc_sub.h"
+#include "sf33rd/Source/Game/sel_pl.h"
 #include "sf33rd/Source/Game/sound/se.h"
 #include "sf33rd/Source/Game/sound/sound3rd.h"
+#include "sf33rd/Source/Game/stage/bg.h"
+#include "sf33rd/Source/Game/stage/bg_data.h"
+#include "sf33rd/Source/Game/stage/bg_sub.h"
+#include "sf33rd/Source/Game/stage/ta_sub.h"
+#include "sf33rd/Source/Game/stage/tate00.h"
+#include "structs.h"
 
 void Wait_Auto_Load(struct _TASK* /* unused */);
 void Loop_Demo(struct _TASK* /* unused */);
@@ -141,7 +142,6 @@ void Game_Task(struct _TASK* task_ptr) {
         seqsAfterProcess();
         texture_cash_update();
         move_pulpul_work();
-        Check_Off_Vib();
         Check_LDREQ_Queue();
     }
 
@@ -233,7 +233,7 @@ void Game0_2() {
         G_No[1] = 0xC;
         G_No[2] = 0;
         G_No[3] = 0;
-        cpReadyTask(MENU_TASK_NUM, Menu_Task);
+        cpReadyTask(TASK_MENU, Menu_Task);
         break;
     }
 }
@@ -286,7 +286,7 @@ void Game12_2() {
         Control_Time = 481;
         Cover_Timer = 23;
         effect_work_init();
-        cpExitTask(3);
+        cpExitTask(TASK_MENU);
     }
 }
 
@@ -434,7 +434,7 @@ void Game2_0() {
             }
         }
 
-        cpExitTask(ENTRY_TASK_NUM);
+        cpExitTask(TASK_ENTRY);
         /* fallthrough */
 
     case MODE_NETWORK:
@@ -496,7 +496,7 @@ void Game2_0() {
 }
 
 void Game2_1() {
-    mpp_w.inGame = 1;
+    mpp_w.inGame = true;
 
     if (Game_pause != 0x81) {
         Game_timer += 1;
@@ -735,8 +735,8 @@ void Game03() {
 
             case MODE_REPLAY:
                 G_No[2] = 5;
-                cpReadyTask(MENU_TASK_NUM, Menu_Task);
-                task[3].r_no[0] = 8;
+                cpReadyTask(TASK_MENU, Menu_Task);
+                task[TASK_MENU].r_no[0] = 8;
                 break;
 
             default:
@@ -777,8 +777,8 @@ void Game03() {
             E_No[2] = 2;
             E_No[3] = 0;
             Request_E_No = 0;
-            cpReadyTask(MENU_TASK_NUM, Menu_Task);
-            task[3].r_no[1] = 16;
+            cpReadyTask(TASK_MENU, Menu_Task);
+            task[TASK_MENU].r_no[1] = 16;
             Cursor_Y_Pos[0][0] = 0;
             Cursor_Y_Pos[1][0] = 0;
             G_Timer = 4;
@@ -836,8 +836,8 @@ void Game04() {
         if (Loser_Scene() != 0) {
             if (Mode_Type == 5) {
                 G_No[2] = 5;
-                cpReadyTask(MENU_TASK_NUM, Menu_Task);
-                task[3].r_no[0] = 8;
+                cpReadyTask(TASK_MENU, Menu_Task);
+                task[TASK_MENU].r_no[0] = 8;
             } else {
                 G_No[1] = 7;
                 G_No[2] = 0;
@@ -1022,16 +1022,16 @@ void Game06() {
                     G_No[3] = 0;
                     G_Timer = 4;
                     Pause_ID = Player_id;
-                    cpReadyTask(MENU_TASK_NUM, Menu_Task);
+                    cpReadyTask(TASK_MENU, Menu_Task);
                     System_all_clear_Level_B();
-                    Menu_Init(&task[3]);
-                    task[3].r_no[0] = 9;
-                    task[3].r_no[1] = 0;
+                    Menu_Init(&task[TASK_MENU]);
+                    task[TASK_MENU].r_no[0] = 9;
+                    task[TASK_MENU].r_no[1] = 0;
                     Forbid_Reset = 1;
                     make_texcash_work(12);
                     Unsubstantial_BG[0] = 1;
                     Copy_Check_w();
-                    cpExitTask(SAVER_TASK_NUM);
+                    cpExitTask(TASK_SAVER);
                 } else {
                     G_No[2] = 6;
                 }
@@ -1066,7 +1066,7 @@ void Game06() {
             D_No[3] = 0;
             Get_Demo_Index = 0;
             Combo_Demo_Flag = 0;
-            cpReadyTask(ENTRY_TASK_NUM, Entry_Task);
+            cpReadyTask(TASK_ENTRY, Entry_Task);
             Purge_mmtm_area(5);
             Make_texcash_of_list(5);
             System_all_clear_Level_B();
@@ -1215,8 +1215,8 @@ void Game08() {
         grade_final_grade_bonus();
         WGJ_Score = Continue_Coin[WINNER] + Score[WINNER][0];
         Purge_mmtm_area(6);
-        cpExitTask(MENU_TASK_NUM);
-        cpExitTask(PAUSE_TASK_NUM);
+        cpExitTask(TASK_MENU);
+        cpExitTask(TASK_PAUSE);
         break;
 
     case 1:
@@ -1389,7 +1389,7 @@ void Game09() {
 s16 Bonus_Sub() {
     s16 x;
 
-    mpp_w.inGame = 1;
+    mpp_w.inGame = true;
     Scene_Cut = Cut_Cut_Cut();
     Bonus_Game_Complete = 0;
 
@@ -1743,7 +1743,7 @@ void Next_Title_Sub() {
     Present_Mode = 1;
     Insert_Y = 23;
     Before_Select_Sub();
-    cpReadyTask(ENTRY_TASK_NUM, Entry_Task);
+    cpReadyTask(TASK_ENTRY, Entry_Task);
     setup_pos_remake_key(2);
 }
 

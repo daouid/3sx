@@ -6,14 +6,14 @@
 #include "sf33rd/Source/Game/effect/effm7.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLCNT.h"
-#include "sf33rd/Source/Game/SLOWF.h"
-#include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/plcnt.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
+#include "sf33rd/Source/Game/rendering/aboutspr.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
-#include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 void effm7_move(WORK_Other* ewk);
 
@@ -90,7 +90,7 @@ void effm7_move(WORK_Other* ewk) {
         break;
 
     case 4:
-        add_y_sub(ewk);
+        add_y_sub(&ewk->wu);
         char_move(&ewk->wu);
 
         if (ewk->wu.cg_type != 2) {
@@ -111,8 +111,8 @@ void effm7_move(WORK_Other* ewk) {
         break;
 
     case 5:
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
 
         if (!range_x_check3(ewk, 208)) {
             ewk->wu.routine_no[0] = 99;

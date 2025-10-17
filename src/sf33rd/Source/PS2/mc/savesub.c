@@ -1,8 +1,8 @@
 #include "sf33rd/Source/PS2/mc/savesub.h"
 #include "common.h"
 #include "sf33rd/AcrSDK/ps2/foundaps2.h"
-#include "sf33rd/Source/Game/PLS02.h"
 #include "sf33rd/Source/Game/RAMCNT.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
 
 #if !defined(TARGET_PS2)
 #include "sf33rd/Source/Game/SYS_sub.h"
@@ -10,10 +10,10 @@
 #endif
 
 #include "sf33rd/Source/Game/WORK_SYS.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/main.h"
 #include "sf33rd/Source/Game/sc_sub.h"
 #include "sf33rd/Source/Game/sound/sound3rd.h"
-#include "sf33rd/Source/Game/workuser.h"
 #include "sf33rd/Source/PS2/mc/knjsub.h"
 #include "sf33rd/Source/PS2/mc/mcsub.h"
 #include "sf33rd/Source/PS2/mc/msgsub.h"
@@ -184,7 +184,7 @@ s32 SaveMove() {
     save_move_jmp[save->r_no_0](save);
     McActMain();
     save_msg_trans(save);
-    task[SAVER_TASK_NUM].timer = 0;
+    task[TASK_SAVER].timer = 0;
 
     return save->return_code;
 }
@@ -2035,7 +2035,7 @@ static void load_data_set_system(_save_work* save) {
     se_level = sw->SE_Level;
 
     if (mpp_w.cutAnalogStickData) {
-        mpp_w.cutAnalogStickData = 0;
+        mpp_w.cutAnalogStickData = false;
         save_w[Present_Mode].AnalogStick = 0;
         save_w[4].AnalogStick = 0;
         save_w[5].AnalogStick = 0;

@@ -6,17 +6,17 @@
 #include "sf33rd/Source/Game/effect/eff11.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CALDIR.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLS02.h"
-#include "sf33rd/Source/Game/SLOWF.h"
-#include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/caldir.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
+#include "sf33rd/Source/Game/rendering/aboutspr.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
-#include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 const s16 eff11_data_tbl[24] = { 8492, 816, 51, 80, 6,  0, 8492, 176, 51, 80, 6,  0,
                                  8492, 720, 55, 80, 12, 1, 8492, 240, 55, 80, 12, 1 };
@@ -105,7 +105,7 @@ void quake_level_middle(WORK_Other* ewk) {
     case 3:
     case 5:
         char_move(&ewk->wu);
-        add_y_sub(ewk);
+        add_y_sub(&ewk->wu);
 
         if (ewk->wu.mvxy.a[1].sp < 0) {
             ewk->wu.routine_no[2]++;
@@ -118,7 +118,7 @@ void quake_level_middle(WORK_Other* ewk) {
     case 2:
     case 4:
         char_move(&ewk->wu);
-        add_y_sub(ewk);
+        add_y_sub(&ewk->wu);
 
         if (ewk->wu.xyz[1].disp.pos < ewk->wu.old_rno[2]) {
             ewk->wu.routine_no[2]++;
@@ -134,7 +134,7 @@ void quake_level_middle(WORK_Other* ewk) {
 
     case 6:
         char_move(&ewk->wu);
-        add_y_sub(ewk);
+        add_y_sub(&ewk->wu);
 
         if (ewk->wu.xyz[1].disp.pos < ewk->wu.old_rno[2]) {
             ewk->wu.routine_no[1] = 2;
@@ -163,8 +163,8 @@ void quake_level_large(WORK_Other* ewk) {
 
     case 1:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
 
         if (ewk->wu.mvxy.a[1].sp < 0) {
             ewk->wu.routine_no[2]++;
@@ -176,8 +176,8 @@ void quake_level_large(WORK_Other* ewk) {
 
     case 2:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
 
         if (!(ewk->wu.xyz[1].disp.pos < ewk->wu.old_rno[2])) {
             break;
@@ -201,8 +201,8 @@ void quake_level_large(WORK_Other* ewk) {
 
     case 3:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
         ewk->wu.old_rno[5]--;
 
         if (ewk->wu.mvxy.a[1].sp < 0) {
@@ -214,8 +214,8 @@ void quake_level_large(WORK_Other* ewk) {
 
     case 4:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
         ewk->wu.old_rno[5]--;
 
         if (ewk->wu.old_rno[5] <= 0) {
@@ -236,7 +236,7 @@ void quake_level_large(WORK_Other* ewk) {
     case 7:
     case 9:
         char_move(&ewk->wu);
-        add_y_sub(ewk);
+        add_y_sub(&ewk->wu);
 
         if (ewk->wu.mvxy.a[1].sp < 0) {
             ewk->wu.routine_no[2]++;
@@ -248,7 +248,7 @@ void quake_level_large(WORK_Other* ewk) {
     case 6:
     case 8:
         char_move(&ewk->wu);
-        add_y_sub(ewk);
+        add_y_sub(&ewk->wu);
 
         if (ewk->wu.xyz[1].disp.pos < ewk->wu.old_rno[2]) {
             ewk->wu.routine_no[2]++;
@@ -265,7 +265,7 @@ void quake_level_large(WORK_Other* ewk) {
 
     case 10:
         char_move(&ewk->wu);
-        add_y_sub(ewk);
+        add_y_sub(&ewk->wu);
 
         if (ewk->wu.xyz[1].disp.pos < ewk->wu.old_rno[2]) {
             ewk->wu.routine_no[1] = 2;

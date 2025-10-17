@@ -10,29 +10,27 @@
 #include "sf33rd/Source/Common/PPGFile.h"
 #include "sf33rd/Source/Common/PPGWork.h"
 #include "sf33rd/Source/Compress/zlibApp.h"
-#include "sf33rd/Source/Game/AcrUtil.h"
-#include "sf33rd/Source/Game/DC_Ghost.h"
-#include "sf33rd/Source/Game/MTRANS.h"
-#include "sf33rd/Source/Game/PLCNT.h"
 #include "sf33rd/Source/Game/RAMCNT.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/SYS_sub2.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/stage/bg.h"
-#include "sf33rd/Source/Game/color3rd.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/plcnt.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/init3rd.h"
-#include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
+#include "sf33rd/Source/Game/io/gd3rd.h"
+#include "sf33rd/Source/Game/io/ioconv.h"
+#include "sf33rd/Source/Game/rendering/color3rd.h"
+#include "sf33rd/Source/Game/rendering/dc_ghost.h"
+#include "sf33rd/Source/Game/rendering/mtrans.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
+#include "sf33rd/Source/Game/sound/sound3rd.h"
+#include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/PS2/mc/knjsub.h"
 #include "sf33rd/Source/PS2/mc/mcsub.h"
 #include "sf33rd/Source/PS2/ps2Quad.h"
 #include "structs.h"
-
-#include "sf33rd/Source/Game/io/gd3rd.h"
-#include "sf33rd/Source/Game/io/ioconv.h"
-#include "sf33rd/Source/Game/sound/sound3rd.h"
 
 #if defined(DEBUG)
 #include "sf33rd/Source/Game/debug/debug_config.h"
@@ -74,8 +72,6 @@ void njUserInit();
 s32 njUserMain();
 void cpLoopTask();
 void cpInitTask();
-void cpReadyTask(u16 num, void* func_adrs);
-void cpExitTask(u16 num);
 
 /// @brief Makes sure resources are present.
 /// @return `true` if resources are present and execution can proceed, `false` otherwise.
@@ -186,15 +182,10 @@ static void game_init() {
 }
 
 static void game_step_0() {
-    mpp_w.ds_h[0] = mpp_w.ds_h[1];
-    mpp_w.ds_v[0] = mpp_w.ds_v[1];
-    mpp_w.ds_h[1] = 100;
-    mpp_w.ds_v[1] = 100;
-
-    setBackGroundColor(0xFF000000);
+    flSetRenderState(FLRENDER_BACKCOLOR, 0xFF000000);
 
     if (Debug_w[0x43]) {
-        setBackGroundColor(0xFF0000FF);
+        flSetRenderState(FLRENDER_BACKCOLOR, 0xFF0000FF);
     }
 
     appSetupTempPriority();
@@ -204,52 +195,49 @@ static void game_step_0() {
 
     if (((Usage == 7) || (Usage == 2)) && !test_flag) {
         if (mpp_w.sysStop) {
-            if (mpp_w.sysStop == 1) {
-                sysSLOW = 1;
+            sysSLOW = 1;
 
-                switch (io_w.data[1].sw_new) {
-                case SWK_LEFT_STICK:
-                    mpp_w.sysStop = 0;
-                    // fallthrough
+            switch (io_w.data[1].sw_new) {
+            case SWK_LEFT_STICK:
+                mpp_w.sysStop = false;
+                // fallthrough
 
-                case SWK_LEFT_SHOULDER:
+            case SWK_LEFT_SHOULDER:
+                Slow_Timer = 1;
+                break;
+
+            default:
+                switch (io_w.data[1].sw & (SWK_LEFT_SHOULDER | SWK_LEFT_TRIGGER)) {
+                case SWK_LEFT_SHOULDER | SWK_LEFT_TRIGGER:
+                    if ((sysFF = Debug_w[1]) == 0) {
+                        sysFF = 1;
+                    }
+
+                    sysSLOW = 1;
                     Slow_Timer = 1;
+
                     break;
 
-                default:
-                    switch (io_w.data[1].sw & (SWK_LEFT_SHOULDER | SWK_LEFT_TRIGGER)) {
-                    case SWK_LEFT_SHOULDER | SWK_LEFT_TRIGGER:
-                        if ((sysFF = Debug_w[1]) == 0) {
-                            sysFF = 1;
+                case SWK_LEFT_TRIGGER:
+                    if (Slow_Timer == 0) {
+                        if ((Slow_Timer = Debug_w[0]) == 0) {
+                            Slow_Timer = 1;
                         }
 
-                        sysSLOW = 1;
-                        Slow_Timer = 1;
-
-                        break;
-
-                    case SWK_LEFT_TRIGGER:
-                        if (Slow_Timer == 0) {
-                            if ((Slow_Timer = Debug_w[0]) == 0) {
-                                Slow_Timer = 1;
-                            }
-
-                            sysFF = 1;
-                        }
-
-                        break;
-
-                    default:
-                        Slow_Timer = 2;
-
-                        break;
+                        sysFF = 1;
                     }
 
                     break;
+
+                default:
+                    Slow_Timer = 2;
+                    break;
                 }
+
+                break;
             }
         } else if (io_w.data[1].sw_new & SWK_LEFT_STICK) {
-            mpp_w.sysStop = 1;
+            mpp_w.sysStop = true;
         }
     }
 
@@ -265,7 +253,7 @@ static void game_step_0() {
         p3sw_0 = p3sw_buff;
         p4sw_0 = p4sw_buff;
 
-        if ((task[3].condition == 1) && (Mode_Type == MODE_PARRY_TRAINING) && (Play_Mode == 1)) {
+        if ((task[TASK_MENU].condition == 1) && (Mode_Type == MODE_PARRY_TRAINING) && (Play_Mode == 1)) {
             const u16 sw_buff = p2sw_0;
             p2sw_0 = p1sw_0;
             p1sw_0 = sw_buff;
@@ -274,7 +262,7 @@ static void game_step_0() {
 
     appCopyKeyData();
 
-    mpp_w.inGame = 0;
+    mpp_w.inGame = false;
 
     njUserMain();
     seqsBeforeProcess();
@@ -341,12 +329,9 @@ void njUserInit() {
     u32 size;
 
     sysFF = 1;
-    mpp_w.sysStop = 0;
-    mpp_w.inGame = 0;
-    mpp_w.ctrDemo = 0;
+    mpp_w.sysStop = false;
+    mpp_w.inGame = false;
     mpp_w.language = 0;
-    mpp_w.langload = -1;
-    mpp_w.pal50Hz = 0;
     mmSystemInitialize();
     flGetFrame(&mpp_w.fmsFrame);
     seqsInitialize(mppMalloc(seqsGetUseMemorySize()));
@@ -365,9 +350,6 @@ void njUserInit() {
     SA_Zoom_Y = 0.0f;
     Disp_Size_H = 100;
     Disp_Size_V = 100;
-    mpp_w.ds_h[0] = mpp_w.ds_h[1] = Disp_Size_H;
-    mpp_w.ds_v[0] = mpp_w.ds_v[1] = Disp_Size_V;
-    Country = 0;
     Country = 4;
     Screen_PAL = 0;
     Turbo = 0;
@@ -395,7 +377,7 @@ void njUserInit() {
     Init_bgm_work();
     sndInitialLoad();
     cpInitTask();
-    cpReadyTask(INIT_TASK_NUM, Init_Task);
+    cpReadyTask(TASK_INIT, Init_Task);
 }
 
 s32 njUserMain() {
@@ -488,8 +470,8 @@ void cpInitTask() {
     memset(&task, 0, sizeof(task));
 }
 
-void cpReadyTask(u16 num, void* func_adrs) {
-    struct _TASK* task_ptr = task + num;
+void cpReadyTask(TaskID num, void* func_adrs) {
+    struct _TASK* task_ptr = &task[num];
 
     memset(task_ptr, 0, sizeof(struct _TASK));
 
@@ -497,8 +479,8 @@ void cpReadyTask(u16 num, void* func_adrs) {
     task_ptr->condition = 2;
 }
 
-void cpExitTask(u16 num) {
-    struct _TASK* task_ptr = task + num;
+void cpExitTask(TaskID num) {
+    struct _TASK* task_ptr = &task[num];
 
     task_ptr->condition = 0;
 

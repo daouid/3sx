@@ -2,17 +2,19 @@
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/Sel_Data.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
-#include "sf33rd/Source/Game/effect/effect_init.h"
+#include "sf33rd/Source/Game/effect/eff58.h"
+#include "sf33rd/Source/Game/effect/eff76.h"
+#include "sf33rd/Source/Game/effect/effa9.h"
+#include "sf33rd/Source/Game/effect/effl1.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/sc_sub.h"
+#include "sf33rd/Source/Game/sound/se.h"
+#include "sf33rd/Source/Game/sound/sound3rd.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/bg_data.h"
 #include "sf33rd/Source/Game/stage/bg_sub.h"
-#include "sf33rd/Source/Game/workuser.h"
 
-#include "sf33rd/Source/Game/sound/se.h"
-#include "sf33rd/Source/Game/sound/sound3rd.h"
-
-u8 GAME_OVER_X; // size: 0x1, address: 0x579078
+u8 GAME_OVER_X;
 
 void GameOver_1st();
 void GameOver_2nd();

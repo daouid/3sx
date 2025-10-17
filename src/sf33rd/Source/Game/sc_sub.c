@@ -4,20 +4,18 @@
 #include "sf33rd/AcrSDK/ps2/foundaps2.h"
 #include "sf33rd/Source/Common/PPGFile.h"
 #include "sf33rd/Source/Common/PPGWork.h"
-#include "sf33rd/Source/Game/AcrUtil.h"
-#include "sf33rd/Source/Game/DC_Ghost.h"
-#include "sf33rd/Source/Game/MTRANS.h"
 #include "sf33rd/Source/Game/RAMCNT.h"
 #include "sf33rd/Source/Game/SysDir.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
 #include "sf33rd/Source/Game/effect/eff76.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
+#include "sf33rd/Source/Game/io/gd3rd.h"
+#include "sf33rd/Source/Game/rendering/dc_ghost.h"
+#include "sf33rd/Source/Game/rendering/mtrans.h"
 #include "sf33rd/Source/Game/sc_data.h"
 #include "sf33rd/Source/Game/stage/bg_data.h"
-#include "sf33rd/Source/Game/workuser.h"
 #include "sf33rd/Source/PS2/ps2Quad.h"
 #include "structs.h"
-
-#include "sf33rd/Source/Game/io/gd3rd.h"
 
 #if defined(TARGET_PS2)
 #define TO_UV_256(val) ((0.5f + (val)) / 256.0f)
@@ -30,18 +28,16 @@
 #endif
 
 typedef struct {
-    // total size: 0x6
-    s16 fade;      // offset 0x0, size 0x2
-    s16 fade_kind; // offset 0x2, size 0x2
-    u8 fade_prio;  // offset 0x4, size 0x1
+    s16 fade;
+    s16 fade_kind;
+    u8 fade_prio;
 } FadeData;
 
 typedef struct {
-    // total size: 0x4
-    u8 atr;  // offset 0x0, size 0x1
-    u8 page; // offset 0x1, size 0x1
-    u8 cx;   // offset 0x2, size 0x1
-    u8 cy;   // offset 0x3, size 0x1
+    u8 atr;
+    u8 page;
+    u8 cx;
+    u8 cy;
 } SAFrame;
 
 // sdata
@@ -909,8 +905,8 @@ s32 WipeOut(u8 type) {
             dmylim = WipeLimit;
         }
 
-        wipe_pc.p = &wipe_p[0];
-        wipe_pc.col = &wipe_col[0];
+        wipe_pc.p = wipe_p;
+        wipe_pc.col = wipe_col;
         wipe_pc.tex = 0;
         wipe_pc.num = 4;
         wipe_col[0].color = wipe_col[1].color = wipe_col[2].color = wipe_col[3].color = 0xFF000000;

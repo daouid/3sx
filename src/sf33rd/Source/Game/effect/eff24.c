@@ -6,17 +6,17 @@
 #include "sf33rd/Source/Game/effect/eff24.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CALDIR.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLS02.h"
-#include "sf33rd/Source/Game/SLOWF.h"
-#include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/caldir.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
+#include "sf33rd/Source/Game/rendering/aboutspr.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
-#include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 const s16 eff24_data_tbl[56] = { 8492, 480, 6,  10, 12, 2, 0, 300,  224, 43, 81, 3, 1, 1, 300, 288, 44, 80, 4, 2, 1,
                                  300,  512, 48, 80, 5,  1, 0, 8492, 512, 48, 80, 6, 2, 0, 300, 644, 48, 80, 7, 1, 1,
@@ -79,8 +79,8 @@ void eff24_quake_sub(WORK_Other* ewk) {
         break;
 
     case 1:
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
 
         if (ewk->wu.xyz[1].disp.pos < ewk->wu.old_rno[2]) {
             ewk->wu.routine_no[1]++;
@@ -92,8 +92,8 @@ void eff24_quake_sub(WORK_Other* ewk) {
         break;
 
     case 2:
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
         ewk->wu.old_rno[5]--;
 
         if (ewk->wu.old_rno[5] > 0) {
@@ -126,7 +126,7 @@ void eff24_quake_sub(WORK_Other* ewk) {
 
     case 3:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
         ewk->wu.old_rno[5]--;
 
         if (ewk->wu.old_rno[5] > 0) {
@@ -138,7 +138,7 @@ void eff24_quake_sub(WORK_Other* ewk) {
 
     case 4:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
+        add_x_sub(&ewk->wu);
 
         if (ewk->wu.cg_type) {
             ewk->wu.routine_no[1] = 0;

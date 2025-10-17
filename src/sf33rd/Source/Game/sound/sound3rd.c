@@ -15,17 +15,16 @@
 #include "sf33rd/Source/Game/RAMCNT.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
-#include "sf33rd/Source/Game/color3rd.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
 #include "sf33rd/Source/Game/effect/effect.h"
-#include "sf33rd/Source/Game/main.h"
-#include "sf33rd/Source/Game/workuser.h"
-#include "sf33rd/Source/PS2/cseDataFiles/CSEData.h"
-#include "structs.h"
-
+#include "sf33rd/Source/Game/engine/workuser.h"
 #include "sf33rd/Source/Game/io/gd3rd.h"
+#include "sf33rd/Source/Game/main.h"
+#include "sf33rd/Source/Game/rendering/color3rd.h"
 #include "sf33rd/Source/Game/sound/se.h"
 #include "sf33rd/Source/Game/sound/se_data.h"
+#include "sf33rd/Source/PS2/cseDataFiles/CSEData.h"
+#include "structs.h"
 
 #define ADX_STM_WORK_SIZE 252388
 

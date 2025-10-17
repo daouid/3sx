@@ -5,16 +5,16 @@
 
 #include "sf33rd/Source/Game/effect/eff94.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/PLS02.h"
-#include "sf33rd/Source/Game/SLOWF.h"
-#include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/effect/eff05.h"
 #include "sf33rd/Source/Game/effect/effect.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/pls02.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
+#include "sf33rd/Source/Game/rendering/aboutspr.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
-#include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 const s16 eff94_data_tbl[5][10] = { { 2, 8492, 392, 64, 12, 22, 52, 0, 0, 1 },
                                     { 2, 8492, 408, 75, 11, 23, 53, 0, 1, 1 },
@@ -119,8 +119,8 @@ void eff94_1000(WORK_Other* ewk) {
 
     case 2:
         char_move(&ewk->wu);
-        add_x_sub(ewk);
-        add_y_sub(ewk);
+        add_x_sub(&ewk->wu);
+        add_y_sub(&ewk->wu);
 
         if (ewk->wu.xyz[1].disp.pos < 11) {
             ewk->wu.routine_no[2]++;
@@ -194,7 +194,7 @@ void eff94_2000_1(WORK_Other* ewk) {
 }
 
 void eff94_2000_2(WORK_Other* ewk) {
-    add_y_sub(ewk);
+    add_y_sub(&ewk->wu);
 
     if (ewk->wu.xyz[1].disp.pos < 17) {
         ewk->wu.routine_no[2]++;

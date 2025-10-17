@@ -6,21 +6,21 @@
 #include "sf33rd/Source/Game/effect/effm5.h"
 #include "bin2obj/char_table.h"
 #include "common.h"
-#include "sf33rd/Source/Game/CALDIR.h"
-#include "sf33rd/Source/Game/CHARSET.h"
-#include "sf33rd/Source/Game/SLOWF.h"
-#include "sf33rd/Source/Game/aboutspr.h"
 #include "sf33rd/Source/Game/animation/appear.h"
 #include "sf33rd/Source/Game/effect/effect.h"
 #include "sf33rd/Source/Game/effect/effm6.h"
+#include "sf33rd/Source/Game/engine/caldir.h"
+#include "sf33rd/Source/Game/engine/charset.h"
+#include "sf33rd/Source/Game/engine/slowf.h"
+#include "sf33rd/Source/Game/engine/workuser.h"
+#include "sf33rd/Source/Game/rendering/aboutspr.h"
+#include "sf33rd/Source/Game/rendering/texcash.h"
 #include "sf33rd/Source/Game/sound/se.h"
 #include "sf33rd/Source/Game/sound/sound3rd.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/bg_data.h"
 #include "sf33rd/Source/Game/stage/bg_sub.h"
 #include "sf33rd/Source/Game/stage/ta_sub.h"
-#include "sf33rd/Source/Game/texcash.h"
-#include "sf33rd/Source/Game/workuser.h"
 
 void effect_M5_move(WORK_Other* ewk) {
     switch (ewk->wu.routine_no[0]) {
@@ -48,7 +48,7 @@ void effect_M5_move(WORK_Other* ewk) {
                     SsRequestPan(0x135, 0x40, 0x40, 0, 2);
                 }
             } else {
-                add_x_sub(ewk);
+                add_x_sub(&ewk->wu);
             }
         }
 
@@ -101,7 +101,7 @@ void effect_M5_move(WORK_Other* ewk) {
             if (ewk->wu.old_rno[0] < 0) {
                 ewk->wu.routine_no[0]++;
             } else {
-                add_x_sub(ewk);
+                add_x_sub(&ewk->wu);
             }
         }
 
