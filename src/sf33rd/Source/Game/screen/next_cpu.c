@@ -1,10 +1,14 @@
-#include "sf33rd/Source/Game/Next_CPU.h"
+/**
+ * @file next_cpu.c
+ * Next CPU character selection
+ */
+
+#include "sf33rd/Source/Game/screen/next_cpu.h"
 #include "common.h"
 #include "sf33rd/AcrSDK/common/pad.h"
 #include "sf33rd/Source/Game/Com_Data.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/SYS_sub2.h"
-#include "sf33rd/Source/Game/Sel_Data.h"
 #include "sf33rd/Source/Game/SysDir.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
@@ -28,6 +32,7 @@
 #include "sf33rd/Source/Game/io/gd3rd.h"
 #include "sf33rd/Source/Game/rendering/mmtmcnt.h"
 #include "sf33rd/Source/Game/sc_sub.h"
+#include "sf33rd/Source/Game/screen/sel_data.h"
 #include "sf33rd/Source/Game/sound/se.h"
 #include "sf33rd/Source/Game/sound/sound3rd.h"
 #include "sf33rd/Source/Game/stage/bg.h"
@@ -144,7 +149,6 @@ void Next_CPU_1st() {
     Cut_Scroll = 2;
     effect_58_init(13, 1, 3);
     effect_58_init(16, 5, 2);
-    setup_pos_remake_key(5);
 }
 
 void Next_CPU_2nd() {
@@ -545,7 +549,6 @@ void After_Bonus_1st() {
     Setup_BG(1, 0x200, 0);
     Setup_BG(3, 0x2C0, 0);
     Unsubstantial_BG[0] = 1;
-    setup_pos_remake_key(5);
 }
 
 void After_Bonus_2nd() {
@@ -637,8 +640,6 @@ void Select_CPU_1st() {
     if (VS_Index[Player_id] >= 8) {
         Push_LDREQ_Queue_Direct(9, 2);
     }
-
-    setup_pos_remake_key(5);
 }
 
 void Select_CPU_2nd() {
@@ -866,7 +867,6 @@ void Next_Bonus_1st() {
     Cut_Scroll = 2;
     effect_58_init(13, 1, 3);
     effect_58_init(16, 5, 2);
-    setup_pos_remake_key(5);
 }
 
 void Next_Bonus_2nd() {
@@ -976,7 +976,6 @@ void Next_Q_1st() {
     Purge_com_player_from_mm();
     Make_texcash_of_list(7);
     Push_LDREQ_Queue_Player(COM_id, 17);
-    setup_pos_remake_key(5);
 }
 
 void Next_Q_2nd() {
@@ -1197,7 +1196,7 @@ void Setup_PL_Color(s16 PL_id, u16 sw) {
 
     sw_new = 0;
 
-    if (plw[PL_id ^ 1].wu.operator == 0) {
+    if (gs.plw[PL_id ^ 1].wu.operator == 0) {
         id_0 = -1;
         id_1 = 1;
     } else {
@@ -1209,7 +1208,7 @@ void Setup_PL_Color(s16 PL_id, u16 sw) {
         id_0 = 127;
     }
 
-    if (plw[PL_id].wu.operator != 0 && My_char[PL_id] == 0) {
+    if (gs.plw[PL_id].wu.operator != 0 && My_char[PL_id] == 0) {
         sw_new = 0;
     } else {
         if (Debug_w[53]) {
@@ -1586,11 +1585,11 @@ void Check_Auto_Cut() {
 }
 
 s32 Auto_Cut_Sub() {
-    if (plw[0].wu.operator && ~p1sw_1 & p1sw_0 & 0xFF0) {
+    if (gs.plw[0].wu.operator && ~p1sw_1 & p1sw_0 & 0xFF0) {
         return 1;
     }
 
-    if (plw[1].wu.operator && ~p2sw_1 & p2sw_0 & 0xFF0) {
+    if (gs.plw[1].wu.operator && ~p2sw_1 & p2sw_0 & 0xFF0) {
         return 1;
     }
 

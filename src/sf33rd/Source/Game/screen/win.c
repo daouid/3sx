@@ -1,7 +1,11 @@
+/**
+ * @file win.c
+ * Win Screen
+ */
+
 #include "common.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/SYS_sub2.h"
-#include "sf33rd/Source/Game/Sel_Data.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
 #include "sf33rd/Source/Game/effect/eff58.h"
 #include "sf33rd/Source/Game/effect/eff76.h"
@@ -12,6 +16,7 @@
 #include "sf33rd/Source/Game/io/pulpul.h"
 #include "sf33rd/Source/Game/rendering/mmtmcnt.h"
 #include "sf33rd/Source/Game/rendering/texgroup.h"
+#include "sf33rd/Source/Game/screen/sel_data.h"
 #include "sf33rd/Source/Game/sound/se.h"
 #include "sf33rd/Source/Game/sound/sound3rd.h"
 #include "sf33rd/Source/Game/stage/bg.h"
@@ -84,14 +89,9 @@ void Win_1st() {
     }
 
     pulpul_stop();
-    setup_pos_remake_key(5);
 }
 
 void Win_2nd() {
-#if defined(TARGET_PS2)
-    s32 effect_B8_init(s32 WIN_PL_NO, s16 timer);
-#endif
-
     Switch_Screen(0);
     M_No[0] += 1;
 
@@ -240,10 +240,6 @@ s32 Loser_Scene() {
 }
 
 void Lose_2nd() {
-#if defined(TARGET_PS2)
-    s32 effect_B8_init(s32 WIN_PL_NO, s16 timer);
-#endif
-
     Switch_Screen(0);
     M_No[0] += 1;
 
