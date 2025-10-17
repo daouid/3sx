@@ -1,4 +1,9 @@
-#include "sf33rd/Source/Game/n_input.h"
+/**
+ * @file n_input.c
+ * High Score Name Entry Screen
+ */
+
+#include "sf33rd/Source/Game/screen/n_input.h"
 #include "common.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
 #include "sf33rd/Source/Game/ending/end_data.h"
@@ -390,10 +395,6 @@ void name_work_init(s16 pl_id) {
 }
 
 void rank_display_set(s16 pl_id) {
-#if defined(TARGET_PS2)
-    void scfont_sqput(u32 x, u16 y, u8 atr, u8 page, u32 cx1, u8 cy1, u8 cx2, u8 cy2, u16 priority);
-#endif
-
     u16 pos_x;
     u8 rank;
 

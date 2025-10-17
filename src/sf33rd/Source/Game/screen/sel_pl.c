@@ -1,11 +1,14 @@
-#include "sf33rd/Source/Game/sel_pl.h"
+/**
+ * @file sel_pl.c
+ * Character/Super Art selection screen
+ */
+
+#include "sf33rd/Source/Game/screen/sel_pl.h"
 #include "common.h"
 #include "sf33rd/AcrSDK/common/pad.h"
 #include "sf33rd/Source/Game/Com_Data.h"
-#include "sf33rd/Source/Game/Next_CPU.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
 #include "sf33rd/Source/Game/SYS_sub2.h"
-#include "sf33rd/Source/Game/Sel_Data.h"
 #include "sf33rd/Source/Game/SysDir.h"
 #include "sf33rd/Source/Game/WORK_SYS.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
@@ -39,6 +42,8 @@
 #include "sf33rd/Source/Game/rendering/mmtmcnt.h"
 #include "sf33rd/Source/Game/rendering/mtrans.h"
 #include "sf33rd/Source/Game/sc_sub.h"
+#include "sf33rd/Source/Game/screen/next_cpu.h"
+#include "sf33rd/Source/Game/screen/sel_data.h"
 #include "sf33rd/Source/Game/sound/se.h"
 #include "sf33rd/Source/Game/sound/sound3rd.h"
 #include "sf33rd/Source/Game/stage/bg.h"
@@ -274,7 +279,6 @@ void Sel_PL_Cont_1st() {
     pulpul_stop();
     pp_operator_check_flag(1);
     effect_58_init(6, 20, 157);
-    setup_pos_remake_key(5);
 }
 
 void Check_Use_Gill() {
@@ -354,23 +358,23 @@ void Setup_Face_Sub() {
 }
 
 void Setup_Select_Status() {
-    if (plw[0].wu.operator) {
+    if (gs.plw[0].wu.operator) {
         Select_Status[0] = 1;
     } else {
         Select_Status[0] = 0;
     }
 
-    if (plw[1].wu.operator) {
+    if (gs.plw[1].wu.operator) {
         Select_Status[0] |= 2;
     }
 
-    if (Sel_Arts_Complete[0] != -1 && plw[0].wu.operator != 0) {
+    if (Sel_Arts_Complete[0] != -1 && gs.plw[0].wu.operator != 0) {
         Select_Status[1] = 1;
     } else {
         Select_Status[1] = 0;
     }
 
-    if (Sel_Arts_Complete[1] != -1 && plw[1].wu.operator != 0) {
+    if (Sel_Arts_Complete[1] != -1 && gs.plw[1].wu.operator != 0) {
         Select_Status[1] |= 2;
     }
 }
@@ -755,7 +759,7 @@ void Go_Away_Red_Lines() {
 void Player_Select_Control() {
     void (*PL_Sel_Jmp_Tbl[5])() = { PL_Sel_1st, PL_Sel_2nd, PL_Sel_3rd, PL_Sel_4th, PL_Sel_5th };
 
-    if (plw[ID2].wu.operator != 0) {
+    if (gs.plw[ID2].wu.operator != 0) {
         PL_Sel_Jmp_Tbl[SP_No[ID2][1]]();
     }
 }
@@ -876,7 +880,7 @@ void Setup_Plates(s8 PL_id, s16 Time) {
 void Sel_PL() {
     void (*Sel_PL_Jmp_Tbl[6])() = { Sel_PL_1st, Sel_PL_2nd, Sel_PL_3rd, Sel_PL_4th, Sel_PL_5th, Sel_PL_6th };
 
-    if (plw[ID].wu.operator != 0) {
+    if (gs.plw[ID].wu.operator != 0) {
         Sel_PL_Jmp_Tbl[SP_No[ID][0]]();
     }
 }
@@ -940,11 +944,6 @@ void Sel_PL_2nd() {
 }
 
 void Sel_PL_3rd() {
-#if defined(TARGET_PS2)
-    void Push_LDREQ_Queue_Player(s32 id, s16 ix);
-    void grade_check_work_1st_init(s32 ix, s32 ix2);
-#endif
-
     if (Stop_Cursor[ID] != 0 || Face_Move != 0) {
         return;
     }
@@ -1081,7 +1080,7 @@ void Sel_PL_5th() {
         S_No[3] = 1;
     }
 
-    if (plw[0].wu.operator == 0 || plw[1].wu.operator == 0) {
+    if (gs.plw[0].wu.operator == 0 || gs.plw[1].wu.operator == 0) {
         Check_Boss(ID);
     }
 }
@@ -1534,11 +1533,11 @@ void Check_Exit() {
 }
 
 void Exit_1st() {
-    if (plw[0].wu.operator != 0 && Sel_Arts_Complete[0] >= 0) {
+    if (gs.plw[0].wu.operator != 0 && Sel_Arts_Complete[0] >= 0) {
         return;
     }
 
-    if (plw[1].wu.operator != 0 && Sel_Arts_Complete[1] >= 0) {
+    if (gs.plw[1].wu.operator != 0 && Sel_Arts_Complete[1] >= 0) {
         return;
     }
 

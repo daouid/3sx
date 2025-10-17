@@ -34,10 +34,10 @@
 #include "sf33rd/Source/Game/ending/end_20.h"
 #include "sf33rd/Source/Game/ending/end_data.h"
 #include "sf33rd/Source/Game/engine/workuser.h"
-#include "sf33rd/Source/Game/n_input.h"
 #include "sf33rd/Source/Game/sc_sub.h"
+#include "sf33rd/Source/Game/screen/n_input.h"
+#include "sf33rd/Source/Game/screen/staff.h"
 #include "sf33rd/Source/Game/sound/sound3rd.h"
-#include "sf33rd/Source/Game/staff.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/bg_data.h"
 
@@ -64,7 +64,6 @@ void Ending_init() {
     end_no_cut = 0;
     staff_r_no = 0;
     end_staff_flag = 0;
-    setup_pos_remake_key(6);
 }
 
 s8 Ending_main(s16 pl_num) {
@@ -172,7 +171,6 @@ void normal_ending(s16 pl_num) {
 
     case 8:
         if (end_fade_complete()) {
-            setup_pos_remake_key(7);
             end_w.r_no_0++;
             end_no_cut = 0;
             Bg_Close();

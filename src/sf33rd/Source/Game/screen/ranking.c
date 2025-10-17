@@ -1,4 +1,9 @@
-#include "sf33rd/Source/Game/RANKING.h"
+/**
+ * @file ranking.c
+ * Manages the display of the high-score ranking tables
+ */
+
+#include "sf33rd/Source/Game/screen/ranking.h"
 #include "common.h"
 #include "sf33rd/Source/Game/Game.h"
 #include "sf33rd/Source/Game/SYS_sub.h"
@@ -54,7 +59,6 @@ void Ranking_00_1st() {
     Demo_Type = 0;
     Flash_Sign[0] = 1;
     Ranking_Sub();
-    setup_pos_remake_key(4);
 }
 
 void Ranking_00_2nd() {
@@ -222,7 +226,6 @@ void Ranking_01_1st() {
     Present_Rank[1] = 99;
     Ranking_Sub();
     effect_58_init(1, 1, -1);
-    setup_pos_remake_key(4);
 }
 
 void Ranking_01_2nd() {
