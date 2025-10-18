@@ -77,9 +77,7 @@ void clear_super_arts_point(PLW* wk);
 void set_scrrrl();
 
 // bss
-ComboType combo_type[2]; // FIXME: move to PLW instead?
 ZanzouTableEntry zanzou_table[2][48];
-ComboType remake_power[2]; // FIXME: move to PLW instead?
 
 // sbss
 s16 pcon_rno[4];
@@ -1264,8 +1262,6 @@ void set_base_data(PLW* wk, s16 ix) {
     wk->wu.hit_adrs = wk->wu.target_adrs;
     wk->wu.dmg_adrs = wk->wu.target_adrs;
     cmd_init(wk);
-    wk->cb = &combo_type[ix];
-    wk->rp = &remake_power[ix];
 
     if (ix) {
         wk->wu.my_col_code |= 0x10;

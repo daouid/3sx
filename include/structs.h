@@ -561,7 +561,7 @@ typedef struct {
     s16 current_attack;
     const AS* as;
     SA_WORK* sa;
-    ComboType* cb;
+    ComboType combo_type;
     PiyoriType* py;
     s8 wkey_flag;
     s8 dead_flag;
@@ -581,7 +581,7 @@ typedef struct {
     s16 image_data_index;
     u8 caution_flag;
     u8 tc_1st_flag;
-    ComboType* rp;
+    ComboType remake_power;
     s16 bullet_hcnt;
     s16 bhcnt_timer;
     s8 cat_break_ok_timer;
