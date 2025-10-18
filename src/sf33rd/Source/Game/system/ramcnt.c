@@ -1,4 +1,9 @@
-#include "sf33rd/Source/Game/RAMCNT.h"
+/**
+ * @file ramcnt.c
+ * RAM Control
+ */
+
+#include "sf33rd/Source/Game/system/ramcnt.h"
 #include "common.h"
 #include "sf33rd/AcrSDK/ps2/flps2debug.h"
 #include "sf33rd/AcrSDK/ps2/foundaps2.h"
@@ -78,10 +83,6 @@ void Push_ramcnt_key_original(s16 key) {
 }
 
 void Push_ramcnt_key_original_2(s16 key) {
-#if defined(TARGET_PS2)
-    void purge_texture_group(u16 grp);
-#endif
-
     RCKeyWork* rwk = &rckey_work[key];
 
     if (rwk->use != 0) {
