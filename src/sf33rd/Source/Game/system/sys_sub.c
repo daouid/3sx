@@ -1,12 +1,14 @@
-#include "sf33rd/Source/Game/SYS_sub.h"
+/**
+ * @file sys_sub.c
+ * System State and Management Hub
+ */
+
+#include "sf33rd/Source/Game/system/sys_sub.h"
 #include "common.h"
 #include "sf33rd/AcrSDK/common/mlPAD.h"
 #include "sf33rd/AcrSDK/ps2/flps2debug.h"
 #include "sf33rd/Source/Game/Com_Data.h"
 #include "sf33rd/Source/Game/Game.h"
-#include "sf33rd/Source/Game/SYS_sub2.h"
-#include "sf33rd/Source/Game/SysDir.h"
-#include "sf33rd/Source/Game/WORK_SYS.h"
 #include "sf33rd/Source/Game/com/com_datu.h"
 #include "sf33rd/Source/Game/debug/Debug.h"
 #include "sf33rd/Source/Game/effect/eff93.h"
@@ -28,6 +30,9 @@
 #include "sf33rd/Source/Game/sound/sound3rd.h"
 #include "sf33rd/Source/Game/stage/bg.h"
 #include "sf33rd/Source/Game/stage/bg_sub.h"
+#include "sf33rd/Source/Game/system/sys_sub2.h"
+#include "sf33rd/Source/Game/system/sysdir.h"
+#include "sf33rd/Source/Game/system/work_sys.h"
 #include <memory.h>
 
 u8 Candidate_Buff[16];
@@ -833,10 +838,6 @@ void Setup_Virtual_BG(s16 BG_INDEX, s16 X, s16 Y) {
 }
 
 void BG_move() {
-#if defined(TARGET_PS2)
-    void bg_pos_hosei_sub2(s32 bg_no);
-#endif
-
     s16 ix;
 
     for (ix = 0; ix < 4; ix++) {
@@ -879,10 +880,6 @@ s32 Check_PL_Load() {
 }
 
 void BG_Draw_System() {
-#if defined(TARGET_PS2)
-    void scr_trans(u32 bgnm);
-#endif
-
     u8 i;
     u16 mask = 1 & 0xFFFF;
     u16 s2;
